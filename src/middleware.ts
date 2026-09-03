@@ -29,7 +29,6 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const token = context.cookies.get("hackrail_token")?.value;
 
   if (!token) {
-    console.log("no token found, redirecting to /401");
     return context.redirect("/401");
   }
 

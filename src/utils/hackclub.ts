@@ -104,7 +104,6 @@ async function Login(code: string): Promise<Result<string>> {
 }
 
 export async function upsertUser(profile: User) {
-  console.log("upserting user", profile);
   const [row] = await db
     .insert(users)
     .values(profile)
