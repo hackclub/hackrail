@@ -1,0 +1,65 @@
+[
+  {
+    "id": "trainline-grant",
+    "image": "trainline.png",
+    "name": "Trainline grant",
+    "description": "5$ on trainline, stackable",
+    "extended-description": "//",
+    "price": 10,
+    "featured": true
+  },
+  {
+    "id": "interail-pass-4-days",
+    "image": "interrail.jpg",
+    "name": "Interrail 4 days",
+    "description": "4 days within a month! activate it within a year.",
+    "extended-description": "//",
+    "price": 490,
+    "featured": true
+  },
+  {
+    "id": "interail-pass-7-days",
+    "image": "interrail.png",
+    "name": "Interrail 7 days",
+    "description": "7 days within a month! activate it within a year.",
+    "extended-description": "//",
+    "price": 670,
+    "featured": false
+  },
+  {
+    "id": "interail-pass-15-days",
+    "image": "interrail.png",
+    "name": "Interrail 15 days",
+    "description": "15 days within two months! activate it within a year.",
+    "extended-description": "//",
+    "price": 960,
+    "featured": false
+  },
+  {
+    "id": "tgv-max-one-month",
+    "image": "tgvm.png",
+    "name": "One month of tgv max jeune",
+    "description": "0€ high speed train in france for one month!",
+    "extended-description": "//",
+    "price": 200,
+    "featured": false
+  },
+  {
+    "id": "amtrak-grant",
+    "image": "amtrak.jpg",
+    "description": "5$ on amtrak, stackable",
+    "name": "Amtrak grant",
+    "extended-description": "//",
+    "price": 10,
+    "featured": true
+  },
+  {
+    "id": "smolhaj",
+    "image": "smolhaj.png",
+    "name": "Smolhaj",
+    "description": "most important item to bring on a train trip",
+    "extended-description": "//",
+    "price": 20,
+    "featured": false
+  }
+]

@@ -485,6 +485,11 @@ summary {
         grid-template-columns: 1fr;
     }
 
+    .idea-card {
+        width: 100%;
+        align-self: center;
+    }
+
     .sign {
         display: none;
     }

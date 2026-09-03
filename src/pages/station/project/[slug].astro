@@ -10,8 +10,8 @@ import {
 } from "../../../utils/hackatime";
 import { formatSeconds } from "../../../utils/time";
 
-import openRaw from "../../../assets/icons/open.svg?raw";
-import codeRaw from "../../../assets/icons/code.svg?raw";
+import { GetUserFromSlackId } from "../../../utils/admin";
+import UserHeader from "../../../components/UserHeader.astro";
 
 const { slug } = Astro.params;
 
@@ -50,54 +50,76 @@ if (!project) {
 }
 
 const isCurrentUserAuthor = project.authorSlackId === user?.slackId;
+
+var authorUser;
+
+if (!isCurrentUserAuthor) {
+    authorUser = GetUserFromSlackId(project.authorSlackId);
+} else {
+    authorUser = user;
+}
 ---
 
 <BaseLayout title={project.projectName} hideFooter={true}>
-    <div class="content-margin">
-        <div class="project-header">
-            <h1 class="project-title">{project.projectName}</h1>
-            {
-                isCurrentUserAuthor && (
-                    <Fragment>
-                        <a
-                            href={`/station/project/${project.id}/edit`}
-                            class="button warnbg"
-                        >
-                            Edit Project
-                        </a>
-                        <a
-                            href={`/station/project/${project.id}/delete`}
-                            class="button dangerbg"
-                        >
-                            Delete Project
-                        </a>
-                    </Fragment>
-                )
-            }
-        </div>
-        <div class="row project-header-container">
-            <Image
-                src={project.projectScreenshot || ""}
-                alt={project.projectName}
-                class="project-image"
-                width={512}
-                height={350}
-            />
-            <div class="cards">
-                <a class="button open" href={project.projectPlayableUrl}>
-                    <span class="icon" set:html={openRaw} />
-                </a>
-                <a class="button open" href={project.projectCodeUrl}>
-                    <span class="icon" set:html={codeRaw} />
-                </a>
-                <div class="time-card surface">
-                    <p class="time-card-title">
-                        Δ {formatSeconds(totalTimeSpent)}
-                    </p>
+    <UserHeader user={user} />
+    <div class="row main-container">
+        <div class="content-margin project">
+            <div class="project-header">
+                <h1 class="project-title">{project.projectName}</h1>
+                {
+                    isCurrentUserAuthor && (
+                        <Fragment>
+                            <a
+                                href={`/station/project/${project.id}/edit`}
+                                class="button warnbg"
+                            >
+                                Edit Project
+                            </a>
+                            <a
+                                href={`/station/project/${project.id}/delete`}
+                                class="button dangerbg"
+                            >
+                                Delete Project
+                            </a>
+                        </Fragment>
+                    )
+                }
+            </div>
+            <div class="row project-header-container">
+                <Image
+                    src={project.projectScreenshot || ""}
+                    alt={project.projectName}
+                    class="project-image"
+                    width={512}
+                    height={350}
+                />
+                <div class="cards">
+                    <a class="button" href={project.projectPlayableUrl}>
+                        demo
+                    </a>
+                    <a class="button" href={project.projectCodeUrl}> code </a>
+                    <div class="time-card surface">
+                        <p class="time-card-title">
+                            Δ {formatSeconds(totalTimeSpent)}
+                        </p>
+                    </div>
                 </div>
             </div>
+            <p class="pre">description:</p>
+            <p>{project.projectDescription}</p>
         </div>
-        <p class="pre">description:</p>
-        <p>{project.projectDescription}</p>
-    </div>
-</BaseLayout>
+        <!-- <div class="author">
+            <div class="author-avatar">
+                <Image
+                    src={authorUser?.avatar || ""}
+                    alt={authorUser?.firstName || "Unknown User"}
+                    width={64}
+                    height={64}
+                />
+            </div>
+            <a href={`/station/user/${authorUser?.slackId}`} class="button">
+                View Author</a
+            >
+        </div> -->
+    </div></BaseLayout
+>

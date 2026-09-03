@@ -128,3 +128,7 @@ button {
     background-color: var(--green);
     color: var(--bg);
 }
+
+.remove-font {
+    font-family: sans-serif;
+}

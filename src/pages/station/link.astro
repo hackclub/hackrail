@@ -1,14 +1,21 @@
 ---
 import BaseLayout from "../../layouts/base.astro";
+import UserHeader from "../../components/UserHeader.astro";
+import { GetUserFromCookies } from "../../utils/auth";
 
 // build oauth url
 const client_id = import.meta.env.PUBLIC_HACKATIME_CLIENT_ID;
 const redirect_uri = import.meta.env.PUBLIC_HACKATIME_REDIRECT_URI;
 
+// get user
+const user = await GetUserFromCookies(Astro.cookies);
+if (!user) return Astro.redirect("/login");
+
 const oauthUrl = `https://hackatime.hackclub.com/oauth/authorize?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=code&scope=profile+read`;
 ---
 
 <BaseLayout title="Link" hideFooter={true}>
+    <UserHeader user={user} />
     <div class="margin">
         <div class="link-container">
             <h1>hackatime link required</h1>

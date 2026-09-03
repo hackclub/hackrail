@@ -1,37 +1,8 @@
 .page {
     margin: 2rem;
-}
-
-.header {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.right {
-    display: flex;
-    align-items: center;
-    justify-content: end;
-    padding: 1rem;
+    flex-direction: column;
     gap: 1rem;
-}
-
-.left > h1 {
-    margin: 0;
-}
-
-.left {
-    display: flex;
-    align-items: center;
-    justify-content: start;
-    padding: 1rem;
-}
-
-.avatar {
-    width: 3rem;
-    height: 3rem;
-    border-radius: 50%;
-    object-fit: cover;
 }
 
 .form-group {
@@ -74,7 +45,18 @@ button.button {
     font-size: inherit;
 }
 
+.projectcard-link {
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+    height: auto;
+    text-decoration: none;
+}
+
 .projectcard {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
     background-color: var(--bg-elevated);
     color: var(--fg);
     padding: 0rem;
@@ -85,6 +67,8 @@ button.button {
 
 .projectcard-content {
     padding: 1rem;
+    display: flex;
+    flex-direction: column;
 }
 
 .projectcard-image {
@@ -106,17 +90,14 @@ h2 {
 }
 
 .limited {
-    white-space: nowrap;
-    word-break: break-all;
     overflow: hidden;
-    text-overflow: clip;
+    word-break: break-word;
+    line-height: 1.4em;
+    max-height: 4.2em; /* 2 lines */
 }
 
-.limited:hover {
-    position: relative;
-    width: max-content;
-    overflow: visible;
-    white-space: normal;
+h2.limited {
+    max-height: 2.8em; /* 1 line */
 }
 
 .projectcard-image-container {
@@ -149,10 +130,6 @@ h2 {
 
 .progressbar-labels {
     margin-top: 0.5rem;
-}
-
-span {
-    margin-right: 0.5rem;
 }
 
 .unshipped {
@@ -192,4 +169,16 @@ span {
     font-size: 3rem;
     margin: 0;
     font-style: italic;
+}
+
+span {
+    margin: 0;
+}
+
+.desc {
+    font-style: italic;
+}
+
+.progressbar-labels > span {
+    margin-right: 0.5rem;
 }

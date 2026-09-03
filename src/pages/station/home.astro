@@ -10,7 +10,8 @@ import {
 } from "../../utils/hackatime";
 import { formatSeconds } from "../../utils/time";
 import type { Project } from "../../db/schema";
-import { isAdmin } from "../../middleware";
+import UserHeader from "../../components/UserHeader.astro";
+import { separateText, type TextBlock } from "../../utils/text";
 
 // get error from cookies
 const error = Astro.cookies.get("flash_error")?.value;
@@ -69,8 +70,8 @@ for (const project of projects) {
     projectTimeSpent[project.id] = formatSeconds(timeSpent);
 }
 
-// admin :3
-const admin = isAdmin(user.slackId);
+// load shop items
+import shopItems from "../../assets/shop.json";
 ---
 
 <BaseLayout title="Home" hideFooter={false}>
@@ -84,26 +85,8 @@ const admin = isAdmin(user.slackId);
             </div>
         )
     }
-    <div class="header">
-        <div class="left"></div>
-        <div class="right">
-            <a class="button" href="/logout">logout</a>
-            {
-                admin && (
-                    <a class="button dangerbg" href="/admin">
-                        admin
-                    </a>
-                )
-            }
-            <Image
-                src={user?.avatar || "/assets/images/bonk.png"}
-                width={32}
-                height={32}
-                class="avatar"
-                alt="pfp"
-            />
-        </div>
-    </div>
+
+    <UserHeader user={user} />
 
     <div class="page">
         <div class="time">
@@ -206,7 +189,7 @@ const admin = isAdmin(user.slackId);
                                     <h2 class="limited">
                                         {project.projectName}
                                     </h2>
-                                    <p class="limited">
+                                    <p class="desc limited">
                                         {project.projectDescription}
                                     </p>
                                 </div>
@@ -215,10 +198,57 @@ const admin = isAdmin(user.slackId);
                     ))
                 }
             </div>
-            <!-- </div>
+        </div>
         <div class="shop">
-            <h1>shop \</h1>
-        </div> -->
+            <div class="row ycentered gap">
+                <h1>featured shop items \[</h1>
+                <a class="button" href="/station/shop">view all</a>
+            </div>
+            <div class="row gap project-strip">
+                {
+                    shopItems.map(
+                        (item) =>
+                            item.featured && (
+                                <a
+                                    href={`/station/shop/${item.id}`}
+                                    class="projectcard-link"
+                                >
+                                    <div class="projectcard">
+                                        <div class="projectcard-image-container">
+                                            <img
+                                                class="projectcard-image"
+                                                src={
+                                                    "/public/shop/" + item.image
+                                                }
+                                                width={128}
+                                                height={128}
+                                                alt="shop item image"
+                                            />
+                                        </div>
+                                        <div class="projectcard-content">
+                                            <h2 class="limited">{item.name}</h2>
+                                            <p class="desc limited">
+                                                {separateText(
+                                                    item.description,
+                                                ).map((block: TextBlock) => (
+                                                    <span
+                                                        class={
+                                                            block.isInBreakList
+                                                                ? "remove-font"
+                                                                : undefined
+                                                        }
+                                                    >
+                                                        {block.text}
+                                                    </span>
+                                                ))}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </a>
+                            ),
+                    )
+                }
+            </div>
         </div>
     </div>
 </BaseLayout>

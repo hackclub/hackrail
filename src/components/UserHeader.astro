@@ -1,0 +1,47 @@
+---
+import { Image } from "astro:assets";
+import "./userheader.css";
+import { isAdmin } from "../middleware";
+
+const { user } = Astro.props;
+const admin = isAdmin(user?.slackId || "");
+---
+
+<div class="header">
+    <div class="left">
+        {
+            Astro.url.pathname !== "/station/home" && (
+                <a href={user ? "/station/home" : "/"} class="button warnbg">
+                    ¬
+                </a>
+            )
+        }
+    </div>
+    <div class="right">
+        {
+            user && (
+                <a class="button" href="/logout">
+                    logout
+                </a>
+            )
+        }
+        {
+            admin && (
+                <a class="button dangerbg" href="/admin">
+                    admin
+                </a>
+            )
+        }
+        {
+            user && (
+                <Image
+                    src={user?.avatar || "/assets/images/bonk.png"}
+                    width={32}
+                    height={32}
+                    class="avatar"
+                    alt="pfp"
+                />
+            )
+        }
+    </div>
+</div>
