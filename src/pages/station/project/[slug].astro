@@ -58,68 +58,75 @@ if (!isCurrentUserAuthor) {
 } else {
     authorUser = user;
 }
+
+var status: string;
+var statusClass: string;
+if (project.approved) {
+    status = "approved";
+    statusClass = "badge-approved";
+} else if (project.rejected) {
+    status = "rejected";
+    statusClass = "badge-rejected";
+} else if (project.shipped) {
+    status = "shipped";
+    statusClass = "badge-shipped";
+} else {
+    status = "unreviewed";
+    statusClass = "badge-unreviewed";
+}
 ---
 
 <BaseLayout title={project.projectName} hideFooter={true}>
     <UserHeader user={user} />
-    <div class="row main-container">
-        <div class="content-margin project">
-            <div class="project-header">
+    <div class="project-page">
+        <div class="project-header">
+            <div class="title-group">
                 <h1 class="project-title">{project.projectName}</h1>
-                {
-                    isCurrentUserAuthor && (
-                        <Fragment>
-                            <a
-                                href={`/station/project/${project.id}/edit`}
-                                class="button warnbg"
-                            >
-                                Edit Project
-                            </a>
-                            <a
-                                href={`/station/project/${project.id}/delete`}
-                                class="button dangerbg"
-                            >
-                                Delete Project
-                            </a>
-                        </Fragment>
-                    )
-                }
+                <span class={`status-badge ${statusClass}`}>{status}</span>
             </div>
-            <div class="row project-header-container">
-                <Image
-                    src={project.projectScreenshot || ""}
-                    alt={project.projectName}
-                    class="project-image"
-                    width={512}
-                    height={350}
-                />
-                <div class="cards">
-                    <a class="button" href={project.projectPlayableUrl}>
-                        demo
-                    </a>
-                    <a class="button" href={project.projectCodeUrl}> code </a>
-                    <div class="time-card surface">
-                        <p class="time-card-title">
-                            Δ {formatSeconds(totalTimeSpent)}
-                        </p>
+            {
+                isCurrentUserAuthor && (
+                    <div class="actions">
+                        <a
+                            href={`/station/project/${project.id}/edit`}
+                            class="button warnbg"
+                        >
+                            Edit Project
+                        </a>
+                        <a
+                            href={`/station/project/${project.id}/delete`}
+                            class="button dangerbg"
+                        >
+                            Delete Project
+                        </a>
                     </div>
-                </div>
+                )
+            }
+        </div>
+
+        <Image
+            src={project.projectScreenshot || ""}
+            alt={project.projectName}
+            class="project-image"
+            width={512}
+            height={350}
+        />
+
+        <div class="project-links">
+            <a class="button" href={project.projectPlayableUrl}>
+                demo
+            </a>
+            <a class="button" href={project.projectCodeUrl}> code </a>
+            <div class="time-card surface">
+                <p class="time-card-title">
+                    Δ {formatSeconds(totalTimeSpent)}
+                </p>
             </div>
+        </div>
+
+        <div class="surface description-card">
             <p class="pre">description:</p>
             <p>{project.projectDescription}</p>
         </div>
-        <!-- <div class="author">
-            <div class="author-avatar">
-                <Image
-                    src={authorUser?.avatar || ""}
-                    alt={authorUser?.firstName || "Unknown User"}
-                    width={64}
-                    height={64}
-                />
-            </div>
-            <a href={`/station/user/${authorUser?.slackId}`} class="button">
-                View Author</a
-            >
-        </div> -->
-    </div></BaseLayout
->
+    </div>
+</BaseLayout>

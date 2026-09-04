@@ -30,7 +30,7 @@ if (hackatimeProjects.projects.length === 0) {
 <BaseLayout title="Create Project" hideFooter={true}>
     <div class="separated-container">
         <div class="content-right">
-            <h1>new project</h1>
+            <h1>Create a new project †</h1>
             <form
                 method="POST"
                 action="/api/create-project"
@@ -121,6 +121,7 @@ if (hackatimeProjects.projects.length === 0) {
             </form>
         </div>
         <div class="image-left">
+            <div class="fade"></div>
             <Image
                 src={amazeImg}
                 width={700}

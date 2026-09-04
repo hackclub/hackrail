@@ -11,3 +11,41 @@ td > a {
     margin-left: 0.5rem;
     margin-right: 0.5rem;
 }
+
+td {
+    max-width: 200px;
+    word-break: break-word;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.unlimited-width {
+    max-width: none;
+    white-space: normal;
+}
+
+.project-header {
+    background-color: var(--fg);
+    max-width: fit-content;
+    color: var(--bg);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+}
+
+h1 {
+    margin: 0;
+}
+
+h2 {
+    margin: 0;
+}
+
+.buttons-group {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+}
+
+.project-state-toggle {
+    margin-bottom: 3rem;
+}

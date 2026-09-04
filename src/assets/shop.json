@@ -5,43 +5,57 @@
     "name": "Trainline grant",
     "description": "5$ on trainline, stackable",
     "extended-description": "//",
-    "price": 10,
+    "stackable": true,
+    "options": [
+      {
+        "name": "5$",
+        "price": 10
+      }
+    ],
     "featured": true
   },
   {
     "id": "interail-pass-4-days",
     "image": "interrail.jpg",
-    "name": "Interrail 4 days",
-    "description": "4 days within a month! activate it within a year.",
+    "name": "Interrail pass",
+    "description": "4/7/15 days within one/two month(s)! activate it within a year.",
     "extended-description": "//",
-    "price": 490,
+    "options": [
+      {
+        "name": "4 days",
+        "price": 490
+      },
+      {
+        "name": "7 days",
+        "price": 670
+      },
+      {
+        "name": "15 days",
+        "price": 960
+      }
+    ],
     "featured": true
   },
   {
-    "id": "interail-pass-7-days",
-    "image": "interrail.jpg",
-    "name": "Interrail 7 days",
-    "description": "7 days within a month! activate it within a year.",
-    "extended-description": "//",
-    "price": 670,
-    "featured": false
-  },
-  {
-    "id": "interail-pass-15-days",
-    "image": "interrail.jpg",
-    "name": "Interrail 15 days",
-    "description": "15 days within two months! activate it within a year.",
-    "extended-description": "//",
-    "price": 960,
-    "featured": false
-  },
-  {
-    "id": "tgv-max-one-month",
+    "id": "tgv-max",
     "image": "tgvm.png",
-    "name": "One month of tgv max jeune",
-    "description": "0€ high speed train in france for one month!",
+    "name": "TGV max jeune",
+    "description": "free high speed train in france!",
     "extended-description": "//",
-    "price": 200,
+    "options": [
+      {
+        "name": "1 month",
+        "price": 200
+      },
+      {
+        "name": "2 months",
+        "price": 400
+      },
+      {
+        "name": "3 months",
+        "price": 600
+      }
+    ],
     "featured": false
   },
   {
@@ -50,7 +64,13 @@
     "description": "5$ on amtrak, stackable",
     "name": "Amtrak grant",
     "extended-description": "//",
-    "price": 10,
+    "stackable": true,
+    "options": [
+      {
+        "name": "5$",
+        "price": 10
+      }
+    ],
     "featured": true
   },
   {
@@ -59,7 +79,100 @@
     "name": "Smolhaj",
     "description": "most important item to bring on a train trip",
     "extended-description": "//",
-    "price": 20,
+    "options": [
+      {
+        "name": "one adorable fluffy friend",
+        "price": 10
+      }
+    ],
+    "featured": false
+  },
+  {
+    "id": "jr-pass-7-days",
+    "image": "jr.png",
+    "name": "JR Pass 7 Days",
+    "description": "7 days of unlimited travel in Japan!",
+    "extended-description": "//",
+    "options": [
+      {
+        "name": "7 days",
+        "price": 640
+      }
+    ],
+    "featured": false
+  },
+  {
+    "id": "sbb-saver-day-pass",
+    "image": "swiss-winter.png",
+    "name": "SBB Saver Day Pass",
+    "description": "Unlimited travel in Switzerland for one day!",
+    "extended-description": "Use this pass to explore switzerland for a day! (Maybe you could use it on the glacier's express route to see crazy winter landscapes :0). Cheaper the earlier you buy it, check the prices at https://www.sbb.ch/en/offers/saver-day-pass",
+    "options": [
+      {
+        "name": "Tier 1 - 52chf",
+        "price": 140
+      },
+      {
+        "name": "Tier 2 - 70chf",
+        "price": 180
+      },
+      {
+        "name": "Tier 3 - 88chf",
+        "price": 220
+      },
+      {
+        "name": "Last minute - 119chf",
+        "price": 300
+      }
+    ],
+    "featured": false
+  },
+  {
+    "id": "deutschland-ticket",
+    "image": "germany.png",
+    "name": "Deutschland Ticket",
+    "description": "Unlimited travel on regional trains & public transport for one month!",
+    "extended-description": "//",
+    "options": [
+      {
+        "name": "1 month",
+        "price": 160
+      }
+    ],
+    "featured": false
+  },
+  {
+    "id": "britrail-pass",
+    "image": "britrail.png",
+    "name": "BritRail Pass",
+    "description": "Unlimited travel in the UK for 3, 4, 8, 15 or 30 days!",
+    "extended-description": "//",
+    "options": [
+      {
+        "name": "2 days",
+        "price": 160
+      },
+      {
+        "name": "3 days",
+        "price": 240
+      },
+      {
+        "name": "4 days",
+        "price": 280
+      },
+      {
+        "name": "8 days",
+        "price": 360
+      },
+      {
+        "name": "15 days",
+        "price": 600
+      },
+      {
+        "name": "30 days",
+        "price": 900
+      }
+    ],
     "featured": false
   }
 ]

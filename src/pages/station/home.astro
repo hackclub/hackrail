@@ -35,8 +35,8 @@ if (hackData.ok) {
 
 // map of project id to time spent (str)
 var projectTimeSpent: { [key: string]: string } = {};
-var totalTimeSpent = 0;
 
+var totalTimeSpent = 0;
 var totalTimeUnshipped = 0;
 var totalTimeUnreviewed = 0;
 var totalTimeRejected = 0;
@@ -48,23 +48,22 @@ for (const project of projects) {
 
     for (const hackatimeProject of hackatimeProjects) {
         if (hackatimeProjectNames.includes(hackatimeProject.name)) {
-            totalTimeSpent += hackatimeProject.total_seconds || 0;
-            timeSpent += hackatimeProject.total_seconds || 0;
-        }
-    }
+            // project found in hackatime, add time spent
+            if (project.approved) {
+                totalTimeApproved += hackatimeProject.total_seconds;
+            } else if (project.rejected) {
+                totalTimeRejected += hackatimeProject.total_seconds;
+            } else if (project.shipped) {
+                totalTimeUnreviewed += hackatimeProject.total_seconds;
+            } else {
+                totalTimeUnshipped += hackatimeProject.total_seconds;
+            }
 
-    // categorize time spent by project status
-    if (project.shipped) {
-        const projectReviewed = !project.approved && !project.rejected;
-        if (!projectReviewed) {
-            totalTimeUnreviewed += timeSpent;
-        } else if (project.approved) {
-            totalTimeApproved += timeSpent;
-        } else if (project.rejected) {
-            totalTimeRejected += timeSpent;
+            // add time to total time spent
+            totalTimeSpent += hackatimeProject.total_seconds;
+            // add time to this specific project's time spent
+            timeSpent += hackatimeProject.total_seconds;
         }
-    } else {
-        totalTimeUnshipped += timeSpent;
     }
 
     projectTimeSpent[project.id] = formatSeconds(timeSpent);

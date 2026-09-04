@@ -112,7 +112,7 @@ const totalTimeSpent = Object.values(projectTimeSpent).reduce(
                                     ).length
                                 }
                             </td>
-                            <td>
+                            <td class="unlimited-width">
                                 <a
                                     class="button warnbg"
                                     id={`delete-user-${user.slackId}`}
@@ -173,7 +173,7 @@ const totalTimeSpent = Object.values(projectTimeSpent).reduce(
                                 )?.firstName || "Unknown"}
                             </td>
                             <td>{project.createdAt.toLocaleDateString()}</td>
-                            <td>
+                            <td class="unlimited-width">
                                 <a
                                     class="button dangerbg"
                                     id={`delete-project-${project.id}`}

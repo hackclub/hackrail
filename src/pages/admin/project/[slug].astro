@@ -19,8 +19,46 @@ if (!project) {
 
 <BaseLayout title={project.projectName} hideFooter={true}>
     <div class="content">
+        <div class="project-state-toggle">
+            <h2>
+                project status: {
+                    project.approved
+                        ? "approved"
+                        : project.rejected
+                          ? "rejected"
+                          : project.shipped
+                            ? "shipped"
+                            : "unshipped"
+                }
+            </h2>
+            <p class="pre">toggle project status:</p>
+            <div class="buttons-group">
+                <a
+                    class="button fgbg"
+                    href={`/admin/project/${project.id}/change-status?status=unshipped`}
+                    >unshipped</a
+                >
+                <a
+                    class="button warnbg"
+                    href={`/admin/project/${project.id}/change-status?status=unreviewed`}
+                    >unreviewed</a
+                >
+                <a
+                    class="button greenbg"
+                    href={`/admin/project/${project.id}/change-status?status=approved`}
+                    >accepted</a
+                >
+                <a
+                    class="button dangerbg"
+                    href={`/admin/project/${project.id}/change-status?status=rejected`}
+                    >rejected</a
+                >
+            </div>
+        </div>
         <div class="project-header">
-            <h1 class="project-title">{project.projectName} - {project.id}</h1>
+            <h1 class="project-title">
+                {project.projectName} - {project.id}
+            </h1>
         </div>
         <p class="pre">description:</p>
         <p>{project.projectCodeUrl}</p>

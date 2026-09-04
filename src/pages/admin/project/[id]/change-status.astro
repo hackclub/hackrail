@@ -1,0 +1,61 @@
+---
+import { eq } from "drizzle-orm";
+import { db } from "../../../../db";
+import { projects } from "../../../../db/schema";
+import { GetProjectFromId } from "../../../../utils/projects";
+
+const { id } = Astro.params;
+
+// get project from id
+var project = await GetProjectFromId(id || "");
+
+// if project not found, redirect to admin page with error
+if (!project) {
+    Astro.cookies.set("flash_error", "Project not found", {
+        path: "/",
+        maxAge: 10,
+    });
+
+    return Astro.redirect("/admin");
+}
+
+// get status from query params
+const status = Astro.url.searchParams.get("status");
+
+const intId = Number(Astro.params.id);
+
+switch (status) {
+    case "unshipped":
+        db.update(projects)
+            .set({ shipped: 0, approved: 0, rejected: 0 })
+            .where(eq(projects.id, intId))
+            .run();
+        break;
+    case "unreviewed":
+        db.update(projects)
+            .set({ shipped: 1, approved: 0, rejected: 0 })
+            .where(eq(projects.id, intId))
+            .run();
+        break;
+    case "approved":
+        db.update(projects)
+            .set({ shipped: 0, approved: 1, rejected: 0 })
+            .where(eq(projects.id, intId))
+            .run();
+        break;
+    case "rejected":
+        db.update(projects)
+            .set({ shipped: 0, approved: 0, rejected: 1 })
+            .where(eq(projects.id, intId))
+            .run();
+        break;
+    default:
+        Astro.cookies.set("flash_error", "Invalid status", {
+            path: "/",
+            maxAge: 10,
+        });
+        return Astro.redirect(`/admin/project/${project.id}`);
+}
+
+return Astro.redirect(`/admin/project/${project.id}`);
+---

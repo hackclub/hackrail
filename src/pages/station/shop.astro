@@ -11,7 +11,6 @@ const user = await GetUserFromCookies(Astro.cookies);
 
 // load shop items
 import shopItems from "../../assets/shop.json";
-import { separateText, type TextBlock } from "../../utils/text";
 ---
 
 <BaseLayout title="Shop">
@@ -62,18 +61,30 @@ import { separateText, type TextBlock } from "../../utils/text";
             <div class="shop-items">
                 {
                     shopItems.map((item) => {
+                        var priceText = item.options[0].price + " =";
+                        if (item.options.length > 1) {
+                            priceText = "from " + priceText;
+                        }
                         const cardItem: CardItem = {
                             id: item.id,
                             name: item.name,
                             description: item.description,
                             imageUrl: "/shop/" + item.image,
                             chip: true,
-                            chipText: item.price + " =",
+                            chipText: priceText,
                             itemLink: `/station/shop/${item.id}`,
                         };
                         return <MultiPurposeCard item={cardItem} />;
                     })
                 }
+                <div class="requests">
+                    <a href="mailto:alice@hackclub.cc?subject=Shop%20Request">
+                        <div class="requests-container surface">
+                            <p class="big">?</p>
+                            <p>Want something else on here? Suggest it!</p>
+                        </div>
+                    </a>
+                </div>
             </div>
         </div>
     </div>

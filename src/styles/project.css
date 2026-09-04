@@ -35,6 +35,7 @@ input[type="file"]::file-selector-button {
 .image-left {
     height: 100vh;
     width: 40vw;
+    position: relative;
     flex-shrink: 0;
 }
 
@@ -122,44 +123,109 @@ input[type="file"]::file-selector-button {
     margin: 0;
 }
 
-.content-margin {
+.project-page {
     margin: 2rem;
+    max-width: 720px;
 }
+
 .project-title {
     font-style: italic;
     margin: 0;
-    margin-right: 3rem;
-    font-size: 3rem;
+    font-size: 2.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 40ch;
 }
 
 .project-header {
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: space-between;
     gap: 1rem;
+    flex-wrap: wrap;
     margin-bottom: 1rem;
+}
+
+.title-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    background: var(--fg-muted);
+    color: var(--bg);
+}
+
+.badge-approved {
+    background: var(--green);
+    color: var(--bg);
+}
+
+.badge-rejected {
+    background: var(--danger);
+    color: var(--bg);
+}
+
+.badge-shipped {
+    background: var(--fg);
+    color: var(--bg);
+}
+
+.badge-unreviewed {
+    background: var(--fg-muted);
+    color: var(--bg);
+}
+
+.actions {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
 }
 
 .project-image {
     border-radius: 0.5rem;
     object-fit: cover;
+    width: 100%;
+    height: auto;
+    max-height: 420px;
+    margin-bottom: 1rem;
 }
 
-.project-header-container {
+.project-links {
     display: flex;
     flex-direction: row;
-    align-items: end;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+}
+
+.project-links .button {
+    padding: 0.75rem 2rem;
+    font-size: 1.1rem;
 }
 
 .pre {
     color: var(--fg-muted);
+    margin: 0 0 0.5rem;
 }
 
-.cards {
-    margin-left: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+.description-card {
+    padding: 1rem;
+    border-radius: 0.5rem;
+}
+
+.description-card p:last-child {
+    margin: 0;
 }
 
 .icon {
@@ -189,7 +255,15 @@ input[type="file"]::file-selector-button {
 }
 
 .time-card {
-    font-size: 2rem;
+    font-size: 1.25rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+}
+
+.time-card-title {
+    margin: 0;
 }
 
 .author {
@@ -213,4 +287,12 @@ input[type="file"]::file-selector-button {
     border-end-start-radius: 2rem;
     height: fit-content;
     padding: 2rem;
+}
+
+.fade {
+    position: absolute;
+    left: 0;
+    height: 100%;
+    width: 40%;
+    background: linear-gradient(to right, var(--bg), transparent);
 }
