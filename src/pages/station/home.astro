@@ -72,6 +72,8 @@ for (const project of projects) {
 
 // load shop items
 import shopItems from "../../assets/shop.json";
+import { type CardItem } from "../../components/MultipurposeCard.astro";
+import MultiPurposeCard from "../../components/MultipurposeCard.astro";
 ---
 
 <BaseLayout title="Home" hideFooter={false}>
@@ -164,38 +166,18 @@ import shopItems from "../../assets/shop.json";
 
             <div class="row gap project-strip">
                 {
-                    projects.map((project: Project) => (
-                        <a
-                            href={`/station/project/${project.id}`}
-                            class="projectcard-link"
-                        >
-                            <div
-                                class="
-                    projectcard"
-                            >
-                                <div class="projectcard-image-container">
-                                    <div class="projectcard-time-spent">
-                                        {projectTimeSpent[project.id] || "0s"}
-                                    </div>
-                                    <Image
-                                        class="projectcard-image"
-                                        src={project.projectScreenshot || ""}
-                                        width={128}
-                                        height={128}
-                                        alt="project image"
-                                    />
-                                </div>
-                                <div class="projectcard-content">
-                                    <h2 class="limited">
-                                        {project.projectName}
-                                    </h2>
-                                    <p class="desc limited">
-                                        {project.projectDescription}
-                                    </p>
-                                </div>
-                            </div>
-                        </a>
-                    ))
+                    projects.map((project: Project) => {
+                        const projectCard: CardItem = {
+                            id: project.id.toString(),
+                            name: project.projectName,
+                            description: project.projectDescription,
+                            imageUrl: project.projectScreenshot || "",
+                            chip: true,
+                            chipText: projectTimeSpent[project.id] || "0h 0m",
+                            itemLink: `/station/project/${project.id}`,
+                        };
+                        return <MultiPurposeCard item={projectCard} />;
+                    })
                 }
             </div>
         </div>
@@ -206,45 +188,20 @@ import shopItems from "../../assets/shop.json";
             </div>
             <div class="row gap project-strip">
                 {
-                    shopItems.map(
-                        (item) =>
-                            item.featured && (
-                                <a
-                                    href={`/station/shop/${item.id}`}
-                                    class="projectcard-link"
-                                >
-                                    <div class="projectcard">
-                                        <div class="projectcard-image-container">
-                                            <img
-                                                class="projectcard-image"
-                                                src={"/shop/" + item.image}
-                                                width={128}
-                                                height={128}
-                                                alt="shop item image"
-                                            />
-                                        </div>
-                                        <div class="projectcard-content">
-                                            <h2 class="limited">{item.name}</h2>
-                                            <p class="desc limited">
-                                                {separateText(
-                                                    item.description,
-                                                ).map((block: TextBlock) => (
-                                                    <span
-                                                        class={
-                                                            block.isInBreakList
-                                                                ? "remove-font"
-                                                                : undefined
-                                                        }
-                                                    >
-                                                        {block.text}
-                                                    </span>
-                                                ))}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </a>
-                            ),
-                    )
+                    shopItems.map((item) => {
+                        if (item.featured) {
+                            const cardItem: CardItem = {
+                                id: item.id,
+                                name: item.name,
+                                description: item.description,
+                                imageUrl: "/shop/" + item.image,
+                                chip: true,
+                                chipText: item.price + " =",
+                                itemLink: `/station/shop/${item.id}`,
+                            };
+                            return <MultiPurposeCard item={cardItem} />;
+                        }
+                    })
                 }
             </div>
         </div>

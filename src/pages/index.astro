@@ -35,6 +35,7 @@ import SillyCarousel from "../components/SillyCarousel.astro";
 import Arrow from "../assets/images/cutearrow.png";
 import ArrowTwo from "../assets/images/arrow2.png";
 import DownArrow from "../assets/images/downarrow.png";
+import { GetUserFromCookies } from "../utils/auth";
 
 const cards: Card[] = [
     {
@@ -101,7 +102,14 @@ const projectCards: Card[] = [
 // get error from cookies
 const error = Astro.cookies.get("flash_error")?.value;
 if (error) {
-  Astro.cookies.delete("flash_error", { path: "/" });
+    Astro.cookies.delete("flash_error", { path: "/" });
+}
+
+// check if user is logged in
+const user = await GetUserFromCookies(Astro.cookies);
+var isLoggedIn = false;
+if (user) {
+    isLoggedIn = true;
 }
 ---
 
@@ -119,7 +127,7 @@ if (error) {
     <main>
         <div class="deadline-container">
             <div class="deadline">
-                <p class="deadline-p">Until 07/09/26</p>
+                <p class="deadline-p">Until 30/10/26</p>
             </div>
         </div>
         <div class="header">
@@ -128,7 +136,13 @@ if (error) {
                 <h1 class="title">hackrail</h1>
                 <p class="subtitle">ship projects ß get on trains</p>
                 <a class="button big" href="/login">
-                    <span class="button-text">Get Started now!</span>
+                    <span class="button-text"
+                        >{
+                            isLoggedIn
+                                ? "Enter the station"
+                                : "Get started now!"
+                        }</span
+                    >
                 </a>
             </div>
             <div class="spacer">
@@ -258,7 +272,7 @@ if (error) {
                                 when is this happening?
                             </summary>
                             <p class="faq-question-desc">
-                                hackrail runs until the 7th of september 2026!
+                                hackrail runs until the 30th of october 2026!
                                 you can submit any projects you make(or have
                                 made) until then!
                             </p>

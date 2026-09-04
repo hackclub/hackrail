@@ -1,0 +1,67 @@
+.card-link {
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+    height: auto;
+    text-decoration: none;
+}
+
+.multicard {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    background-color: var(--bg-elevated);
+    color: var(--fg);
+    padding: 0rem;
+    width: 180px;
+    border-radius: 1rem;
+    margin-bottom: 1rem;
+}
+
+.card-content {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-image {
+    border-start-start-radius: 1rem;
+    border-start-end-radius: 1rem;
+    width: 100%;
+    object-fit: cover;
+}
+
+.limited {
+    overflow: hidden;
+    word-break: break-word;
+}
+
+h2.limited {
+    max-height: 2.8em; /* 2 lines */
+}
+
+.desc {
+    font-style: italic;
+    margin-bottom: 0.2rem;
+}
+
+h2 {
+    margin: 0;
+}
+
+.card-chip {
+    position: absolute;
+    background-color: var(--green);
+    top: 0;
+    right: 0;
+    margin: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.5rem;
+    width: fit-content;
+    color: var(--bg);
+}
+
+.card-image-container {
+    width: 100%;
+    position: relative;
+}

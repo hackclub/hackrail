@@ -1,0 +1,51 @@
+---
+import { separateText, type TextBlock } from "../utils/text";
+import "./card.css";
+
+export type CardItem = {
+    id: string;
+    name: string;
+    description: string;
+    imageUrl: string;
+    chip: boolean;
+    chipText: string;
+    itemLink: string;
+};
+
+interface Props {
+    item: CardItem;
+}
+
+const { item } = Astro.props;
+---
+
+<a href={item.itemLink} class="card-link">
+    <div class="multicard">
+        <div class="card-image-container">
+            {item.chip && <div class="card-chip">{item.chipText}</div>}
+            <img
+                class="card-image"
+                src={item.imageUrl}
+                width={128}
+                height={128}
+                alt="item image"
+            />
+        </div>
+        <div class="card-content">
+            <h2 class="limited">{item.name}</h2>
+            <p class="desc limited">
+                {
+                    separateText(item.description).map((block: TextBlock) => (
+                        <span
+                            class={
+                                block.isInBreakList ? "remove-font" : undefined
+                            }
+                        >
+                            {block.text}
+                        </span>
+                    ))
+                }
+            </p>
+        </div>
+    </div>
+</a>

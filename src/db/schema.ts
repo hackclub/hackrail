@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer, real } from "drizzle-orm/sqlite-core";
 
 export const users = sqliteTable("users", {
   slackId: text("slack_id").primaryKey(),
@@ -14,6 +14,7 @@ export const users = sqliteTable("users", {
   zipCode: text("zip_code").notNull(),
   country: text("country").notNull(),
   birthdate: text("birthdate").notNull(),
+  balance: integer("balance").notNull().default(0),
 
   // hackatime
   hackatimeLinked: integer("is_hackatime_linked").notNull().default(0),
@@ -72,6 +73,20 @@ export const tokens = sqliteTable("tokens", {
     .$defaultFn(() => new Date()),
 });
 
+export const orders = sqliteTable("orders", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  slackId: text("slack_id")
+    .notNull()
+    .references(() => users.slackId, { onDelete: "cascade" }),
+  itemId: text("item_id").notNull(),
+  quantity: real("quantity").notNull(), // can be fractional for some items
+  totalPrice: real("total_price").notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .notNull()
+    .$defaultFn(() => new Date()),
+});
+
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Project = typeof projects.$inferSelect;
+export type Order = typeof orders.$inferSelect;

@@ -19,7 +19,7 @@
   },
   {
     "id": "interail-pass-7-days",
-    "image": "interrail.png",
+    "image": "interrail.jpg",
     "name": "Interrail 7 days",
     "description": "7 days within a month! activate it within a year.",
     "extended-description": "//",
@@ -28,7 +28,7 @@
   },
   {
     "id": "interail-pass-15-days",
-    "image": "interrail.png",
+    "image": "interrail.jpg",
     "name": "Interrail 15 days",
     "description": "15 days within two months! activate it within a year.",
     "extended-description": "//",

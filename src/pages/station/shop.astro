@@ -1,7 +1,80 @@
 ---
+import { Image } from "astro:assets";
 import BaseLayout from "../../layouts/base.astro";
+import shopHeaderImage from "../../assets/images/shop.jpg";
+import "../../styles/shop.css";
+import { GetUserFromCookies } from "../../utils/auth";
+import MultiPurposeCard from "../../components/MultipurposeCard.astro";
+import type { CardItem } from "../../components/MultipurposeCard.astro";
+
+const user = await GetUserFromCookies(Astro.cookies);
+
+// load shop items
+import shopItems from "../../assets/shop.json";
+import { separateText, type TextBlock } from "../../utils/text";
 ---
 
 <BaseLayout title="Shop">
-    <div></div>
+    <div class="shop">
+        <div class="shop-image-header">
+            {
+                user && (
+                    <div class="balance-amount">
+                        <div class="surface warnbg">
+                            <p>{user?.balance} =</p>
+                        </div>
+                    </div>
+                )
+            }
+            <Image
+                class="shop-image"
+                src={shopHeaderImage}
+                width={2000}
+                height={500}
+                alt="shop header image"
+            />
+            <div class="shop-image-fadecontainer"></div>
+        </div>
+
+        <div class="shop-content">
+            <div class="shop-header-again">
+                <div class="row shop-title">
+                    <h1>Shop!</h1>
+                    <p>
+                        or should i say overpriced train station convenience
+                        store?
+                    </p>
+                </div>
+                <div class="surface dangerbg">
+                    <p>
+                        shop orders are temporarily disabled, sorry for the
+                        inconvenience!
+                    </p>
+                </div>
+                <p class="expl">
+                    welcome to the shop! here you can spend your tracks = on
+                    real stuff. <br />you earn 10 tracks for every hour you
+                    spend on your projects, and you can get a variable bonus
+                    based on project quality.
+                </p>
+            </div>
+
+            <div class="shop-items">
+                {
+                    shopItems.map((item) => {
+                        const cardItem: CardItem = {
+                            id: item.id,
+                            name: item.name,
+                            description: item.description,
+                            imageUrl: "/shop/" + item.image,
+                            chip: true,
+                            chipText: item.price + " =",
+                            itemLink: `/station/shop/${item.id}`,
+                        };
+                        return <MultiPurposeCard item={cardItem} />;
+                    })
+                }
+            </div>
+        </div>
+    </div>
 </BaseLayout>
