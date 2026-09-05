@@ -8,6 +8,39 @@
     "stackable": true,
     "options": [
       {
+        "id": "trainline-grant-5",
+        "name": "5$",
+        "price": 10
+      }
+    ],
+    "featured": true
+  },
+  {
+    "id": "sncf-grant",
+    "image": "sncf.png",
+    "name": "SNCF connect grant",
+    "description": "5$ on sncf connect, stackable",
+    "extended-description": "//",
+    "stackable": true,
+    "options": [
+      {
+        "id": "sncf-grant-5",
+        "name": "5$",
+        "price": 10
+      }
+    ],
+    "featured": false
+  },
+  {
+    "id": "eurostar-grant",
+    "image": "eurostar.jpg",
+    "name": "Eurostar grant",
+    "description": "5$ on eurostar, stackable",
+    "extended-description": "//",
+    "stackable": true,
+    "options": [
+      {
+        "id": "eurostar-grant-5",
         "name": "5$",
         "price": 10
       }
@@ -22,14 +55,17 @@
     "extended-description": "//",
     "options": [
       {
+        "id": "interail-pass-4-days",
         "name": "4 days",
         "price": 490
       },
       {
+        "id": "interail-pass-7-days",
         "name": "7 days",
         "price": 670
       },
       {
+        "id": "interail-pass-15-days",
         "name": "15 days",
         "price": 960
       }
@@ -44,14 +80,17 @@
     "extended-description": "//",
     "options": [
       {
+        "id": "tgv-max-1-month",
         "name": "1 month",
         "price": 200
       },
       {
+        "id": "tgv-max-2-months",
         "name": "2 months",
         "price": 400
       },
       {
+        "id": "tgv-max-3-months",
         "name": "3 months",
         "price": 600
       }
@@ -67,6 +106,7 @@
     "stackable": true,
     "options": [
       {
+        "id": "amtrak-grant-5",
         "name": "5$",
         "price": 10
       }
@@ -81,6 +121,7 @@
     "extended-description": "//",
     "options": [
       {
+        "id": "smolhaj-1",
         "name": "one adorable fluffy friend",
         "price": 10
       }
@@ -95,6 +136,7 @@
     "extended-description": "//",
     "options": [
       {
+        "id": "jr-pass-7-days",
         "name": "7 days",
         "price": 640
       }
@@ -109,23 +151,27 @@
     "extended-description": "Use this pass to explore switzerland for a day! (Maybe you could use it on the glacier's express route to see crazy winter landscapes :0). Cheaper the earlier you buy it, check the prices at https://www.sbb.ch/en/offers/saver-day-pass",
     "options": [
       {
+        "id": "sbb-saver-day-pass-tier-1",
         "name": "Tier 1 - 52chf",
         "price": 140
       },
       {
+        "id": "sbb-saver-day-pass-tier-2",
         "name": "Tier 2 - 70chf",
         "price": 180
       },
       {
+        "id": "sbb-saver-day-pass-tier-3",
         "name": "Tier 3 - 88chf",
         "price": 220
       },
       {
+        "id": "sbb-saver-day-pass-tier-4",
         "name": "Last minute - 119chf",
         "price": 300
       }
     ],
-    "featured": false
+    "featured": true
   },
   {
     "id": "deutschland-ticket",
@@ -135,6 +181,7 @@
     "extended-description": "//",
     "options": [
       {
+        "id": "deutschland-ticket-1-month",
         "name": "1 month",
         "price": 160
       }
@@ -149,26 +196,32 @@
     "extended-description": "//",
     "options": [
       {
+        "id": "britrail-pass-2-days",
         "name": "2 days",
         "price": 160
       },
       {
+        "id": "britrail-pass-3-days",
         "name": "3 days",
         "price": 240
       },
       {
+        "id": "britrail-pass-4-days",
         "name": "4 days",
         "price": 280
       },
       {
+        "id": "britrail-pass-8-days",
         "name": "8 days",
         "price": 360
       },
       {
+        "id": "britrail-pass-15-days",
         "name": "15 days",
         "price": 600
       },
       {
+        "id": "britrail-pass-30-days",
         "name": "30 days",
         "price": 900
       }

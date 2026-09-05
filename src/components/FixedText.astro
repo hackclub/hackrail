@@ -1,0 +1,13 @@
+---
+import { separateText, type TextBlock } from "../utils/text";
+
+const { text } = Astro.props;
+---
+
+{
+    separateText(text).map((block: TextBlock) => (
+        <span class={block.isInBreakList ? "remove-font" : undefined}>
+            {block.text}
+        </span>
+    ))
+}

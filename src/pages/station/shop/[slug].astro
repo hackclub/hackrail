@@ -1,0 +1,85 @@
+---
+const { slug } = Astro.params;
+import BaseLayout from "../../../layouts/base.astro";
+import shopItems from "../../../assets/shop.json";
+import "../../../styles/shop.css";
+import UserHeader from "../../../components/UserHeader.astro";
+import { GetUserFromCookies } from "../../../utils/auth";
+import FixedText from "../../../components/FixedText.astro";
+
+const shopItemId = slug || "";
+
+const item = shopItems.find((item) => item.id === shopItemId);
+if (!item) {
+    Astro.cookies.set("flash_error", "Shop item not found", {
+        path: "/",
+        maxAge: 10,
+    });
+
+    return Astro.redirect("/station/shop");
+}
+
+const user = await GetUserFromCookies(Astro.cookies);
+
+// now we have the item :scheming:
+---
+
+<BaseLayout title={"Shop - " + item.name}>
+    <UserHeader user={user} backUrlOverride="/station/shop" />
+    <div class="shop-item-page">
+        <div class="shop-item-top">
+            <div class="shop-item-image-container">
+                <img
+                    class="shop-item-image"
+                    src={"/shop/" + item.image}
+                    alt={item.name}
+                />
+            </div>
+            <div class="shop-item-extended surface">
+                <FixedText text={item["extended-description"]} />
+            </div>
+        </div>
+        <div class="shop-item-details">
+            <h1 class="shop-item-title">{item.name}</h1>
+            <p class="shop-item-desc">
+                <FixedText text={item.description} />
+
+                <form
+                    method="POST"
+                    action=`/station/shop/${item.id}/purchase`
+                    class="shop-item-purchase-form"
+                >
+                    <input type="hidden" name="itemId" value={item.id} />
+
+                    {
+                        item.options.length > 0 && (
+                            <fieldset class="shop-item-options">
+                                <legend>Select an option:</legend>
+                                {item.options.map((option, index) => (
+                                    <div class="radio-option">
+                                        <input
+                                            type="radio"
+                                            id={`option-${index}`}
+                                            name="option"
+                                            value={option.name}
+                                            checked={index === 0}
+                                            required
+                                        />
+                                        <label for={`option-${index}`}>
+                                            <FixedText text={option.name} /> -{" "}
+                                            {option.price} =
+                                        </label>
+                                    </div>
+                                ))}
+                            </fieldset>
+                        )
+                    }
+
+                    <button class="button greenbg" type="submit"
+                        >Purchase</button
+                    >
+                </form>
+            </p>
+        </div>
+    </div>
+</BaseLayout>

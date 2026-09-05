@@ -3,7 +3,7 @@ import { Image } from "astro:assets";
 import "./userheader.css";
 import { isAdmin } from "../middleware";
 
-const { user } = Astro.props;
+const { user, backUrlOverride } = Astro.props;
 const admin = isAdmin(user?.slackId || "");
 ---
 
@@ -11,7 +11,10 @@ const admin = isAdmin(user?.slackId || "");
     <div class="left">
         {
             Astro.url.pathname !== "/station/home" && (
-                <a href={user ? "/station/home" : "/"} class="button warnbg">
+                <a
+                    href={user ? backUrlOverride || "/station/home" : "/"}
+                    class="button warnbg"
+                >
                     ¬
                 </a>
             )

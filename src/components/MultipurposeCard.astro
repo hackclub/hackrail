@@ -1,6 +1,7 @@
 ---
 import { separateText, type TextBlock } from "../utils/text";
 import "./card.css";
+import FixedText from "./FixedText.astro";
 
 export type CardItem = {
     id: string;
@@ -33,19 +34,7 @@ const { item } = Astro.props;
         </div>
         <div class="card-content">
             <h2 class="limited">{item.name}</h2>
-            <p class="desc limited">
-                {
-                    separateText(item.description).map((block: TextBlock) => (
-                        <span
-                            class={
-                                block.isInBreakList ? "remove-font" : undefined
-                            }
-                        >
-                            {block.text}
-                        </span>
-                    ))
-                }
-            </p>
+            <p class="desc limited"><FixedText text={item.description} /></p>
         </div>
     </div>
 </a>

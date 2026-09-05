@@ -183,19 +183,24 @@ import MultiPurposeCard from "../../components/MultipurposeCard.astro";
         <div class="shop">
             <div class="row ycentered gap">
                 <h1>featured shop items \[</h1>
-                <a class="button" href="/station/shop">view all</a>
+                <a class="button" href="/station/shop">view aits ll</a>
             </div>
             <div class="row gap project-strip">
                 {
                     shopItems.map((item) => {
                         if (item.featured) {
+                            var priceText = item.options[0].price + " =";
+                            if (item.options.length > 1) {
+                                priceText = "from " + priceText;
+                            }
+
                             const cardItem: CardItem = {
                                 id: item.id,
                                 name: item.name,
                                 description: item.description,
                                 imageUrl: "/shop/" + item.image,
                                 chip: true,
-                                chipText: item.price + " =",
+                                chipText: priceText,
                                 itemLink: `/station/shop/${item.id}`,
                             };
                             return <MultiPurposeCard item={cardItem} />;

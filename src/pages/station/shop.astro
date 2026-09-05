@@ -6,14 +6,29 @@ import "../../styles/shop.css";
 import { GetUserFromCookies } from "../../utils/auth";
 import MultiPurposeCard from "../../components/MultipurposeCard.astro";
 import type { CardItem } from "../../components/MultipurposeCard.astro";
+// load shop items
+import shopItems from "../../assets/shop.json";
 
 const user = await GetUserFromCookies(Astro.cookies);
 
-// load shop items
-import shopItems from "../../assets/shop.json";
+// cookie error
+const error = Astro.cookies.get("flash_error")?.value;
+if (error) {
+    Astro.cookies.delete("flash_error", { path: "/" });
+}
 ---
 
 <BaseLayout title="Shop">
+    {
+        error && (
+            <div
+                class="surface dangerbg"
+                style="width: 100%; border-radius: 0; padding: 1rem;"
+            >
+                <p>{error}</p>
+            </div>
+        )
+    }
     <div class="shop">
         <div class="shop-image-header">
             {
