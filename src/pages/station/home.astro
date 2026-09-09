@@ -76,27 +76,23 @@ import MultiPurposeCard from "../../components/MultipurposeCard.astro";
 ---
 
 <BaseLayout title="Home" hideFooter={false}>
-    {
-        error && (
-            <div
-                class="surface dangerbg"
-                style="width: 100%; border-radius: 0; padding: 1rem; margin-bottom: 1rem;"
-            >
-                <p>{error}</p>
-            </div>
-        )
-    }
+    {error && (
+        <div
+            class="surface dangerbg"
+            style="width: 100%; border-radius: 0; padding: 1rem; margin-bottom: 1rem;"
+        >
+            <p>{error}</p>
+        </div>
+    )}
 
     <UserHeader user={user} />
 
     <div class="page">
         <div class="time">
             <h1 class="time-title">
-                {
-                    totalTimeSpent === 0
-                        ? "no hours logged yet ª"
-                        : `total time spent: ${formatSeconds(totalTimeSpent)}`
-                }
+                {totalTimeSpent === 0
+                    ? "no hours logged yet ª"
+                    : `total time spent: ${formatSeconds(totalTimeSpent)}`}
             </h1>
             <div class="progressbar">
                 <div
@@ -106,8 +102,7 @@ import MultiPurposeCard from "../../components/MultipurposeCard.astro";
                             ? (totalTimeUnshipped / totalTimeSpent) * 100
                             : 0
                     }%`}
-                >
-                </div>
+                ></div>
                 <div
                     class="progressbar-fill unreviewed"
                     style={`width: ${
@@ -115,8 +110,7 @@ import MultiPurposeCard from "../../components/MultipurposeCard.astro";
                             ? (totalTimeUnreviewed / totalTimeSpent) * 100
                             : 0
                     }%`}
-                >
-                </div>
+                ></div>
                 <div
                     class="progressbar-fill approved"
                     style={`width: ${
@@ -124,8 +118,7 @@ import MultiPurposeCard from "../../components/MultipurposeCard.astro";
                             ? (totalTimeApproved / totalTimeSpent) * 100
                             : 0
                     }%`}
-                >
-                </div>
+                ></div>
                 <div
                     class="progressbar-fill rejected"
                     style={`width: ${
@@ -133,8 +126,7 @@ import MultiPurposeCard from "../../components/MultipurposeCard.astro";
                             ? (totalTimeRejected / totalTimeSpent) * 100
                             : 0
                     }%`}
-                >
-                </div>
+                ></div>
             </div>
             <div class="progressbar-labels">
                 <div class="color-box unshipped"></div>
@@ -150,63 +142,65 @@ import MultiPurposeCard from "../../components/MultipurposeCard.astro";
         <div class="projects">
             <div class="row ycentered gap">
                 <h1>your projects</h1>
-                <a class="button" href="/station/projects/create">@</a>
+                <a class="button" href="/station/projects/create">
+                    @
+                </a>
+                <a class="guides-link" href="/station/help">
+                    <p class="guides">you don't know what to build?</p>
+                    <span class="arrow">…</span>
+                </a>
             </div>
-            {
-                projects.length === 0 && (
-                    <div class="surface warnbg">
-                        <p>
-                            you have no projects yet! click the @ button to
-                            create one.
-                        </p>
-                    </div>
-                )
-            }
+            {projects.length === 0 && (
+                <div class="surface warnbg">
+                    <p>
+                        you have no projects yet! click the @ button to create
+                        one.
+                    </p>
+                </div>
+            )}
 
             <div class="row gap project-strip">
-                {
-                    projects.map((project: Project) => {
-                        const projectCard: CardItem = {
-                            id: project.id.toString(),
-                            name: project.projectName,
-                            description: project.projectDescription,
-                            imageUrl: project.projectScreenshot || "",
-                            chip: true,
-                            chipText: projectTimeSpent[project.id] || "0h 0m",
-                            itemLink: `/station/project/${project.id}`,
-                        };
-                        return <MultiPurposeCard item={projectCard} />;
-                    })
-                }
+                {projects.map((project: Project) => {
+                    const projectCard: CardItem = {
+                        id: project.id.toString(),
+                        name: project.projectName,
+                        description: project.projectDescription,
+                        imageUrl: project.projectScreenshot || "",
+                        chip: true,
+                        chipText: projectTimeSpent[project.id] || "0h 0m",
+                        itemLink: `/station/project/${project.id}`,
+                    };
+                    return <MultiPurposeCard item={projectCard} />;
+                })}
             </div>
         </div>
         <div class="shop">
             <div class="row ycentered gap">
                 <h1>featured shop items \[</h1>
-                <a class="button" href="/station/shop">view aits ll</a>
+                <a class="button" href="/station/shop">
+                    view all
+                </a>
             </div>
             <div class="row gap project-strip">
-                {
-                    shopItems.map((item) => {
-                        if (item.featured) {
-                            var priceText = item.options[0].price + " =";
-                            if (item.options.length > 1) {
-                                priceText = "from " + priceText;
-                            }
-
-                            const cardItem: CardItem = {
-                                id: item.id,
-                                name: item.name,
-                                description: item.description,
-                                imageUrl: "/shop/" + item.image,
-                                chip: true,
-                                chipText: priceText,
-                                itemLink: `/station/shop/${item.id}`,
-                            };
-                            return <MultiPurposeCard item={cardItem} />;
+                {shopItems.map((item) => {
+                    if (item.featured) {
+                        var priceText = item.options[0].price + " =";
+                        if (item.options.length > 1) {
+                            priceText = "from " + priceText;
                         }
-                    })
-                }
+
+                        const cardItem: CardItem = {
+                            id: item.id,
+                            name: item.name,
+                            description: item.description,
+                            imageUrl: "/shop/" + item.image,
+                            chip: true,
+                            chipText: priceText,
+                            itemLink: `/station/shop/${item.id}`,
+                        };
+                        return <MultiPurposeCard item={cardItem} />;
+                    }
+                })}
             </div>
         </div>
     </div>

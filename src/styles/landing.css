@@ -188,12 +188,17 @@ h2 {
     object-fit: contain;
 }
 
+.logo-container:hover {
+    transform: scale(1.2) rotate(2deg);
+}
+
 .logo-container {
     background-color: var(--fg);
     padding: 0.5rem;
     border-radius: 25%;
     position: absolute;
     height: 60px;
+    transition: transform 0.2s ease-in-out;
 }
 
 .sncf-logo {
@@ -254,6 +259,11 @@ h2 {
     border-radius: 1rem;
     padding: 0.5rem;
     max-width: 300px;
+    transition: transform 0.2s ease-in-out;
+}
+
+.idea-card:hover {
+    transform: scale(1.05) rotate(-2deg);
 }
 
 .idea-card-image {
@@ -266,7 +276,8 @@ h2 {
 
 .sign {
     width: clamp(1rem, 20vw, 10rem);
-    padding: 5rem;
+    padding: 1rem;
+    padding-right: 6rem;
     display: flex;
     align-items: end;
     padding-bottom: 0px;

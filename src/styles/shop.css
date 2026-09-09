@@ -9,6 +9,12 @@
     object-fit: cover;
 }
 
+.back-button {
+    position: absolute;
+    left: 0;
+    margin: 1rem;
+}
+
 /* fade in container */
 .shop-image-fadecontainer {
     position: absolute;

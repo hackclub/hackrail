@@ -1,0 +1,58 @@
+.guides {
+    margin: 2rem;
+}
+
+h1 {
+    font-size: 3rem;
+    margin: 0;
+}
+
+.guides-image {
+    border-radius: 1rem;
+    width: max(10vh, 300px);
+    height: max(10vh, 300px);
+    object-fit: cover;
+}
+
+.guides-content {
+    display: flex;
+    overflow-x: auto;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.card {
+    background-color: var(--bg-inset);
+    color: var(--fg);
+    display: flex;
+    width: fit-content;
+    align-items: center;
+    padding: 0.5rem;
+    border-radius: 1rem;
+}
+
+h2 {
+    margin-bottom: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.guides-icon {
+    width: 3rem;
+    height: 3rem;
+    margin-right: 0.5rem;
+    border-radius: 1rem;
+    object-fit: contain;
+}
+
+.guides-title {
+    font-size: 1.2rem;
+    margin-right: 0.5rem;
+    /* no wrap */
+    white-space: nowrap;
+}
+
+.categories {
+    display: flex;
+    flex-direction: column;
+}

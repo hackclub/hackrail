@@ -61,6 +61,7 @@ button {
 .button {
     width: fit-content;
     padding: 0.5rem 0.7rem;
+    transition: transform 0.15s ease-in-out;
     border-radius: 0.5rem;
     text-decoration: none;
     background-color: var(--green);
@@ -77,11 +78,10 @@ button {
     padding: 1rem 1rem;
     font-style: italic;
     padding-right: 1.5rem;
-    transition: background-color 0.2s ease-in-out;
 }
 
 .button:hover {
-    box-shadow: 0 4px 12px rgba(139, 219, 134, 0.25);
+    transform: scale(1.1);
 }
 
 .row {
@@ -142,4 +142,11 @@ button {
 
 .wide {
     max-width: 50vw;
+}
+
+/* scrollbars */
+
+* {
+    scrollbar-color: var(--fg-muted) var(--bg);
+    scrollbar-width: thin;
 }

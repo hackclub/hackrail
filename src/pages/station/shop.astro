@@ -31,15 +31,10 @@ if (error) {
     }
     <div class="shop">
         <div class="shop-image-header">
-            {
-                user && (
-                    <div class="balance-amount">
-                        <div class="surface warnbg">
-                            <p>{user?.balance} =</p>
-                        </div>
-                    </div>
-                )
-            }
+            <div class="back-button">
+                <a class="button warnbg" href="/station/home"> ¬ </a>
+            </div>
+            {}
             <Image
                 class="shop-image"
                 src={shopHeaderImage}
@@ -59,17 +54,26 @@ if (error) {
                         store?
                     </p>
                 </div>
-                <div class="surface dangerbg">
-                    <p>
-                        shop orders are temporarily disabled, sorry for the
-                        inconvenience!
-                    </p>
+                <div class="row gap">
+                    <div class="surface dangerbg">
+                        <p>
+                            shop orders are temporarily disabled, sorry for the
+                            inconvenience!
+                        </p>
+                    </div>
+                    {
+                        user && (
+                            <div class="surface warnbg">
+                                <p>Balance: {user?.balance} =</p>
+                            </div>
+                        )
+                    }
                 </div>
                 <p class="expl">
                     welcome to the shop! here you can spend your tracks = on
                     real stuff. <br />you earn 10 tracks for every hour you
                     spend on your projects, and you can get a variable bonus
-                    based on project quality.
+                    based on project quality & relevant use of train data :)
                 </p>
             </div>
 

@@ -1,0 +1,110 @@
+---
+import BaseLayout from "../../layouts/base.astro";
+import { GetUserFromCookies } from "../../utils/auth";
+import UserHeader from "../../components/UserHeader.astro";
+import "../../styles/guides.css";
+import { Image } from "astro:assets";
+
+import informationDeskImage from "../../assets/images/information.jpg";
+import railwayMapImage from "../../assets/images/railwaymap.png";
+import euLogo from "../../assets/images/eu.webp";
+import amtrakLogo from "../../assets/images/amtrak.png";
+import sncfLogo from "../../assets/images/sncf.png";
+import jrLogo from "../../assets/images/jr.png";
+import dbLogo from "../../assets/images/db.png";
+import nationalRailLogo from "../../assets/images/nationalrail.png";
+
+const user = await GetUserFromCookies(Astro.cookies);
+
+type Item = {
+    title: string;
+    icon: ImageMetadata;
+    link: string;
+};
+
+const apis: Item[] = [
+    {
+        title: "European NAPs",
+        icon: euLogo,
+        link: "https://transport.ec.europa.eu/document/download/963c997d-efd9-40ae-a38b-5d4b935bdfcf_en?filename=its-national-access-points.pdf",
+    },
+    {
+        title: "Openrailway map",
+        icon: railwayMapImage,
+        link: "https://www.openrailwaymap.org/",
+    },
+    {
+        title: "Amtrak sillies",
+        icon: amtrakLogo,
+        link: "https://web.archive.org/web/20240311035706/https://mgwalker.github.io/blog/amtrak-api/",
+    },
+    {
+        title: "SNCF open data",
+        icon: sncfLogo,
+        link: "https://ressources.data.sncf.com/pages/accueil/",
+    },
+    {
+        title: "Network Rail",
+        icon: nationalRailLogo,
+        link: "https://www.networkrail.co.uk/who-we-are/transparency-and-ethics/transparency/open-data-feeds/",
+    },
+    {
+        title: "DB Open Data",
+        icon: dbLogo,
+        link: "https://data.deutschebahn.com/opendata",
+    },
+    {
+        title: "Japan Open Data",
+        icon: jrLogo,
+        link: "https://www.odpt.org/en/",
+    },
+];
+---
+
+<BaseLayout title="Information desk">
+    <UserHeader user={user} />
+    <div class="guides">
+        <Image
+            src={informationDeskImage}
+            alt="Information desk"
+            class="guides-image"
+            width={500}
+            height={500}
+        />
+        <h1>Information desk</h1>
+        <div class="categories gap">
+            <div class="category">
+                <h2>Cool apis you should check out!</h2>
+                <div class="guides-content">
+                    {apis.map((api) => (
+                        <a
+                            href={api.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="link"
+                        >
+                            <div class="card">
+                                <Image
+                                    src={api.icon}
+                                    alt={api.title}
+                                    class="guides-icon"
+                                    width={500}
+                                    height={500}
+                                />
+                                <span class="guides-title">{api.title} …</span>
+                            </div>
+                        </a>
+                    ))}
+                </div>
+            </div>
+            <div class="category">
+                <h2>Nice projects to check out for inspiration</h2>
+                <div class="guides-content"></div>
+            </div>
+            <div class="category">
+                <h2>Starter projects</h2>
+                <div class="guides-content"></div>
+            </div>
+        </div>
+    </div>
+</BaseLayout>

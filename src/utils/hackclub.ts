@@ -85,6 +85,7 @@ async function Login(code: string): Promise<Result<string>> {
           profileData.identity.slack_id +
           "/r",
         banned: 0,
+        balance: 0,
         note: "",
         hackatimeLinked: 0,
         hackatimeToken: "",

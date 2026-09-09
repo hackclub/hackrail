@@ -14,14 +14,36 @@ if (error) {
     Astro.cookies.delete("flash_error", { path: "/" });
 }
 
+async function batchedFetch<T>(
+    items: string[],
+    fn: (item: string) => Promise<T>,
+    batchSize = 10,
+): Promise<T[]> {
+    const results: T[] = [];
+    for (let i = 0; i < items.length; i += batchSize) {
+        const batch = items.slice(i, i + batchSize);
+        const batchResults = await Promise.all(batch.map(fn));
+        results.push(...batchResults);
+    }
+    return results;
+}
+
 const users = GetAllUsers();
 const projects = GetAllProjects();
 
 // dict of project: hackatime seconds
 var projectTimeSpent: { [key: string]: number } = {};
 
-for (const user of users) {
-    const hackData = await GetHackatimeProjects(user.slackId);
+const hackDataResults = await batchedFetch(
+    users.map((u) => u.slackId),
+    (slackId) => GetHackatimeProjects(slackId),
+    10,
+);
+
+for (let i = 0; i < users.length; i++) {
+    const user = users[i];
+    const hackData = hackDataResults[i];
+
     var hackatimeProjects: HackatimeProject[];
     if (hackData.ok) {
         hackatimeProjects = hackData.projects || [];

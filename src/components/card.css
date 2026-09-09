@@ -16,6 +16,13 @@
     width: 180px;
     border-radius: 1rem;
     margin-bottom: 1rem;
+    transition:
+        background-color 0.2s ease-in-out,
+        transform 0.2s ease-in-out;
+}
+
+.multicard:hover {
+    background-color: color-mix(in srgb, var(--green) 5%, var(--bg-elevated));
 }
 
 .card-content {

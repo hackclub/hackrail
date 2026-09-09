@@ -51,8 +51,8 @@
     "id": "interail-pass-4-days",
     "image": "interrail.jpg",
     "name": "Interrail pass",
-    "description": "4/7/15 days within one/two month(s)! activate it within a year.",
-    "extended-description": "//",
+    "description": "4/7/15 days within one/two month(s)!",
+    "extended-description": "The best way to travel around Europe! You get unlimited travels on trains in 33 countries for 4, 7 or 15 days within one or two months. Activate it within a year of purchase. You might still need to pay for seat reservations on some trains, but it's still a great deal! Check prices on some routes at https://www.interrail.com/en/plan-your-trip/interrail-timetable",
     "options": [
       {
         "id": "interail-pass-4-days",
@@ -102,7 +102,7 @@
     "image": "amtrak.jpg",
     "description": "5$ on amtrak, stackable",
     "name": "Amtrak grant",
-    "extended-description": "//",
+    "extended-description": "use it for any journey on amtrak (or multiple!), stackable",
     "stackable": true,
     "options": [
       {
@@ -116,14 +116,19 @@
   {
     "id": "smolhaj",
     "image": "smolhaj.png",
-    "name": "Smolhaj",
-    "description": "most important item to bring on a train trip",
-    "extended-description": "//",
+    "name": "Blahaj",
+    "description": "most important item to bring on a train trip!",
+    "extended-description": "very pillow-y",
     "options": [
       {
-        "id": "smolhaj-1",
-        "name": "one adorable fluffy friend",
-        "price": 10
+        "id": "smolhaj-europe-pickup",
+        "name": "one adorable fluffy friend (ikea pickup, europe)",
+        "price": 20
+      },
+      {
+        "id": "smolhaj-worldwide-shipping",
+        "name": "one adorable fluffy friend (worldwide shipping)",
+        "price": 60
       }
     ],
     "featured": false
@@ -171,7 +176,7 @@
         "price": 300
       }
     ],
-    "featured": true
+    "featured": false
   },
   {
     "id": "deutschland-ticket",
@@ -224,6 +229,46 @@
         "id": "britrail-pass-30-days",
         "name": "30 days",
         "price": 900
+      }
+    ],
+    "featured": false
+  },
+  {
+    "id": "powerbank",
+    "image": "powerbank.png",
+    "name": "Powerbank",
+    "description": "A powerbank to charge your devices on the go!",
+    "extended-description": "//",
+    "options": [
+      {
+        "id": "powerbank-1",
+        "name": "1 powerbank",
+        "price": 90
+      }
+    ],
+    "featured": false
+  },
+  {
+    "id": "railway-museum-ticket",
+    "image": "railwaymuseum.jpg",
+    "name": "Railway Museum Ticket",
+    "description": "A ticket to visit any railway museum in the world!",
+    "extended-description": "",
+    "options": [
+      {
+        "id": "railway-museum-ticket-10",
+        "name": "Up to 10$",
+        "price": 30
+      },
+      {
+        "id": "railway-museum-ticket-20",
+        "name": "Up to 20$",
+        "price": 50
+      },
+      {
+        "id": "railway-museum-ticket-30",
+        "name": "Up to 30$",
+        "price": 70
       }
     ],
     "featured": false

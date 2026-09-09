@@ -12,7 +12,7 @@ const PROTECTED_ROUTES: Record<string, "auth" | "admin" | "reviewer"> = {
   "/api/review": "reviewer",
 };
 
-const EXEMPTED_ROUTES = ["/station/project/"];
+const EXEMPTED_ROUTES = ["/station/project/", "/station/guide"];
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const { pathname } = context.url;
