@@ -5,13 +5,9 @@
     gap: 1rem;
 }
 
-.form-group {
-    margin-bottom: 1rem;
-}
-
 .form-group label {
     display: block;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.1rem;
     color: var(--fg-muted);
 }
 
@@ -23,7 +19,6 @@
     border: none;
     background-color: var(--bg-inset);
     color: var(--fg);
-    font-family: inherit;
     font-size: 1rem;
 }
 

@@ -7,6 +7,7 @@ import { GetUserFromCookies } from "../../../utils/auth.ts";
 import amazeImg from "../../../assets/images/amaze.jpg";
 import { GetHackatimeProjects } from "../../../utils/hackatime";
 import { formatSeconds } from "../../../utils/time.ts";
+import MultiCard from "../../../components/MultipurposeCard.astro";
 
 const user = await GetUserFromCookies(Astro.cookies);
 if (!user) return Astro.redirect("/login");
@@ -37,60 +38,77 @@ if (hackatimeProjects.projects.length === 0) {
                 class="form"
                 enctype="multipart/form-data"
             >
-                <div class="form-group">
-                    <label for="name">name</label>
-                    <input
-                        autocomplete="off"
-                        type="text"
-                        id="name"
-                        name="name"
-                        required
-                    />
+                <div class="form-high-group">
+                    <div class="form-group">
+                        <label for="name">name</label>
+                        <input
+                            autocomplete="off"
+                            type="text"
+                            id="name"
+                            name="name"
+                            required
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label for="description">description</label>
+                        <textarea
+                            id="description"
+                            name="description"
+                            required
+                        ></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="image">image url</label>
+                        <input
+                            type="file"
+                            id="image"
+                            name="image"
+                            accept="image/*"
+                        />
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="description">description</label>
-                    <textarea id="description" name="description" required
-                    ></textarea>
+                <div class="form-high-group">
+                    <div class="form-group">
+                        <label for="githubUrl">github url</label>
+                        <input
+                            type="url"
+                            id="githubUrl"
+                            name="githubUrl"
+                            required
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label for="liveUrl">playable url</label>
+                        <input type="url" id="liveUrl" name="liveUrl" />
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="githubUrl">github url</label>
-                    <input
-                        type="url"
-                        id="githubUrl"
-                        name="githubUrl"
-                        required
-                    />
-                </div>
-                <div class="form-group">
-                    <label for="liveUrl">playable url</label>
-                    <input type="url" id="liveUrl" name="liveUrl" />
-                </div>
-                <div class="form-group combobox">
-                    <label for="hackatimeSearch">hackatime projects</label>
-                    <div class="combobox-tags" id="comboboxTags"></div>
-                    <input
-                        type="text"
-                        id="hackatimeSearch"
-                        placeholder="search projects..."
-                        autocomplete="off"
-                    />
-                    <input
-                        type="hidden"
-                        name="hackatimeProjects"
-                        id="hackatimeHidden"
-                    />
-                    <ul
-                        class="combobox-list"
-                        id="hackatimeList"
-                        role="listbox"
-                        hidden
-                    >
-                        {
-                            hackatimeProjects.projects.map((p) => (
+                <div class="form-high-group">
+                    <div class="form-group combobox">
+                        <label for="hackatimeSearch">hackatime projects</label>
+                        <div class="combobox-tags" id="comboboxTags"></div>
+                        <input
+                            type="text"
+                            id="hackatimeSearch"
+                            placeholder="search projects..."
+                            autocomplete="off"
+                        />
+                        <input
+                            type="hidden"
+                            name="hackatimeProjects"
+                            id="hackatimeHidden"
+                        />
+                        <ul
+                            class="combobox-list"
+                            id="hackatimeList"
+                            role="listbox"
+                            hidden
+                        >
+                            {hackatimeProjects.projects.map((p) => (
                                 <li
                                     class="combobox-option"
                                     role="option"
                                     data-value={p.name}
+                                    data-seconds={p.total_seconds}
                                 >
                                     <span class="combobox-option-name">
                                         {p.name}
@@ -101,27 +119,38 @@ if (hackatimeProjects.projects.length === 0) {
                                         </span>
                                     )}
                                 </li>
-                            ))
-                        }
-                    </ul>
+                            ))}
+                        </ul>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="image">image url</label>
-                    <input
-                        type="file"
-                        id="image"
-                        name="image"
-                        accept="image/*"
-                    />
-                </div>
-                <div class="row gap">
-                    <a class="button warnbg" href="/station/home">cancel</a>
-                    <button type="submit" class="button">create</button>
+                <div class="buttons-group">
+                    <a class="button warnbg" href="/station/home">
+                        cancel
+                    </a>
+                    <button type="submit" class="button">
+                        create
+                    </button>
                 </div>
             </form>
         </div>
         <div class="image-left">
             <div class="fade"></div>
+            <div class="previewcard">
+                <MultiCard
+                    unClickable={true}
+                    scale={1.5}
+                    item={{
+                        id: "preview",
+                        name: "project name",
+                        description: "project description",
+                        itemLink: "",
+                        imageUrl:
+                            "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Den_Haag_Hollands_Spoor.jpg/3840px-Den_Haag_Hollands_Spoor.jpg",
+                        chip: true,
+                        chipText: "0h 0m",
+                    }}
+                />
+            </div>
             <Image
                 src={amazeImg}
                 width={700}
@@ -132,6 +161,36 @@ if (hackatimeProjects.projects.length === 0) {
         </div>
     </div>
     <script is:inline>
+        function formatSecondsClient(seconds) {
+            if (!seconds || seconds <= 0) return "0h 0m";
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            return `${hours}h ${minutes}m`;
+        }
+
+        const imageInput = document.getElementById("image");
+        const previewImg = document.querySelector(".previewcard img");
+
+        imageInput.addEventListener("change", (e) => {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith("image/")) {
+                previewImg.src = URL.createObjectURL(file);
+            }
+        });
+
+        const nameInput = document.getElementById("name");
+        const descInput = document.getElementById("description");
+        const previewName = document.querySelector(".previewcard h2");
+        const previewDesc = document.querySelector(".previewcard .desc");
+
+        nameInput.addEventListener("input", (e) => {
+            previewName.textContent = e.target.value || "project name";
+        });
+
+        descInput.addEventListener("input", (e) => {
+            previewDesc.textContent = e.target.value || "project description";
+        });
+
         document.addEventListener("DOMContentLoaded", () => {
             const search = document.getElementById("hackatimeSearch");
             const list = document.getElementById("hackatimeList");
@@ -140,10 +199,24 @@ if (hackatimeProjects.projects.length === 0) {
             const options = Array.from(
                 list.querySelectorAll(".combobox-option"),
             );
+            const timeChip = document.querySelector(".previewcard .card-chip");
             const selected = new Set();
 
             function updateHidden() {
                 hidden.value = JSON.stringify([...selected]);
+            }
+
+            function updateTimeChip() {
+                let totalSeconds = 0;
+                for (const name of selected) {
+                    const opt = options.find((o) => o.dataset.value === name);
+                    if (opt && opt.dataset.seconds) {
+                        totalSeconds += parseInt(opt.dataset.seconds, 10) || 0;
+                    }
+                }
+                if (timeChip) {
+                    timeChip.textContent = formatSecondsClient(totalSeconds);
+                }
             }
 
             function renderTags() {
@@ -163,6 +236,7 @@ if (hackatimeProjects.projects.length === 0) {
                         selected.delete(name);
                         updateHidden();
                         renderTags();
+                        updateTimeChip();
                         const opt = options.find(
                             (o) => o.dataset.value === name,
                         );
@@ -182,6 +256,7 @@ if (hackatimeProjects.projects.length === 0) {
                     selected.add(value);
                     opt.classList.add("selected");
                 }
+                updateTimeChip();
                 updateHidden();
                 renderTags();
             }

@@ -35,8 +35,22 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
     ? `/station/project/${id}/edit`
     : "/station/projects/create";
 
+  if (
+    name.length > 200 ||
+    description.length > 500 ||
+    hackatimeProjects.length > 20
+  ) {
+    return redirect(backTo);
+  }
+
   // check that hackatime projects are legit
-  var hackatimeProjectNames = JSON.parse(hackatimeProjects) as string[];
+  let hackatimeProjectNames: string[] = [];
+  try {
+    hackatimeProjectNames = JSON.parse(hackatimeProjects);
+  } catch {
+    return redirect(backTo);
+  }
+
   if (!Array.isArray(hackatimeProjectNames)) {
     return redirect(backTo);
   }

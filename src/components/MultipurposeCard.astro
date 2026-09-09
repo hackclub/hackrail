@@ -15,13 +15,15 @@ export type CardItem = {
 
 interface Props {
     item: CardItem;
+    scale?: number;
+    unClickable?: boolean;
 }
 
-const { item } = Astro.props;
+const { item, scale, unClickable = false } = Astro.props;
 ---
 
-<a href={item.itemLink} class="card-link">
-    <div class="multicard">
+<a href={unClickable == false ? item.itemLink : undefined} class="card-link">
+    <div class="multicard" style={`transform: scale(${scale || 1})`}>
         <div class="card-image-container">
             {item.chip && <div class="card-chip">{item.chipText}</div>}
             <img
@@ -30,11 +32,14 @@ const { item } = Astro.props;
                 width={128}
                 height={128}
                 alt="item image"
+                id="card-image"
             />
         </div>
         <div class="card-content">
             <h2 class="limited">{item.name}</h2>
-            <p class="desc limited"><FixedText text={item.description} /></p>
+            <p class="desc limited">
+                <FixedText limited={true} text={item.description} />
+            </p>
         </div>
     </div>
 </a>

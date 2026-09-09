@@ -9,10 +9,14 @@
 .content-right {
     margin: 4rem;
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .form {
-    max-width: 600px;
+    min-width: 600px;
 }
 
 input,
@@ -53,7 +57,8 @@ input[type="file"]::file-selector-button {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-    margin-bottom: 0.75rem;
+    margin-bottom: 1rem;
+    margin-top: 0.5rem;
 }
 
 .combobox-tag {
@@ -63,7 +68,7 @@ input[type="file"]::file-selector-button {
     gap: 0.25rem;
     background: var(--fg);
     color: var(--bg);
-    padding: 0.5rem 0.5rem;
+    padding: 0.25rem 0.5rem;
     border-radius: 0.25rem;
     font-size: 0.85rem;
 }
@@ -75,6 +80,8 @@ input[type="file"]::file-selector-button {
     cursor: pointer;
     padding: 0;
     font-size: 1rem;
+    margin: 0;
+    margin-top: 0.1rem;
     line-height: 1;
 }
 
@@ -121,6 +128,7 @@ input[type="file"]::file-selector-button {
 
 .combobox-tag-name {
     margin: 0;
+    margin-top: 0.1rem;
 }
 
 .project-page {
@@ -295,4 +303,38 @@ input[type="file"]::file-selector-button {
     height: 100%;
     width: 40%;
     background: linear-gradient(to right, var(--bg), transparent);
+}
+
+h1 {
+    font-size: 3rem;
+    margin: 0;
+    margin-bottom: 1rem;
+}
+
+input {
+    font-family: sans-serif;
+}
+
+.previewcard {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.form-high-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    background-color: var(--bg-elevated);
+    border-radius: 1rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.buttons-group {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    margin-top: 2rem;
 }

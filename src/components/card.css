@@ -43,6 +43,10 @@
     word-break: break-word;
 }
 
+.limited {
+    max-height: 4.2em; /* 3 lines */
+}
+
 h2.limited {
     max-height: 2.8em; /* 2 lines */
 }

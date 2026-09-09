@@ -1,13 +1,19 @@
 ---
 import { separateText, type TextBlock } from "../utils/text";
 
-const { text } = Astro.props;
+interface Props {
+    text: string;
+    limited?: boolean;
+}
+
+const { text, limited } = Astro.props;
 ---
 
-{
-    separateText(text).map((block: TextBlock) => (
-        <span class={block.isInBreakList ? "remove-font" : undefined}>
-            {block.text}
-        </span>
-    ))
-}
+{separateText(text).map((block: TextBlock) => (
+    <span
+        class={block.isInBreakList ? "remove-font" : undefined}
+        class={limited ? "limited" : undefined}
+    >
+        {block.text}
+    </span>
+))}
