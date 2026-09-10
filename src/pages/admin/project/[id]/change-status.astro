@@ -27,25 +27,25 @@ const intId = Number(Astro.params.id);
 switch (status) {
     case "unshipped":
         db.update(projects)
-            .set({ shipped: 0, approved: 0, rejected: 0 })
+            .set({ shipped: false, approved: false, rejected: false })
             .where(eq(projects.id, intId))
             .run();
         break;
     case "unreviewed":
         db.update(projects)
-            .set({ shipped: 1, approved: 0, rejected: 0 })
+            .set({ shipped: true, approved: false, rejected: false })
             .where(eq(projects.id, intId))
             .run();
         break;
     case "approved":
         db.update(projects)
-            .set({ shipped: 0, approved: 1, rejected: 0 })
+            .set({ shipped: true, approved: true, rejected: false })
             .where(eq(projects.id, intId))
             .run();
         break;
     case "rejected":
         db.update(projects)
-            .set({ shipped: 0, approved: 0, rejected: 1 })
+            .set({ shipped: true, approved: false, rejected: true })
             .where(eq(projects.id, intId))
             .run();
         break;

@@ -17,12 +17,14 @@ export const users = sqliteTable("users", {
   balance: integer("balance").notNull().default(0),
 
   // hackatime
-  hackatimeLinked: integer("is_hackatime_linked").notNull().default(0),
+  hackatimeLinked: integer("is_hackatime_linked", { mode: "boolean" })
+    .notNull()
+    .default(false),
+  banned: integer("banned", { mode: "boolean" }).notNull().default(false),
   hackatimeToken: text("hackatime_token").notNull().default(""),
 
   // state
   avatar: text("avatar").notNull(), // only used on website
-  banned: integer("banned").notNull().default(0),
   note: text("note").notNull().default(""),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
@@ -48,9 +50,9 @@ export const projects = sqliteTable("projects", {
 
   // project state
   hackatimeProjects: text("hackatime_projects").notNull(),
-  shipped: integer("shipped").notNull().default(0),
-  rejected: integer("rejected").notNull().default(0),
-  approved: integer("approved").notNull().default(0),
+  shipped: integer("shipped", { mode: "boolean" }).notNull().default(false),
+  rejected: integer("rejected", { mode: "boolean" }).notNull().default(false),
+  approved: integer("approved", { mode: "boolean" }).notNull().default(false),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .$defaultFn(() => new Date()),
@@ -92,7 +94,7 @@ export const reviews = sqliteTable("reviews", {
     .notNull()
     .references(() => projects.id, { onDelete: "cascade" }),
   reviewerSlackId: text("reviewer_slack_id").notNull(),
-  status: text("status").notNull(), // "approved", "rejected", "pending"
+  status: text("status").notNull(), // "approved", "rejected", "pending", "information"
   overrideHoursSpent: integer("override_hours_spent").notNull().default(0),
   overrideHoursSpentReason: text("override_hours_spent_reason")
     .notNull()
@@ -113,3 +115,4 @@ export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Project = typeof projects.$inferSelect;
 export type Order = typeof orders.$inferSelect;
+export type Review = typeof reviews.$inferSelect;

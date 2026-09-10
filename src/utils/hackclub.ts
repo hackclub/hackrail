@@ -84,10 +84,10 @@ async function Login(code: string): Promise<Result<string>> {
           "https://cachet.dunkirk.sh/users/" +
           profileData.identity.slack_id +
           "/r",
-        banned: 0,
+        banned: false,
         balance: 0,
         note: "",
-        hackatimeLinked: 0,
+        hackatimeLinked: false,
         hackatimeToken: "",
         createdAt: new Date(),
       };

@@ -8,10 +8,12 @@ import {
     GetHackatimeProjects,
     type HackatimeProject,
 } from "../../../utils/hackatime";
-import { formatSeconds } from "../../../utils/time";
+import type { Review } from "../../../db/schema";
+import { GetReviewsForProject } from "../../../utils/reviews";
 
 import { GetUserFromSlackId } from "../../../utils/admin";
 import UserHeader from "../../../components/UserHeader.astro";
+import { formatSeconds } from "../../../utils/time";
 
 const { slug } = Astro.params;
 
@@ -59,74 +61,213 @@ if (!isCurrentUserAuthor) {
     authorUser = user;
 }
 
+if (!authorUser) {
+    Astro.cookies.set("flash_error", "Author not found", {
+        path: "/",
+        maxAge: 10,
+    });
+
+    if (!user) {
+        return Astro.redirect("/");
+    }
+
+    return Astro.redirect("/station/home");
+}
+
+// now fetch reviews if this is the project's author
+
+var reviews: Review[] = [];
+
+if (isCurrentUserAuthor) {
+    const reviewR = await GetReviewsForProject(project.id);
+    if (reviewR) {
+        reviews = reviewR || [];
+    }
+}
+
 var status: string;
 var statusClass: string;
 if (project.approved) {
     status = "approved";
-    statusClass = "badge-approved";
+    statusClass = "greenbg";
 } else if (project.rejected) {
     status = "rejected";
-    statusClass = "badge-rejected";
+    statusClass = "dangerbg";
 } else if (project.shipped) {
-    status = "shipped";
-    statusClass = "badge-shipped";
+    status = "in review";
+    statusClass = "warnbg";
 } else {
-    status = "unreviewed";
-    statusClass = "badge-unreviewed";
+    status = "unshipped";
+    statusClass = "fgbg";
 }
 ---
 
 <BaseLayout title={project.projectName} hideFooter={true}>
-    <UserHeader user={user} />
-    <div class="project-page">
-        <div class="project-header">
-            <div class="title-group">
-                <h1 class="project-title">{project.projectName}</h1>
-                <span class={`status-badge ${statusClass}`}>{status}</span>
+    {user && <UserHeader user={authorUser} absolute={true} />}
+    <div class="main-content">
+        <div class="left-container" style="flex: 1;">
+            <div class="project-image">
+                <img
+                    src={project.projectScreenshot}
+                    alt={project.projectName}
+                    class="project-screenshot"
+                />
+                <div class="image-fade"></div>
             </div>
-            {
-                isCurrentUserAuthor && (
-                    <div class="actions">
-                        <a
-                            href={`/station/project/${project.id}/edit`}
-                            class="button warnbg"
-                        >
-                            Edit Project
-                        </a>
-                        <a
-                            href={`/station/project/${project.id}/delete`}
-                            class="button dangerbg"
-                        >
-                            Delete Project
-                        </a>
+            <div class="project-content">
+                <div class="project-header">
+                    <h1 class="project-title limited">{project.projectName}</h1>
+                    <p class="project-desc limited">
+                        {project.projectDescription}
+                    </p>
+                    {isCurrentUserAuthor && (
+                        <div class="row smolgap vcenter">
+                            <a
+                                class="button warnbg"
+                                href={`/station/project/${project.id}/edit`}
+                            >
+                                edit
+                            </a>
+                            <a
+                                class="button dangerbg"
+                                href={`/station/project/${project.id}/delete`}
+                            >
+                                delete
+                            </a>
+                            {!project.approved &&
+                                !project.shipped &&
+                                !project.rejected && (
+                                    <a
+                                        class="button greenbg"
+                                        href={`/station/project/${project.id}/submit`}
+                                    >
+                                        ship
+                                    </a>
+                                )}
+                            {project.rejected && (
+                                <a
+                                    class="button greenbg"
+                                    href={`/station/project/${project.id}/resubmit`}
+                                >
+                                    reship
+                                </a>
+                            )}
+                        </div>
+                    )}
+                </div>
+                <div class="project-time">
+                    <p class="time-value">[ {formatSeconds(totalTimeSpent)}</p>
+                </div>
+                <div class="project-author">
+                    <p class="pre author-header">made by:</p>
+                    <div class="row gap vcenter">
+                        <div class="author-pfp">
+                            <Image
+                                class="author-pfp-image"
+                                src={authorUser.avatar}
+                                width={50}
+                                height={50}
+                                alt={
+                                    authorUser.firstName + "'s profile picture"
+                                }
+                            />
+                        </div>
+                        <div class="author-name row smolgap vcenter">
+                            <p class="author-name-text">
+                                {authorUser.firstName}
+                            </p>
+                            {isCurrentUserAuthor && <p>(you!)</p>}
+                        </div>
                     </div>
-                )
-            }
-        </div>
-
-        <Image
-            src={project.projectScreenshot || ""}
-            alt={project.projectName}
-            class="project-image"
-            width={512}
-            height={350}
-        />
-
-        <div class="project-links">
-            <a class="button" href={project.projectPlayableUrl}>
-                demo
-            </a>
-            <a class="button" href={project.projectCodeUrl}> code </a>
-            <div class="time-card surface">
-                <p class="time-card-title">
-                    Δ {formatSeconds(totalTimeSpent)}
-                </p>
+                </div>
             </div>
         </div>
+        {isCurrentUserAuthor && (
+            <div class="right-container">
+                <div class="container-content">
+                    <div class="project-status">
+                        <div class="project-header">
+                            <div class="dot-thing">
+                                <div class="rectangle"></div>
+                                <div class="final-dot">
+                                    <div class="project-review-header">
+                                        <h1 class="project-status-header">
+                                            Project status
+                                        </h1>
 
-        <div class="surface description-card">
-            <p class="pre">description:</p>
-            <p>{project.projectDescription}</p>
-        </div>
+                                        <div
+                                            class={
+                                                "project-status-badge" +
+                                                " " +
+                                                statusClass
+                                            }
+                                        >
+                                            <p class={statusClass}>{status}</p>
+                                        </div>
+                                    </div>
+                                    <div class="dot"></div>
+                                </div>
+                                <div class="other-rectangle">
+                                    <div class="rectangle-fade"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="project-details">
+                            <h2 class="project-status-subheader">
+                                Hackatime projects
+                            </h2>
+                            <div class="project-hackatime-projects">
+                                {hackatimeProjects.map((hackatimeProject) => {
+                                    const projectHackatimeNames = JSON.parse(
+                                        project?.hackatimeProjects || "[]",
+                                    );
+                                    if (
+                                        projectHackatimeNames.includes(
+                                            hackatimeProject.name,
+                                        )
+                                    ) {
+                                        return (
+                                            <div class="project-chip">
+                                                <p>
+                                                    {hackatimeProject.name}
+                                                    {": "}
+                                                    {formatSeconds(
+                                                        hackatimeProject.total_seconds,
+                                                    )}
+                                                </p>
+                                            </div>
+                                        );
+                                    }
+                                })}
+                            </div>
+                            <h2 class="project-status-subheader">
+                                Review timeline
+                            </h2>
+                            <div class="reviews">
+                                {reviews.length === 0 && (
+                                    <div class="surface nothing">
+                                        <p class="nothing-header">ª</p>
+                                        <p class="review-header">
+                                            Nothing here yet...
+                                        </p>
+                                    </div>
+                                )}
+                                {reviews.map((review) => {
+                                    return (
+                                        <div class="review-card surface">
+                                            <p>
+                                                {" "}
+                                                you got a review but this is a
+                                                wip... dm alice
+                                            </p>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )}
     </div>
 </BaseLayout>

@@ -3,48 +3,47 @@ import { Image } from "astro:assets";
 import "./userheader.css";
 import { isAdmin } from "../middleware";
 
-const { user, backUrlOverride } = Astro.props;
+const { user, backUrlOverride, absolute = false } = Astro.props;
 const admin = isAdmin(user?.slackId || "");
 ---
 
-<div class="header">
+<div
+    class="header"
+    style={
+        absolute
+            ? "position: absolute; top: 0; left: 0; width: 100%; z-index: 100;"
+            : ""
+    }
+>
     <div class="left">
-        {
-            Astro.url.pathname !== "/station/home" && (
-                <a
-                    href={user ? backUrlOverride || "/station/home" : "/"}
-                    class="button warnbg"
-                >
-                    ¬
-                </a>
-            )
-        }
+        {Astro.url.pathname !== "/station/home" && (
+            <a
+                href={user ? backUrlOverride || "/station/home" : "/"}
+                class="button warnbg"
+            >
+                ¬
+            </a>
+        )}
     </div>
     <div class="right">
-        {
-            user && (
-                <a class="button" href="/logout">
-                    logout
-                </a>
-            )
-        }
-        {
-            admin && (
-                <a class="button dangerbg" href="/admin">
-                    admin
-                </a>
-            )
-        }
-        {
-            user && (
-                <Image
-                    src={user?.avatar || "/assets/images/bonk.png"}
-                    width={32}
-                    height={32}
-                    class="avatar"
-                    alt="pfp"
-                />
-            )
-        }
+        {user && (
+            <a class="button" href="/logout">
+                logout
+            </a>
+        )}
+        {admin && (
+            <a class="button dangerbg" href="/admin">
+                admin
+            </a>
+        )}
+        {user && (
+            <Image
+                src={user?.avatar || "/assets/images/bonk.png"}
+                width={32}
+                height={32}
+                class="avatar"
+                alt="pfp"
+            />
+        )}
     </div>
 </div>

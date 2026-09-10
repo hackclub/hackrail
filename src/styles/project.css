@@ -131,170 +131,9 @@ input[type="file"]::file-selector-button {
     margin-top: 0.1rem;
 }
 
-.project-page {
-    margin: 2rem;
-    max-width: 720px;
-}
-
-.project-title {
-    font-style: italic;
-    margin: 0;
-    font-size: 2.5rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 40ch;
-}
-
-.project-header {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    flex-wrap: wrap;
-    margin-bottom: 1rem;
-}
-
-.title-group {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-}
-
-.status-badge {
-    padding: 0.25rem 0.75rem;
-    border-radius: 999px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    background: var(--fg-muted);
-    color: var(--bg);
-}
-
-.badge-approved {
-    background: var(--green);
-    color: var(--bg);
-}
-
-.badge-rejected {
-    background: var(--danger);
-    color: var(--bg);
-}
-
-.badge-shipped {
-    background: var(--fg);
-    color: var(--bg);
-}
-
-.badge-unreviewed {
-    background: var(--fg-muted);
-    color: var(--bg);
-}
-
-.actions {
-    display: flex;
-    flex-direction: row;
-    gap: 0.5rem;
-}
-
-.project-image {
-    border-radius: 0.5rem;
-    object-fit: cover;
-    width: 100%;
-    height: auto;
-    max-height: 420px;
-    margin-bottom: 1rem;
-}
-
-.project-links {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-    margin-bottom: 1.5rem;
-}
-
-.project-links .button {
-    padding: 0.75rem 2rem;
-    font-size: 1.1rem;
-}
-
 .pre {
     color: var(--fg-muted);
     margin: 0 0 0.5rem;
-}
-
-.description-card {
-    padding: 1rem;
-    border-radius: 0.5rem;
-}
-
-.description-card p:last-child {
-    margin: 0;
-}
-
-.icon {
-    color: var(--bg);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 0;
-    vertical-align: middle;
-    margin: 0.75rem;
-}
-
-.icon svg {
-    width: 100%;
-    height: 100%;
-    display: block;
-}
-
-.open {
-    height: 4rem;
-    width: 4rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    line-height: 0;
-}
-
-.time-card {
-    font-size: 1.25rem;
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.5rem;
-    display: inline-flex;
-    align-items: center;
-}
-
-.time-card-title {
-    margin: 0;
-}
-
-.author {
-    background-color: var(--green);
-}
-
-.main-container {
-    display: flex;
-    justify-content: space-between;
-}
-
-.author-avatar {
-    width: 4rem;
-    height: 4rem;
-    border-radius: 50%;
-    object-fit: cover;
-    overflow: hidden;
-}
-
-.author {
-    border-end-start-radius: 2rem;
-    height: fit-content;
-    padding: 2rem;
 }
 
 .fade {
@@ -308,7 +147,6 @@ input[type="file"]::file-selector-button {
 h1 {
     font-size: 3rem;
     margin: 0;
-    margin-bottom: 1rem;
 }
 
 input {
@@ -337,4 +175,240 @@ input {
     flex-direction: row;
     gap: 0.5rem;
     margin-top: 2rem;
+}
+
+.content-margin {
+    margin: 5rem;
+}
+
+.left-container {
+    width: 60%;
+    height: 100vh;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.right-container {
+    width: 40%;
+    height: 100vh;
+    background-color: var(--bg-elevated);
+}
+
+.main-content {
+    display: flex;
+    flex-direction: row;
+}
+
+.container-content {
+    display: flex;
+    flex-direction: column;
+    margin-top: 5rem;
+}
+
+.project-screenshot {
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+    object-fit: cover;
+}
+
+.project-image {
+    position: relative;
+}
+
+.image-fade {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 50%;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, var(--bg) 80%);
+}
+
+.project-content {
+    margin: 2rem;
+    display: flex;
+    gap: 2rem;
+    flex-direction: column;
+}
+
+.project-title {
+    margin: 0;
+    font-size: 4rem;
+    overflow: hidden;
+    margin-top: -3rem;
+    font-style: italic;
+    margin-bottom: -1rem;
+}
+
+.project-desc {
+    margin-top: -0.5rem;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+p.pre {
+    margin: 0;
+}
+
+.author-pfp-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.author-header {
+    margin-bottom: 0.5rem !important;
+}
+
+.project-status {
+    margin: 2rem;
+    margin-top: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.project-status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: bold;
+    width: fit-content;
+}
+
+.project-status-badge > p {
+    margin: 0;
+}
+
+.project-hackatime-projects {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+}
+
+.project-chip {
+    padding: 0.4rem 0.9rem;
+    border-radius: 1rem;
+    background-color: var(--fg-muted);
+    color: var(--bg);
+    width: fit-content;
+}
+
+.project-chip > p {
+    margin: 0;
+}
+
+.project-details > h2 {
+    margin: 0;
+    margin-bottom: 0.5rem;
+    margin-top: 2rem;
+}
+
+.project-details {
+    margin-top: -2rem;
+}
+
+.nothing {
+    background-color: var(--bg-inset);
+    border-radius: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--fg);
+    transition: transform 0.2s ease-in-out;
+}
+
+.nothing:hover {
+    transform: rotate(-5deg) scale(1.05);
+}
+
+.nothing-header {
+    font-size: 3rem;
+}
+
+.reviews {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+    align-items: center;
+}
+
+.rectangle {
+    margin-top: -5rem;
+    width: 30px;
+    height: 100px;
+    background-color: var(--green);
+    border-radius: 0rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: -1rem;
+}
+
+.final-dot {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: var(--green);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dot {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--bg-inset);
+}
+
+.dot-thing {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: fit-content;
+}
+
+.other-rectangle {
+    margin-top: -1rem;
+    width: 30px;
+    height: 100px;
+    background-color: var(--green);
+    position: relative;
+}
+
+.rectangle-fade {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 70%;
+    background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0) 0%,
+        var(--bg-elevated) 100%
+    );
+}
+
+.project-review-header {
+    margin-top: 2.5rem;
+    position: absolute;
+    left: 100%;
+    padding-left: 1rem;
+    white-space: nowrap;
+    padding-top: 0;
+}
+
+.project-time {
+    background-color: var(--bg-inset);
+    width: fit-content;
+    padding: 1rem 1rem;
+    border-radius: 1rem;
+}
+
+.time-value {
+    font-weight: bold;
+    font-size: 1.5rem;
+    margin: 0;
 }

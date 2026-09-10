@@ -27,6 +27,9 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
   if (isEdit) {
     existing = await GetProjectFromId(id);
     if (!existing || existing.authorSlackId !== user.slackId) {
+      console.error(
+        `User ${user.slackId} tried to edit project ${id} but they are not the author`,
+      );
       return redirect("/station/home");
     }
   }
@@ -38,8 +41,11 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
   if (
     name.length > 200 ||
     description.length > 500 ||
-    hackatimeProjects.length > 20
+    hackatimeProjects.length > 500
   ) {
+    console.error(
+      `User ${user.slackId} tried to create/edit project with invalid lengths: name(${name.length}), description(${description.length}), hackatimeProjects(${hackatimeProjects.length})`,
+    );
     return redirect(backTo);
   }
 
@@ -48,21 +54,33 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
   try {
     hackatimeProjectNames = JSON.parse(hackatimeProjects);
   } catch {
+    console.error(
+      `User ${user.slackId} tried to create/edit project with invalid hackatime projects: ${hackatimeProjects}`,
+    );
     return redirect(backTo);
   }
 
   if (!Array.isArray(hackatimeProjectNames)) {
+    console.error(
+      `User ${user.slackId} tried to create/edit project with invalid hackatime projects: ${hackatimeProjects}`,
+    );
     return redirect(backTo);
   }
 
   var hackatimeData = await GetHackatimeProjects(user.slackId);
   if (!hackatimeData.ok || !hackatimeData.projects) {
+    console.error(
+      `User ${user.slackId} tried to create/edit project but failed to fetch hackatime projects`,
+    );
     return redirect(backTo);
   }
 
   for (const projectName of hackatimeProjectNames) {
     // check if project name is in hackatimeData.projects
     if (!hackatimeData.projects.some((p) => p.name === projectName)) {
+      console.error(
+        `User ${user.slackId} tried to create/edit project with invalid hackatime project: ${projectName}`,
+      );
       return redirect(backTo);
     }
   }
@@ -81,6 +99,9 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
   }
 
   if (!name || !description || !githubUrl || !hackatimeProjects) {
+    console.error(
+      `User ${user.slackId} tried to create/edit project with missing fields: name(${name}), description(${description}), githubUrl(${githubUrl}), hackatimeProjects(${hackatimeProjects})`,
+    );
     return redirect(backTo);
   }
 
@@ -100,6 +121,7 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
 
     db.update(projects).set(values).where(eq(projects.id, existing.id)).run();
 
+    console.log(`User ${user.slackId} edited project ${existing.id}`);
     return redirect(`/station/project/${existing.id}`);
   }
 

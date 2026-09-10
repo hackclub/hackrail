@@ -98,11 +98,29 @@ button {
     gap: 1rem;
 }
 
+.smolgap {
+    gap: 0.5rem;
+}
+
 .surface {
     background-color: var(--bg-elevated);
     border-radius: 0.5rem;
     padding: 1rem;
     width: fit-content;
+}
+
+.vcenter {
+    display: flex;
+    align-items: center;
+}
+
+.vcenter > p {
+    margin-top: 0.5rem;
+}
+
+.hcenter {
+    display: flex;
+    justify-content: center;
 }
 
 .surface > p {
