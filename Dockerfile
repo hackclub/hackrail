@@ -23,6 +23,7 @@ COPY --from=prod-deps /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
 COPY drizzle.config.ts ./
 COPY drizzle ./drizzle
+COPY scripts ./scripts
 COPY src/db/schema.ts ./src/db/schema.ts
 RUN mkdir -p /app/data
 
@@ -35,4 +36,4 @@ EXPOSE 4321
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD wget -qO- http://localhost:4321/ || exit 1
 
-CMD ["sh", "-c", "npx drizzle-kit migrate --config=drizzle.config.ts && node dist/server/entry.mjs"]
+CMD ["sh", "-c", "node scripts/baseline.mjs && npx drizzle-kit migrate --config=drizzle.config.ts && node dist/server/entry.mjs"]
