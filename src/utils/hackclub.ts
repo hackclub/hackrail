@@ -81,7 +81,7 @@ async function Login(code: string): Promise<Result<string>> {
         country: primaryAdress?.country || "",
         birthdate: profileData.identity.birthday,
         avatar:
-          "https://cachet.dunkirk.sh/users/" +
+          "https://cachet.hackclub.com/users/" +
           profileData.identity.slack_id +
           "/r",
         banned: false,

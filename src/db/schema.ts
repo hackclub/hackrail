@@ -88,24 +88,26 @@ export const orders = sqliteTable("orders", {
     .$defaultFn(() => new Date()),
 });
 
+export const reviewEvents = sqliteTable("review_events", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  projectId: integer("project_id")
+    .notNull()
+    .references(() => projects.id, { onDelete: "cascade" }),
+  reviewAuthorSlackId: text("reviewer_slack_id"),
+  type: text("status").notNull(), // "approved", "rejected", "pending", "information"
+  message: text("status_message").notNull().default(""),
+  jsonData: text("json_data").notNull().default("{}"), // for any extra data we want to store, ex hours approved & reason
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .notNull()
+    .$defaultFn(() => new Date()),
+});
+
 export const reviews = sqliteTable("reviews", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   projectId: integer("project_id")
     .notNull()
     .references(() => projects.id, { onDelete: "cascade" }),
-  reviewerSlackId: text("reviewer_slack_id").notNull(),
-  status: text("status").notNull(), // "approved", "rejected", "pending", "information"
-  overrideHoursSpent: integer("override_hours_spent").notNull().default(0),
-  overrideHoursSpentReason: text("override_hours_spent_reason")
-    .notNull()
-    .default(""),
-  statusMessages: text("status_message").notNull().default(""),
-  // array of status update with timestamps, stored as JSON string
-  // exemple : [{"message": "ai looking at it", "timestamp": 1633024800}, {"message": "position 10 in the queue", "timestamp": 1633024800}]
-  // TODO: actually use it
-  updatedAt: integer("updated_at", { mode: "timestamp" })
-    .notNull()
-    .$defaultFn(() => new Date()),
+  done: integer("done", { mode: "boolean" }).notNull().default(false),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .$defaultFn(() => new Date()),
@@ -115,4 +117,4 @@ export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Project = typeof projects.$inferSelect;
 export type Order = typeof orders.$inferSelect;
-export type Review = typeof reviews.$inferSelect;
+export type Review = typeof reviewEvents.$inferSelect;

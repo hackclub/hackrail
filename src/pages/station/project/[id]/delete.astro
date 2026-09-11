@@ -3,6 +3,8 @@ import { GetProjectFromId } from "../../../../utils/projects";
 import { GetUserFromCookies } from "../../../../utils/auth";
 import BaseLayout from "../../../../layouts/base.astro";
 import "../../../../styles/project.css";
+import { Image } from "astro:assets";
+import trainGif from "../../../../assets/images/misc/train.gif";
 
 const { id } = Astro.params;
 
@@ -17,26 +19,39 @@ if (project.authorSlackId !== user.slackId)
 
 <BaseLayout title={`Delete ${project.projectName}`} hideFooter={true}>
     <div class="content-margin">
-        <div class="project-header">
-            <h1 class="project-title">Delete Project</h1>
-        </div>
-        <div class="project-body">
+        <!-- <Image
+            class="delete-gif"
+            src={trainGif}
+            width={200}
+            height={200}
+            alt="Project Image"
+        /> -->
+        <div class="project-modal-header">
+            <h1 class="project-modal-title">Delete Project</h1>
             <p>
                 Are you sure you want to delete this project? This action cannot
                 be undone.
             </p>
-            <form method="POST" action="/api/delete-project">
-                <input type="hidden" name="projectId" value={project.id} />
-                <p>Delete "{project.projectName}"?</p>
-                <a class="button warnbg" href={`/station/project/${project.id}`}
-                    >cancel</a
-                >
-                <button
-                    style="margin-left: 0.5rem;"
-                    type="submit"
-                    class="button dangerbg">delete</button
-                >
-            </form>
+        </div>
+        <div class="project-body">
+            <div>
+                <form method="POST" action="/api/delete-project">
+                    <input type="hidden" name="projectId" value={project.id} />
+                    <a
+                        class="button warnbg"
+                        href={`/station/project/${project.id}`}
+                    >
+                        cancel
+                    </a>
+                    <button
+                        style="margin-left: 0.5rem;"
+                        type="submit"
+                        class="button dangerbg"
+                    >
+                        delete
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 </BaseLayout>

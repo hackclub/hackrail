@@ -120,7 +120,10 @@ if (project.approved) {
                     <p class="project-desc limited">
                         {project.projectDescription}
                     </p>
-                    {isCurrentUserAuthor && (
+                </div>
+                {isCurrentUserAuthor &&
+                    !project.approved &&
+                    !project.shipped && (
                         <div class="row smolgap vcenter">
                             <a
                                 class="button warnbg"
@@ -134,27 +137,24 @@ if (project.approved) {
                             >
                                 delete
                             </a>
-                            {!project.approved &&
-                                !project.shipped &&
-                                !project.rejected && (
-                                    <a
-                                        class="button greenbg"
-                                        href={`/station/project/${project.id}/submit`}
-                                    >
-                                        ship
-                                    </a>
-                                )}
-                            {project.rejected && (
-                                <a
-                                    class="button greenbg"
-                                    href={`/station/project/${project.id}/resubmit`}
-                                >
-                                    reship
-                                </a>
-                            )}
+                            <a
+                                class="button greenbg"
+                                href={`/station/project/${project.id}/ship${project.rejected ? "?reship=true" : ""}`}
+                            >
+                                {project.rejected ? "reship" : "ship"}
+                            </a>
                         </div>
                     )}
-                </div>
+                {isCurrentUserAuthor &&
+                    (project.shipped || project.approved) && (
+                        <div class="row smolgap vcenter">
+                            <p class="pre">
+                                this project is in review/has been accepted, so
+                                it cannot be deleted or edited
+                            </p>
+                        </div>
+                    )}
+
                 <div class="project-time">
                     <p class="time-value">[ {formatSeconds(totalTimeSpent)}</p>
                 </div>
@@ -252,17 +252,51 @@ if (project.approved) {
                                         </p>
                                     </div>
                                 )}
-                                {reviews.map((review) => {
-                                    return (
-                                        <div class="review-card surface">
-                                            <p>
-                                                {" "}
-                                                you got a review but this is a
-                                                wip... dm alice
-                                            </p>
-                                        </div>
-                                    );
-                                })}
+                                {reviews
+                                    .sort(
+                                        (a, b) =>
+                                            b.createdAt.getTime() -
+                                            a.createdAt.getTime(),
+                                    )
+                                    .map((review) => {
+                                        return (
+                                            <div class="review-container">
+                                                <div class="review-container-inside">
+                                                    <p class="review-header">
+                                                        {review.createdAt.getDate() +
+                                                            "/" +
+                                                            (review.createdAt.getMonth() +
+                                                                1) +
+                                                            "/" +
+                                                            review.createdAt.getFullYear()}{" "}
+                                                        {" at "}{" "}
+                                                        {review.createdAt.getHours() +
+                                                            ":" +
+                                                            review.createdAt.getMinutes()}
+                                                    </p>
+                                                    <div
+                                                        class={
+                                                            "review-card surface" +
+                                                            " " +
+                                                            (review.type ==
+                                                            "information"
+                                                                ? "fgbg"
+                                                                : review.type ==
+                                                                    "warning"
+                                                                  ? "warnbg"
+                                                                  : "dangerbg")
+                                                        }
+                                                    >
+                                                        <div class="review-card-inside">
+                                                            <p class="review-content">
+                                                                {review.message}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
                             </div>
                         </div>
                     </div>

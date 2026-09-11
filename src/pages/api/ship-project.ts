@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro";
 import { GetUserFromCookies } from "../../utils/auth";
 import { db } from "../../db";
-import { projects } from "../../db/schema";
+import { projects, reviewEvents, reviews } from "../../db/schema";
 import { GetProjectFromId } from "../../utils/projects";
 import { eq } from "drizzle-orm";
 
@@ -22,14 +22,33 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
       status: 403,
     });
 
-  // check that the project isn't shipped/approved
+  // check if project isnt alr shipped or approved
+
   if (project.shipped || project.approved) {
-    return new Response("Cannot delete a shipped or approved project", {
-      status: 400,
-    });
+    return new Response("What are u trying to do,,,", { status: 400 });
   }
 
-  await db.delete(projects).where(eq(projects.id, Number(projectId)));
+  // mark the project as shipped
+  await db
+    .update(projects)
+    .set({ shipped: true })
+    .where(eq(projects.id, Number(projectId)));
 
-  return redirect("/station/home");
+  // create a review event
+  await db.insert(reviewEvents).values({
+    projectId: Number(projectId),
+    reviewAuthorSlackId: null,
+    type: "information",
+    message: "Project shipped!",
+    jsonData: "{}",
+  });
+
+  // add it to the review table
+
+  await db.insert(reviews).values({
+    projectId: Number(projectId),
+    done: false,
+  });
+
+  return redirect("/station/project/" + projectId);
 };

@@ -1,0 +1,124 @@
+---
+import { GetUserFromCookies } from "../../../../utils/auth";
+import { GetProjectFromId } from "../../../../utils/projects";
+import BaseLayout from "../../../../layouts/base.astro";
+import "../../../../styles/project.css";
+
+const { id } = Astro.params;
+
+const r = Astro.url.searchParams.get("reship") || false;
+const reship: boolean = r === "true" ? true : false;
+
+const user = await GetUserFromCookies(Astro.cookies);
+const project = await GetProjectFromId(id || "");
+
+// check if you are authorized to submit this project
+if (project?.authorSlackId != user?.slackId || !project || !user) {
+    Astro.cookies.set("flash_error", "What are you doing :pensive:", {
+        path: "/",
+        maxAge: 10,
+    });
+
+    return Astro.redirect("/station/home");
+}
+---
+
+<BaseLayout title={`Ship ${project.projectName}`} hideFooter={true}>
+    <div class="content-margin">
+        <div class="project-header">
+            <h1 class="project-modal-title">Ship Project</h1>
+        </div>
+        <form method="POST" action="/api/ship-project">
+            <div class="project-body">
+                <p>
+                    Are you sure you want to ship this project? This action
+                    cannot be undone.
+                </p>
+                {reship && (
+                    <div class="surface warnbg" style="max-width: 600px;">
+                        <p>
+                            This project has already been shipped and rejected
+                            at least once. Please make sure you have fixed the
+                            issues mentioned by your reviewer before reshipping.
+                            Attempting to submit a fraudulent project may result
+                            in a ban from hackrail/hackclub.
+                        </p>
+                    </div>
+                )}
+                <div class="surface checkboxes-container">
+                    <div class="checkbox-text-container">
+                        <input
+                            type="checkbox"
+                            id="confirm-checkbox"
+                            name="confirm-checkbox"
+                            required
+                        />
+                        <label for="confirm-checkbox">
+                            Your project has a screenshot uploaded (and a video
+                            in the readme if it's difficult to experience)
+                        </label>
+                    </div>
+                    <div class="checkbox-text-container">
+                        <input
+                            type="checkbox"
+                            id="confirm-checkbox-2"
+                            name="confirm-checkbox-2"
+                            required
+                        />
+                        <label for="confirm-checkbox-2">
+                            Your project is functional and can be experienced by
+                            others
+                        </label>
+                    </div>
+                    <div class="checkbox-text-container">
+                        <input
+                            type="checkbox"
+                            id="confirm-checkbox-3"
+                            name="confirm-checkbox-3"
+                            required
+                        />
+                        <label for="confirm-checkbox-3">
+                            Your project description clearly explains what it
+                            does
+                        </label>
+                    </div>
+                    <div class="checkbox-text-container">
+                        <input
+                            type="checkbox"
+                            id="confirm-checkbox-5"
+                            name="confirm-checkbox-5"
+                            required
+                        />
+                        <label for="confirm-checkbox-5">
+                            You used ai for less than 30 percents of your
+                            projects content
+                        </label>
+                    </div>
+                    <div class="checkbox-text-container">
+                        <input
+                            type="checkbox"
+                            id="confirm-checkbox-6"
+                            name="confirm-checkbox-6"
+                            required
+                        />
+                        <label for="confirm-checkbox-6">
+                            Your readme is not ai generated
+                        </label>
+                    </div>
+                </div>
+                <input type="hidden" name="projectId" value={project.id} />
+                <div class="row smolgap">
+                    <a
+                        class="button warnbg"
+                        href={`/station/project/${project.id}`}
+                    >
+                        cancel
+                    </a>
+                    <button type="submit" class="button greenbg">
+                        ship
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</BaseLayout>

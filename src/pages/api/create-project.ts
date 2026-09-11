@@ -38,6 +38,14 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
     ? `/station/project/${id}/edit`
     : "/station/projects/create";
 
+  // if it's an edit, check if it isn't in review or accepted
+  if (isEdit && (existing?.shipped || existing?.approved)) {
+    console.error(
+      `User ${user.slackId} tried to edit project ${id} but it is in review or accepted`,
+    );
+    return redirect(backTo);
+  }
+
   if (
     name.length > 200 ||
     description.length > 500 ||
