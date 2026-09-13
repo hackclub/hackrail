@@ -66,6 +66,27 @@ async function Login(code: string): Promise<Result<string>> {
       (address: any) => address.primary,
     );
 
+    // check if all the required scopes are given
+    const scopes = [
+      "email",
+      "name",
+      "slack_id",
+      "verification_status",
+      "birthdate",
+      "adress",
+    ];
+
+    if (profileData.scopes.some((scope: string) => !scopes.includes(scope))) {
+      return {
+        ok: false,
+        error: new Error(
+          `why did you mess with the scopes... required: ${scopes.join(
+            ", ",
+          )}, got: ${profileData.scopes.join(", ")}`,
+        ),
+      };
+    }
+
     if (!dbUserProfile.ok) {
       // the user doesn't have a profile yet
       const profile: User = {

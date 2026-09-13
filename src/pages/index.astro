@@ -119,16 +119,14 @@ if (user) {
 ---
 
 <BaseLayout title="hackrail">
-    {
-        error && (
-            <div
-                class="surface dangerbg"
-                style="width: 100%; border-radius: 0; padding: 1rem; margin-bottom: 1rem;"
-            >
-                <p>{error}</p>
-            </div>
-        )
-    }
+    {error && (
+        <div
+            class="surface dangerbg"
+            style="width: 100%; border-radius: 0; padding: 1rem; margin-bottom: 1rem;"
+        >
+            <p>{error}</p>
+        </div>
+    )}
     <main>
         <div class="deadline-container">
             <div class="deadline">
@@ -141,13 +139,9 @@ if (user) {
                 <h1 class="title">hackrail</h1>
                 <p class="subtitle">ship projects ß get on trains</p>
                 <a class="button big" href="/login">
-                    <span class="button-text"
-                        >{
-                            isLoggedIn
-                                ? "Enter the station"
-                                : "Get started now!"
-                        }</span
-                    >
+                    <span class="button-text">
+                        {isLoggedIn ? "Enter the station" : "Get started now!"}
+                    </span>
                 </a>
             </div>
             <div class="spacer">
@@ -165,7 +159,9 @@ if (user) {
                     </div>
                 </div>
             </div>
-            <div class="exp-container"><Map client:load /></div>
+            <div class="exp-container">
+                <Map client:load />
+            </div>
         </div>
         <SillyCarousel ideas={false} direction="right" cards={cards} />
         <div class="expl-container">
@@ -175,9 +171,8 @@ if (user) {
                     <div class="row">
                         <div class="first-card expl-card">
                             <h3 class="exp-title">
-                                ship projects that use <em class="italic">
-                                    open source train data</em
-                                >
+                                ship projects that use{" "}
+                                <em class="italic">open source train data</em>
                             </h3>
                             <div class="sncf-logo logo-container">
                                 <Image
@@ -245,25 +240,19 @@ if (user) {
             <div class="ideas">
                 <h2 class="ideas-title">what can you make?</h2>
                 <div class="ideas-carousel">
-                    {
-                        projectCards.map((card) => {
-                            return (
-                                <div class="idea-card">
-                                    <Image
-                                        src={card.image}
-                                        alt={card.alt}
-                                        class="idea-card-image"
-                                    />
-                                    <h3 class="idea-card-title">
-                                        {card.title}
-                                    </h3>
-                                    <p class="idea-card-desc">
-                                        {card.description}
-                                    </p>
-                                </div>
-                            );
-                        })
-                    }
+                    {projectCards.map((card) => {
+                        return (
+                            <div class="idea-card">
+                                <Image
+                                    src={card.image}
+                                    alt={card.alt}
+                                    class="idea-card-image"
+                                />
+                                <h3 class="idea-card-title">{card.title}</h3>
+                                <p class="idea-card-desc">{card.description}</p>
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
         </div>

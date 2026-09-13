@@ -5,7 +5,7 @@ import { ValidateToken } from "../utils/auth";
 
 const clientId = import.meta.env.PUBLIC_CLIENT_ID;
 const redirectURI = import.meta.env.PUBLIC_REDIRECT_URI;
-const oauthUrl = `https://auth.hackclub.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectURI}&response_type=code&scope=email+name+slack_id+verification_status+birthdate+address+basic_info`;
+const oauthUrl = `https://auth.hackclub.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectURI}&response_type=code&scope=email+name+slack_id+verification_status+birthdate+address`;
 
 if (Astro.cookies.has("hackrail_token")) {
     // user is logged in hmmmm
