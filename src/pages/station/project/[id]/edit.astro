@@ -43,9 +43,22 @@ if (hackatimeProjects.projects.length === 0) {
 const initialSeconds = hackatimeProjects.projects
     .filter((p) => selectedProjects.includes(p.name))
     .reduce((t, p) => t + (p.total_seconds || 0), 0);
+
+const error = Astro.cookies.get("flash_error")?.value;
+if (error) {
+    Astro.cookies.delete("flash_error", { path: "/" });
+}
 ---
 
 <BaseLayout title="Edit Project" hideFooter={true}>
+    {error && (
+        <div
+            class="surface dangerbg"
+            style="width: 100%; border-radius: 0; padding: 1rem; margin-bottom: 1rem;"
+        >
+            <p>{error}</p>
+        </div>
+    )}
     <div class="separated-container">
         <div class="content-right">
             <h1>edit project †</h1>
@@ -158,7 +171,9 @@ const initialSeconds = hackatimeProjects.projects
                     >
                         cancel
                     </a>
-                    <button type="submit" class="button">save</button>
+                    <button type="submit" class="button">
+                        save
+                    </button>
                 </div>
             </form>
         </div>

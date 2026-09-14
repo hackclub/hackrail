@@ -13,6 +13,12 @@ const user = await GetUserFromCookies(Astro.cookies);
 if (!user) return Astro.redirect("/login");
 if (!user.hackatimeLinked) return Astro.redirect("/station/link");
 
+const error = Astro.cookies.get("flash_error")?.value;
+if (error) {
+    console.log("flash error: " + error);
+    Astro.cookies.delete("flash_error", { path: "/" });
+}
+
 const hackatimeProjects = await GetHackatimeProjects(user.slackId || "");
 
 if (
@@ -29,6 +35,14 @@ if (hackatimeProjects.projects.length === 0) {
 ---
 
 <BaseLayout title="Create Project" hideFooter={true}>
+    {error && (
+        <div
+            class="surface dangerbg"
+            style="width: 100%; border-radius: 0; padding: 1rem;"
+        >
+            <p>{error}</p>
+        </div>
+    )}
     <div class="separated-container">
         <div class="content-right">
             <h1>Create a new project †</h1>
@@ -89,7 +103,12 @@ if (hackatimeProjects.projects.length === 0) {
                     </div>
                     <div class="form-group">
                         <label for="liveUrl">playable url</label>
-                        <input type="url" id="liveUrl" name="liveUrl" />
+                        <input
+                            type="url"
+                            id="liveUrl"
+                            name="liveUrl"
+                            required
+                        />
                     </div>
                 </div>
                 <div class="form-high-group">

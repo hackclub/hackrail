@@ -65,6 +65,11 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
     console.error(
       `User ${user.slackId} tried to create/edit project with invalid hackatime projects: ${hackatimeProjects}`,
     );
+    cookies.set(
+      "flash_error",
+      "Invalid hackatime projects. Please make sure you selected at least one valid hackatime project.",
+      { path: "/" },
+    );
     return redirect(backTo);
   }
 
@@ -106,9 +111,20 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
     }
   }
 
-  if (!name || !description || !githubUrl || !hackatimeProjects) {
+  if (
+    !name ||
+    !description ||
+    !githubUrl ||
+    !hackatimeProjects ||
+    !playableUrl
+  ) {
     console.error(
       `User ${user.slackId} tried to create/edit project with missing fields: name(${name}), description(${description}), githubUrl(${githubUrl}), hackatimeProjects(${hackatimeProjects})`,
+    );
+    cookies.set(
+      "flash_error",
+      "Missing fields: name, description, githubUrl, hackatimeProjects, playableUrl are required",
+      { path: "/" },
     );
     return redirect(backTo);
   }
