@@ -73,7 +73,7 @@ async function Login(code: string): Promise<Result<string>> {
       "slack_id",
       "verification_status",
       "birthdate",
-      "adress",
+      "address",
     ];
 
     if (profileData.scopes.some((scope: string) => !scopes.includes(scope))) {
