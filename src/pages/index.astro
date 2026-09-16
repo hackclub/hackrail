@@ -130,7 +130,17 @@ if (user) {
     <main>
         <div class="deadline-container">
             <div class="deadline">
-                <p class="deadline-p">Until 30/10/26</p>
+                <p class="deadline-p">
+                    {new Date("2026-11-30T23:59:59Z").getTime() -
+                        new Date().getTime() >
+                    0
+                        ? `${Math.floor(
+                              (new Date("2026-11-30T23:59:59Z").getTime() -
+                                  new Date().getTime()) /
+                                  (1000 * 60 * 60 * 24),
+                          )} days left!`
+                        : "deadline has passed!"}
+                </p>
             </div>
         </div>
         <div class="header">
@@ -266,9 +276,9 @@ if (user) {
                                 when is this happening?
                             </summary>
                             <p class="faq-question-desc">
-                                hackrail runs until the 30th of october 2026!
-                                you can submit any projects you make(or have
-                                made) until then!
+                                hackrail runs until the 30th of nov 2026! you
+                                can submit any projects you make(or have made)
+                                until then!
                             </p>
                         </details>
                         <details class="faq-question">
