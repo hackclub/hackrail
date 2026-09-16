@@ -2,8 +2,6 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    height: 100vh;
-    overflow: hidden;
 }
 
 .content-right {
@@ -16,7 +14,8 @@
 }
 
 .form {
-    min-width: 600px;
+    width: 100%;
+    min-width: min(600px, 100%);
 }
 
 input,
@@ -37,9 +36,10 @@ input[type="file"]::file-selector-button {
 }
 
 .image-left {
+    position: sticky;
+    top: 0;
     height: 100vh;
     width: 40vw;
-    position: relative;
     flex-shrink: 0;
 }
 
