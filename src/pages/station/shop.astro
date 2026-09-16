@@ -16,23 +16,34 @@ const error = Astro.cookies.get("flash_error")?.value;
 if (error) {
     Astro.cookies.delete("flash_error", { path: "/" });
 }
+
+const success = Astro.url.searchParams.get("success");
 ---
 
 <BaseLayout title="Shop">
-    {
-        error && (
-            <div
-                class="surface dangerbg"
-                style="width: 100%; border-radius: 0; padding: 1rem;"
-            >
-                <p>{error}</p>
-            </div>
-        )
-    }
+    {success && (
+        <div
+            class="surface greenbg"
+            style="width: 100%; border-radius: 0; padding: 1rem;"
+        >
+            <p>Order placed! Be ready to board soon!...</p>
+        </div>
+    )}
+    {error && (
+        <div
+            class="surface dangerbg"
+            style="width: 100%; border-radius: 0; padding: 1rem;"
+        >
+            <p>{error}</p>
+        </div>
+    )}
     <div class="shop">
         <div class="shop-image-header">
             <div class="back-button">
-                <a class="button warnbg" href="/station/home"> ¬ </a>
+                <a class="button warnbg" href="/station/home">
+                    {" "}
+                    ¬{" "}
+                </a>
             </div>
             {}
             <Image
@@ -55,47 +66,44 @@ if (error) {
                     </p>
                 </div>
                 <div class="row gap">
-                    <div class="surface dangerbg">
-                        <p>
-                            shop orders are temporarily disabled, sorry for the
-                            inconvenience!
-                        </p>
+                    {user && (
+                        <div class="surface warnbg">
+                            <p>Balance: {user?.balance} =</p>
+                        </div>
+                    )}
+                    <div class="surface fgbg">
+                        <p>shop is open!</p>
                     </div>
-                    {
-                        user && (
-                            <div class="surface warnbg">
-                                <p>Balance: {user?.balance} =</p>
-                            </div>
-                        )
-                    }
+                    <a class="button greenbg" href="/station/shop/orders">
+                        see your orders
+                    </a>
                 </div>
                 <p class="expl">
                     welcome to the shop! here you can spend your tracks = on
-                    real stuff. <br />you earn 10 tracks for every hour you
-                    spend on your projects, and you can get a variable bonus
-                    based on project quality & relevant use of train data :)
+                    real stuff. <br />
+                    you earn 10 tracks for every hour you spend on your
+                    projects, and you can get a variable bonus based on project
+                    quality & relevant use of train data :)
                 </p>
             </div>
 
             <div class="shop-items">
-                {
-                    shopItems.map((item) => {
-                        var priceText = item.options[0].price + " =";
-                        if (item.options.length > 1) {
-                            priceText = "from " + priceText;
-                        }
-                        const cardItem: CardItem = {
-                            id: item.id,
-                            name: item.name,
-                            description: item.description,
-                            imageUrl: "/shop/" + item.image,
-                            chip: true,
-                            chipText: priceText,
-                            itemLink: `/station/shop/${item.id}`,
-                        };
-                        return <MultiPurposeCard item={cardItem} />;
-                    })
-                }
+                {shopItems.map((item) => {
+                    var priceText = item.options[0].price + " =";
+                    if (item.options.length > 1) {
+                        priceText = "from " + priceText;
+                    }
+                    const cardItem: CardItem = {
+                        id: item.id,
+                        name: item.name,
+                        description: item.description,
+                        imageUrl: "/shop/" + item.image,
+                        chip: true,
+                        chipText: priceText,
+                        itemLink: `/station/shop/${item.id}`,
+                    };
+                    return <MultiPurposeCard item={cardItem} />;
+                })}
                 <div class="requests">
                     <a href="mailto:alice@hackclub.cc?subject=Shop%20Request">
                         <div class="requests-container surface">

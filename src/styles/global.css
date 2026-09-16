@@ -128,22 +128,22 @@ button {
 }
 
 .dangerbg {
-    background-color: var(--danger);
+    background-color: var(--danger) !important;
     color: var(--bg);
 }
 
 .warnbg {
-    background-color: var(--warn);
+    background-color: var(--warn) !important;
     color: var(--bg);
 }
 
 .fgbg {
-    background-color: var(--fg);
+    background-color: var(--fg) !important;
     color: var(--bg);
 }
 
 .greenbg {
-    background-color: var(--green);
+    background-color: var(--green) !important;
     color: var(--bg);
 }
 

@@ -169,6 +169,24 @@ import MultiPurposeCard from "../../components/MultipurposeCard.astro";
                         chip: true,
                         chipText: projectTimeSpent[project.id] || "0h 0m",
                         itemLink: `/station/project/${project.id}`,
+                        secondChip:
+                            project.rejected == true ||
+                            project.shipped == true ||
+                            project.approved == true,
+                        secondChipText: project.rejected
+                            ? "rejected"
+                            : project.shipped
+                              ? "in review"
+                              : project.approved
+                                ? "approved"
+                                : "unshipped",
+                        secondChipColor: project.rejected
+                            ? "danger"
+                            : project.shipped
+                              ? "warn"
+                              : project.approved
+                                ? "success"
+                                : "primary",
                     };
                     return <MultiPurposeCard item={projectCard} />;
                 })}

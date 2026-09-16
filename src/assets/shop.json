@@ -4,7 +4,7 @@
     "image": "trainline.png",
     "name": "Trainline grant",
     "description": "5$ on trainline, stackable",
-    "extended-description": "//",
+    "extended-description": "",
     "stackable": true,
     "options": [
       {
@@ -20,7 +20,7 @@
     "image": "sncf.png",
     "name": "SNCF connect grant",
     "description": "5$ on sncf connect, stackable",
-    "extended-description": "//",
+    "extended-description": "",
     "stackable": true,
     "options": [
       {
@@ -36,7 +36,7 @@
     "image": "eurostar.jpg",
     "name": "Eurostar grant",
     "description": "5$ on eurostar, stackable",
-    "extended-description": "//",
+    "extended-description": "",
     "stackable": true,
     "options": [
       {
@@ -52,7 +52,7 @@
     "image": "interrail.jpg",
     "name": "Interrail pass",
     "description": "4/7/15 days within one/two month(s)!",
-    "extended-description": "The best way to travel around Europe! You get unlimited travels on trains in 33 countries for 4, 7 or 15 days within one or two months. Activate it within a year of purchase. You might still need to pay for seat reservations on some trains, but it's still a great deal! Check prices on some routes at https://www.interrail.com/en/plan-your-trip/interrail-timetable",
+    "extended-description": "The best way to travel around Europe! You get unlimited travels on trains in 33 countries for 4, 7 or 15 days within one or two months. Activate it within a year of purchase. You might still need to pay for seat reservations on some trains, but it's still a great deal! Check prices on some routes at https:www.interrail.com/en/plan-your-trip/interrail-timetable",
     "options": [
       {
         "id": "interail-pass-4-days",
@@ -77,7 +77,7 @@
     "image": "tgvm.png",
     "name": "TGV max jeune",
     "description": "free high speed train in france!",
-    "extended-description": "//",
+    "extended-description": "",
     "options": [
       {
         "id": "tgv-max-1-month",
@@ -138,7 +138,7 @@
     "image": "jr.png",
     "name": "JR Pass 7 Days",
     "description": "7 days of unlimited travel in Japan!",
-    "extended-description": "//",
+    "extended-description": "",
     "options": [
       {
         "id": "jr-pass-7-days",
@@ -153,7 +153,7 @@
     "image": "swiss-winter.png",
     "name": "SBB Saver Day Pass",
     "description": "Unlimited travel in Switzerland for one day!",
-    "extended-description": "Use this pass to explore switzerland for a day! (Maybe you could use it on the glacier's express route to see crazy winter landscapes :0). Cheaper the earlier you buy it, check the prices at https://www.sbb.ch/en/offers/saver-day-pass",
+    "extended-description": "Use this pass to explore switzerland for a day! (Maybe you could use it on the glacier's express route to see crazy winter landscapes :0). Cheaper the earlier you buy it, check the prices at https:www.sbb.ch/en/offers/saver-day-pass",
     "options": [
       {
         "id": "sbb-saver-day-pass-tier-1",
@@ -183,7 +183,7 @@
     "image": "germany.png",
     "name": "Deutschland Ticket",
     "description": "Unlimited travel on regional trains & public transport!",
-    "extended-description": "//",
+    "extended-description": "",
     "options": [
       {
         "id": "deutschland-ticket-1-month",
@@ -198,7 +198,7 @@
     "image": "britrail.png",
     "name": "BritRail Pass",
     "description": "Unlimited travel in the UK for 3, 4, 8, 15 or 30 days!",
-    "extended-description": "//",
+    "extended-description": "",
     "options": [
       {
         "id": "britrail-pass-2-days",
@@ -238,7 +238,7 @@
     "image": "powerbank.png",
     "name": "Powerbank",
     "description": "A powerbank to charge your devices on the go!",
-    "extended-description": "//",
+    "extended-description": "",
     "options": [
       {
         "id": "powerbank-1",

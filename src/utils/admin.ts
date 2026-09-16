@@ -13,11 +13,19 @@ export function GetAllProjects() {
 export async function UnlinkHackatimeForUser(slackId: string) {
   return db
     .update(users)
-    .set({ hackatimeLinked: 0, hackatimeToken: "" })
+    .set({ hackatimeLinked: false, hackatimeToken: "" })
     .where(eq(users.slackId, slackId))
     .run();
 }
 
 export function GetUserFromSlackId(slackId: string) {
   return db.select().from(users).where(eq(users.slackId, slackId)).get();
+}
+
+export async function UpdateUserBalance(slackId: string, newBalance: number) {
+  return db
+    .update(users)
+    .set({ balance: newBalance })
+    .where(eq(users.slackId, slackId))
+    .run();
 }

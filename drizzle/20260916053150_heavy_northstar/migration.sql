@@ -1,0 +1,1 @@
+ALTER TABLE `orders` ADD `option_id` text NOT NULL;

@@ -148,13 +148,13 @@ h1 {
     margin: 0;
     border: none;
     padding: 0;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
 }
 
 legend {
     font-weight: 700;
     font-size: 1.25rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
     padding: 0;
 }
 
@@ -177,4 +177,24 @@ label {
 input[type="radio" i] {
     accent-color: var(--green);
     margin: 0;
+}
+
+input[type="number" i] {
+    background-color: var(--bg-inset);
+    color: var(--fg);
+    border: none;
+    border-radius: 1rem;
+    padding: 0.5rem 1rem;
+    width: fit-content;
+    accent-color: var(--green);
+}
+
+.disabled {
+    background-color: var(--bg-inset) !important;
+    color: var(--fg-muted);
+    pointer-events: none;
+}
+
+.purchase-btn-container {
+    margin-top: 2rem;
 }

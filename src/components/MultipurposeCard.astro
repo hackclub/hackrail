@@ -11,6 +11,9 @@ export type CardItem = {
     chip: boolean;
     chipText: string;
     itemLink: string;
+    secondChip?: boolean;
+    secondChipText?: string;
+    secondChipColor?: "primary" | "success" | "warn" | "danger";
 };
 
 interface Props {
@@ -26,6 +29,11 @@ const { item, scale, unClickable = false } = Astro.props;
     <div class="multicard" style={`transform: scale(${scale || 1})`}>
         <div class="card-image-container">
             {item.chip && <div class="card-chip">{item.chipText}</div>}
+            {item.secondChip && (
+                <div class={`card-chip second ${item.secondChipColor + "bg"}`}>
+                    {item.secondChipText}
+                </div>
+            )}
             <img
                 class="card-image"
                 src={item.imageUrl}

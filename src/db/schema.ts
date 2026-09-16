@@ -81,8 +81,10 @@ export const orders = sqliteTable("orders", {
     .notNull()
     .references(() => users.slackId, { onDelete: "cascade" }),
   itemId: text("item_id").notNull(),
-  quantity: real("quantity").notNull(), // can be fractional for some items
+  optionId: text("option_id").notNull(),
+  quantity: real("quantity").notNull(), // can be fractional for some items, 1 or multiple if stackable
   totalPrice: real("total_price").notNull(),
+  status: text("status").notNull().default("processing"), // processing, error, shipped
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .$defaultFn(() => new Date()),
@@ -114,7 +116,6 @@ export const reviews = sqliteTable("reviews", {
 });
 
 export type User = typeof users.$inferSelect;
-export type NewUser = typeof users.$inferInsert;
 export type Project = typeof projects.$inferSelect;
 export type Order = typeof orders.$inferSelect;
 export type Review = typeof reviewEvents.$inferSelect;

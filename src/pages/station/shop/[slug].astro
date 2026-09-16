@@ -21,6 +21,19 @@ if (!item) {
 
 const user = await GetUserFromCookies(Astro.cookies);
 
+if (!user) {
+    Astro.cookies.set(
+        "flash_error",
+        "There was a problem with your account...",
+        {
+            path: "/",
+            maxAge: 10,
+        },
+    );
+}
+
+const balance = user?.balance || 0;
+
 // now we have the item :scheming:
 ---
 
@@ -35,51 +48,120 @@ const user = await GetUserFromCookies(Astro.cookies);
                     alt={item.name}
                 />
             </div>
-            <div class="shop-item-extended surface">
-                <FixedText text={item["extended-description"]} />
-            </div>
+            {item["extended-description"] != "" && (
+                <div class="shop-item-extended surface">
+                    <FixedText text={item["extended-description"]} />
+                </div>
+            )}
         </div>
         <div class="shop-item-details">
             <h1 class="shop-item-title">{item.name}</h1>
             <p class="shop-item-desc">
                 <FixedText text={item.description} />
-
-                <form
-                    method="POST"
-                    action=`/station/shop/${item.id}/purchase`
-                    class="shop-item-purchase-form"
-                >
-                    <input type="hidden" name="itemId" value={item.id} />
-
-                    {
-                        item.options.length > 0 && (
-                            <fieldset class="shop-item-options">
-                                <legend>Select an option:</legend>
-                                {item.options.map((option, index) => (
-                                    <div class="radio-option">
-                                        <input
-                                            type="radio"
-                                            id={`option-${index}`}
-                                            name="option"
-                                            value={option.name}
-                                            checked={index === 0}
-                                            required
-                                        />
-                                        <label for={`option-${index}`}>
-                                            <FixedText text={option.name} /> -{" "}
-                                            {option.price} =
-                                        </label>
-                                    </div>
-                                ))}
-                            </fieldset>
-                        )
-                    }
-
-                    <button class="button greenbg" type="submit"
-                        >Purchase</button
-                    >
-                </form>
             </p>
+
+            <form
+                method="POST"
+                action="/api/buy"
+                class="shop-item-purchase-form"
+            >
+                <input type="hidden" name="itemId" value={item.id} />
+
+                {item.options.length > 0 && (
+                    <>
+                        <fieldset class="shop-item-options">
+                            <legend>Select an option:</legend>
+                            {item.options.map((option, index) => (
+                                <div class="radio-option">
+                                    <input
+                                        type="radio"
+                                        id={`option-${index}`}
+                                        name="optionId"
+                                        value={option.id}
+                                        checked={index === 0}
+                                        data-price={option.price}
+                                        required
+                                    />
+                                    <label for={`option-${index}`}>
+                                        <FixedText text={option.name} /> -{" "}
+                                        {option.price} =
+                                    </label>
+                                </div>
+                            ))}
+                        </fieldset>
+                        {item.stackable && (
+                            <fieldset class="shop-item-options">
+                                <legend>How many do you want?</legend>
+                                <input
+                                    type="number"
+                                    name="quantity"
+                                    min="1"
+                                    value="1"
+                                    required
+                                />
+                            </fieldset>
+                        )}
+                    </>
+                )}
+                <div class="gap row purchase-btn-container">
+                    <button
+                        id="purchase-btn"
+                        class="button greenbg"
+                        type="submit"
+                        data-balance={balance}
+                    >
+                        Purchase
+                    </button>
+
+                    <p
+                        id="error-message"
+                        class="error-text"
+                        style="display: none;"
+                    >
+                        You don't have enough to purchase this item :(
+                    </p>
+                </div>
+            </form>
         </div>
     </div>
+    <script is:inline type="module">
+        const purchaseBtn = document.getElementById("purchase-btn");
+        const errorMessage = document.getElementById("error-message");
+        const radioInputs = document.querySelectorAll('input[name="optionId"]');
+        const quantityInput = document.querySelector('input[name="quantity"]');
+
+        if (purchaseBtn && radioInputs.length > 0) {
+            const balance = parseFloat(purchaseBtn.dataset.balance || "0");
+
+            const updateState = () => {
+                const selectedOption = Array.from(radioInputs).find(
+                    (input) => input.checked,
+                );
+                let price = parseFloat(selectedOption?.dataset.price || "0");
+                if (quantityInput) {
+                    const quantity = parseInt(quantityInput.value || "1");
+                    price *= quantity;
+                }
+
+                const hasEnoughBalance = balance >= price;
+
+                purchaseBtn.disabled = !hasEnoughBalance;
+                purchaseBtn.classList.toggle("disabled", !hasEnoughBalance);
+
+                if (errorMessage) {
+                    errorMessage.style.display = hasEnoughBalance
+                        ? "none"
+                        : "block";
+                }
+            };
+
+            radioInputs.forEach((input) => {
+                input.addEventListener("change", updateState);
+            });
+
+            quantityInput?.addEventListener("input", updateState);
+
+            updateState();
+        }
+    </script>
 </BaseLayout>

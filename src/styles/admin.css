@@ -49,3 +49,14 @@ h2 {
 .project-state-toggle {
     margin-bottom: 3rem;
 }
+
+.balance-change-form {
+    margin-bottom: 3rem;
+}
+
+.balance-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: start;
+}

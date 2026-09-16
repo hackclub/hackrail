@@ -72,6 +72,10 @@ h2.limited {
     color: var(--bg);
 }
 
+.second {
+    top: 2.25rem !important;
+}
+
 .card-image-container {
     width: 100%;
     position: relative;

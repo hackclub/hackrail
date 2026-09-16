@@ -129,3 +129,7 @@ span {
     flex-direction: row;
     align-items: center;
 }
+
+.shop {
+    margin-bottom: 4rem;
+}
