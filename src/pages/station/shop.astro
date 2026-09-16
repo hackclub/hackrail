@@ -65,16 +65,13 @@ const success = Astro.url.searchParams.get("success");
                         store?
                     </p>
                 </div>
-                <div class="row gap">
-                    {user && (
+<div class="row gap" style="align-items: center;">
+    {user && (
                         <div class="surface warnbg">
                             <p>Balance: {user?.balance} =</p>
                         </div>
                     )}
-                    <div class="surface fgbg">
-                        <p>shop is open!</p>
-                    </div>
-                    <a class="button greenbg" href="/station/orders">
+                    <a class="button greenbg order-btn" href="/station/orders">
                         see your orders
                     </a>
                 </div>
