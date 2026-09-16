@@ -1,0 +1,129 @@
+.page {
+    margin: 2rem;
+}
+
+h1 {
+    margin-bottom: 0;
+    margin-top: 0;
+    font-size: 4rem;
+    font-style: italic;
+}
+
+h2 {
+    margin: 0;
+    font-size: 1.25rem;
+}
+
+.orders-list {
+    display: flex;
+    flex-direction: column;
+    margin-right: 2rem;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.order-card {
+    width: 100%;
+    display: flex;
+    border-radius: 2rem !important;
+}
+
+.order-details {
+    align-items: center;
+    height: 100%;
+}
+
+.muted {
+    color: var(--fg-muted);
+    font-size: 0.875rem;
+    margin: 0;
+}
+
+.price {
+    margin: 0.5rem 0 0;
+    font-weight: 600;
+}
+
+.qty {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--fg-muted);
+    margin: 0;
+}
+
+.status {
+    font-size: 0.75rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 1rem;
+    font-weight: 600;
+    margin-left: auto;
+    text-transform: capitalize;
+}
+
+.status.processing {
+    background-color: var(--warn);
+    color: var(--bg);
+}
+
+.status.shipped {
+    background-color: var(--green);
+    color: var(--bg);
+}
+
+.status.error {
+    background-color: var(--danger);
+    color: var(--fg);
+}
+
+.item-image {
+    width: 100px;
+    height: 100%;
+    border-radius: 1rem;
+    object-fit: cover;
+}
+
+.order-main-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    justify-content: start;
+    height: 100%;
+    align-items: start;
+}
+
+h2 {
+    margin: 0;
+    font-size: 2rem;
+}
+
+.order-image {
+    height: 100%;
+}
+
+.order-price-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    margin-top: 0.5rem;
+}
+
+.order-price {
+    margin: 0;
+    padding: 0.5rem 0.75rem;
+    background-color: var(--bg-inset);
+    border-radius: 1rem;
+}
+
+.order-status {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.order-chip {
+    padding: 0.5rem 0.75rem;
+    border-radius: 1rem;
+}

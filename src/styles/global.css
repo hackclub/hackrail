@@ -89,6 +89,16 @@ button {
     flex-direction: row;
 }
 
+.spacebetween {
+    justify-content: space-between;
+    width: 100%;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+}
+
 .ycentered {
     display: flex;
     align-items: center;

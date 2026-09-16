@@ -106,7 +106,7 @@ export function OrderDMBlocks(order: Order): any[] {
       type: "section",
       text: {
         type: "mrkdwn",
-        text: `hey! we got your order! (*#${order.id}*).\nwe'll send you updates here & you can check its status at <https://rail.hackclub.com/station/shop/orders>`,
+        text: `hey! we got your order! (*#${order.id}*).\nwe'll send you updates here & you can check its status at <https://rail.hackclub.com/station/orders>`,
       },
     },
   ];

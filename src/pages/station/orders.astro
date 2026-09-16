@@ -1,0 +1,120 @@
+---
+import BaseLayout from "../../layouts/base.astro";
+import "../../styles/orders.css";
+import { GetUserFromCookies } from "../../utils/auth";
+import { GetOrdersByUser } from "../../utils/orders";
+import shopItems from "../../assets/shop.json";
+import UserHeader from "../../components/UserHeader.astro";
+import FixedText from "../../components/FixedText.astro";
+
+const user = await GetUserFromCookies(Astro.cookies);
+if (!user) return Astro.redirect("/login");
+
+const orders = await GetOrdersByUser(user.slackId);
+
+const info = (order) => {
+    const item = shopItems.find((item) => item.id === order.itemId);
+    if (!item) return null;
+    const option = item.options.find((option) => option.id === order.optionId);
+    return {
+        item: item.name,
+        image: item.image,
+        option: option ? option.name : null,
+    };
+};
+---
+
+<BaseLayout title="Orders">
+    <UserHeader user={user} />
+    <div class="page">
+        <div class="row ycentered gap">
+            <h1>Orders</h1>
+        </div>
+
+        {orders.length === 0 ? (
+            <div class="surface fgbg">
+                <p>
+                    you have no orders yet! check out the{" "}
+                    <a href="/station/shop">shop</a> =
+                </p>
+            </div>
+        ) : (
+            <div class="orders-list">
+                {orders.map((order) => {
+                    const itemInfo = info(order);
+                    return (
+                        <div class="surface order-card">
+                            <div class="row spacebetween">
+                                <div class="row ycentered gap">
+                                    <div class="order-image">
+                                        <img
+                                            src={
+                                                itemInfo
+                                                    ? "/shop/" + itemInfo.image
+                                                    : "default.png"
+                                            }
+                                            class="item-image"
+                                            alt={itemInfo?.item ?? order.itemId}
+                                            width="64"
+                                            height="64"
+                                        />
+                                    </div>
+                                    <div class="row gap order-details">
+                                        <div class="column order-main-details">
+                                            <div class="row gap">
+                                                <h2>
+                                                    {itemInfo?.item ??
+                                                        order.itemId}
+                                                </h2>
+                                                <p class="qty">
+                                                    {order.quantity > 1
+                                                        ? `x${order.quantity}`
+                                                        : ""}
+                                                </p>
+                                            </div>
+                                            <div class="column smolgap order-id">
+                                                <p class="muted">
+                                                    <FixedText
+                                                        text={
+                                                            itemInfo?.option ??
+                                                            order.optionId
+                                                        }
+                                                    />
+                                                </p>
+                                                <p class="muted">
+                                                    {order.createdAt.toLocaleDateString() +
+                                                        " at " +
+                                                        order.createdAt.toLocaleTimeString()}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="order-price-container">
+                                            <p class="order-price">
+                                                = {order.totalPrice.toFixed(2)}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="order-status">
+                                <div
+                                    class={`order-chip ${
+                                        order.status === "processing"
+                                            ? "warnbg"
+                                            : order.status === "shipped"
+                                              ? "greenbg"
+                                              : order.status === "delivered"
+                                                ? "primarybg"
+                                                : "dangerbg"
+                                    }`}
+                                >
+                                    {order.status}
+                                </div>
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+        )}
+    </div>
+</BaseLayout>
