@@ -70,7 +70,8 @@ for (const project of projects) {
 }
 
 // load shop items
-import shopItems from "../../assets/shop.json";
+import { getShopData } from "../../utils/shop";
+const shopItems = await getShopData();
 import { type CardItem } from "../../components/MultipurposeCard.astro";
 import MultiPurposeCard from "../../components/MultipurposeCard.astro";
 ---
@@ -211,7 +212,7 @@ import MultiPurposeCard from "../../components/MultipurposeCard.astro";
                             id: item.id,
                             name: item.name,
                             description: item.description,
-                            imageUrl: "/shop/" + item.image,
+                            imageUrl: item.image,
                             chip: true,
                             chipText: priceText,
                             itemLink: `/station/shop/${item.id}`,

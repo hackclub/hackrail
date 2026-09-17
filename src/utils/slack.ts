@@ -1,5 +1,5 @@
 import type { Order } from "../db/schema";
-import shopItems from "../assets/shop.json";
+import { getShopData } from "./shop";
 
 export async function SendSlackBlocks(blocks: any[], channel: string) {
   return await fetch("https://slack.com/api/chat.postMessage", {
@@ -54,10 +54,11 @@ export async function SendSlackBlocksToUser(userId: string, blocks: any[]) {
     .catch((err) => console.error("[slack] postMessage error:", err));
 }
 
-export function OrderBlocks(order: Order): any[] {
+export async function OrderBlocks(order: Order): Promise<any[]> {
+  const shopItems = await getShopData();
   const item = shopItems.find((i) => i.id === order.itemId);
   const imageUrl = item
-    ? `https://rail.hackclub.com/shop/${item.image}`
+    ? item.image
     : undefined;
 
   const accessory = imageUrl

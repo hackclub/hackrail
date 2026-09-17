@@ -85,6 +85,13 @@ const totalTimeSpent = Object.values(projectTimeSpent).reduce(
         )
     }
     <div style="margin:2rem;">
+        <button
+            class="button greenbg"
+            id="update-shop-btn"
+            style="margin-bottom: 1rem;"
+        >
+            update shop from sheets
+        </button>
         <h2>Stats</h2>
         <ul>
             <li>Total Users: {users.length}</li>
@@ -216,6 +223,22 @@ const totalTimeSpent = Object.values(projectTimeSpent).reduce(
         </table>
     </div>
     <script>
+        document
+            .getElementById("update-shop-btn")
+            ?.addEventListener("click", async () => {
+                const response = await fetch("/api/admin/update-shop", {
+                    method: "POST",
+                });
+                if (response.ok) {
+                   alert("Shop updated successfully!");
+                } else {
+                    console.error(
+                        "Failed to update shop:",
+                        response.statusText,
+                    );
+                }
+            });
+
         document.querySelectorAll("[id^='delete-user-']").forEach((button) => {
             button.addEventListener("click", async () => {
                 const slackId = button.id.replace("delete-user-", "");

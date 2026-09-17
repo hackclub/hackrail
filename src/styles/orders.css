@@ -23,7 +23,7 @@ h2 {
 }
 
 .order-card {
-    width: 100%;
+    width: 100% !important;
     display: flex;
     border-radius: 2rem !important;
 }

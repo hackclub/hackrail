@@ -1,3 +1,4 @@
+import "./initialize";
 import { defineMiddleware } from "astro:middleware";
 import { ValidateToken } from "./utils/auth";
 

@@ -1,11 +1,13 @@
 ---
 const { slug } = Astro.params;
 import BaseLayout from "../../../layouts/base.astro";
-import shopItems from "../../../assets/shop.json";
+import { getShopData } from "../../../utils/shop";
 import "../../../styles/shop.css";
 import UserHeader from "../../../components/UserHeader.astro";
 import { GetUserFromCookies } from "../../../utils/auth";
 import FixedText from "../../../components/FixedText.astro";
+
+const shopItems = await getShopData();
 
 const shopItemId = slug || "";
 
@@ -44,7 +46,7 @@ const balance = user?.balance || 0;
             <div class="shop-item-image-container">
                 <img
                     class="shop-item-image"
-                    src={"/shop/" + item.image}
+                    src={item.image}
                     alt={item.name}
                 />
             </div>

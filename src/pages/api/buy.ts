@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
 import { GetUserFromCookies } from "../../utils/auth";
-import shopData from "../../assets/shop.json";
+import { getShopData } from "../../utils/shop";
 import { upsertUser } from "../../utils/hackclub";
 import { orders, type Order } from "../../db/schema";
 import { db } from "../../db";
@@ -14,6 +14,8 @@ import {
 export const POST: APIRoute = async ({ request, cookies, redirect }) => {
   const user = await GetUserFromCookies(cookies);
   if (!user) return redirect("/login");
+
+  const shopData = await getShopData();
 
   const formData = await request.formData();
   const itemId = formData.get("itemId") as string;
@@ -85,7 +87,7 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
 
   const [inserted] = await db.insert(orders).values(order).returning();
 
-  await SendSlackBlocksToHackrailChannel(OrderBlocks(inserted));
+  await SendSlackBlocksToHackrailChannel(await OrderBlocks(inserted));
 
   await SendSlackBlocksToUser(user.slackId, OrderDMBlocks(inserted));
 

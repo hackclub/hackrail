@@ -3,7 +3,9 @@ import BaseLayout from "../../layouts/base.astro";
 import "../../styles/orders.css";
 import { GetUserFromCookies } from "../../utils/auth";
 import { GetOrdersByUser } from "../../utils/orders";
-import shopItems from "../../assets/shop.json";
+import { getShopData } from "../../utils/shop";
+
+const shopItems = await getShopData();
 import UserHeader from "../../components/UserHeader.astro";
 import FixedText from "../../components/FixedText.astro";
 import type { Order } from "../../db/schema";
@@ -17,6 +19,7 @@ const info = (order: Order) => {
     const item = shopItems.find((item) => item.id === order.itemId);
     if (!item) return null;
     const option = item.options.find((option) => option.id === order.optionId);
+    console.log("item", item, "option", option);
     return {
         item: item.name,
         image: item.image,
@@ -24,7 +27,6 @@ const info = (order: Order) => {
     };
 };
 
-//Sort orders by createdAt descending
 orders.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 ---
 
@@ -54,7 +56,7 @@ orders.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
                                         <img
                                             src={
                                                 itemInfo
-                                                    ? "/shop/" + itemInfo.image
+                                                    ? itemInfo.image
                                                     : "default.png"
                                             }
                                             class="item-image"

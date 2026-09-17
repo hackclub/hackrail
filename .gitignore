@@ -17,6 +17,9 @@ pnpm-debug.log*
 .env
 .env.production
 
+# shop data synced from sheets
+shop.json
+
 # macOS-specific files
 .DS_Store
 
