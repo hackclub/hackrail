@@ -1,0 +1,1 @@
+ALTER TABLE `orders` ADD `status` text DEFAULT 'processing' NOT NULL;
