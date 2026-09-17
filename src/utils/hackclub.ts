@@ -147,6 +147,7 @@ export async function upsertUser(profile: User) {
         note: profile.note,
         hackatimeLinked: profile.hackatimeLinked,
         hackatimeToken: profile.hackatimeToken,
+        balance: profile.balance,
       },
     })
     .returning();
