@@ -6,13 +6,14 @@ import { GetOrdersByUser } from "../../utils/orders";
 import shopItems from "../../assets/shop.json";
 import UserHeader from "../../components/UserHeader.astro";
 import FixedText from "../../components/FixedText.astro";
+import type { Order } from "../../db/schema";
 
 const user = await GetUserFromCookies(Astro.cookies);
 if (!user) return Astro.redirect("/login");
 
 const orders = await GetOrdersByUser(user.slackId);
 
-const info = (order) => {
+const info = (order: Order) => {
     const item = shopItems.find((item) => item.id === order.itemId);
     if (!item) return null;
     const option = item.options.find((option) => option.id === order.optionId);
@@ -22,6 +23,9 @@ const info = (order) => {
         option: option ? option.name : null,
     };
 };
+
+//Sort orders by createdAt descending
+orders.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 ---
 
 <BaseLayout title="Orders">
@@ -66,11 +70,11 @@ const info = (order) => {
                                                     {itemInfo?.item ??
                                                         order.itemId}
                                                 </h2>
-                                                <p class="qty">
+                                                <h2>
                                                     {order.quantity > 1
                                                         ? `x${order.quantity}`
                                                         : ""}
-                                                </p>
+                                                </h2>
                                             </div>
                                             <div class="column smolgap order-id">
                                                 <p class="muted">

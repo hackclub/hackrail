@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
 import { GetUserFromCookies } from "../../utils/auth";
-import fs from "fs";
+import shopData from "../../assets/shop.json";
 import { upsertUser } from "../../utils/hackclub";
 import { orders, type Order } from "../../db/schema";
 import { db } from "../../db";
@@ -14,8 +14,6 @@ import {
 export const POST: APIRoute = async ({ request, cookies, redirect }) => {
   const user = await GetUserFromCookies(cookies);
   if (!user) return redirect("/login");
-
-  const shopData = GetShopData();
 
   const formData = await request.formData();
   const itemId = formData.get("itemId") as string;
@@ -92,30 +90,4 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
   await SendSlackBlocksToUser(user.slackId, OrderDMBlocks(inserted));
 
   return redirect("/station/shop?success=true");
-};
-
-function GetShopData(): ShopData {
-  // load ../../../assets/shop.json
-  const shopData = JSON.parse(
-    fs.readFileSync("src/assets/shop.json", "utf8"),
-  ) as ShopData;
-
-  return shopData;
-}
-
-type ShopData = ShopItem[];
-type ShopItem = {
-  id: string;
-  name: string;
-  image: string;
-  description: string;
-  extendedDescription: string;
-  stackable: boolean;
-  options: ShopOption[];
-};
-
-type ShopOption = {
-  id: string;
-  name: string;
-  price: number;
 };
