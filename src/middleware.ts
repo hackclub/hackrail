@@ -2,7 +2,7 @@ import "./initialize";
 import { defineMiddleware } from "astro:middleware";
 import { ValidateToken } from "./utils/auth";
 
-const ADMIN_USERS = ["U05MKEZUY67,U08RVF1BAN4"];
+const ADMIN_USERS = ["U05MKEZUY67", "U08RVF1BAN4"];
 const REVIEWER_USERS = ["U05MKEZUY67", "U080HHYN0JD, U08RVF1BAN4"];
 
 const PROTECTED_ROUTES: Record<string, "auth" | "admin" | "reviewer"> = {
