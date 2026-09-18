@@ -2,6 +2,7 @@
 import { Image } from "astro:assets";
 import "./userheader.css";
 import { isAdmin } from "../middleware";
+import hackrailRoundedLogo from "../assets/misc/rounded_hackrail.svg";
 
 const { user, backUrlOverride, absolute = false } = Astro.props;
 const admin = isAdmin(user?.slackId || "");

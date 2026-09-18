@@ -5,7 +5,7 @@ import { type Card } from "../components/SillyCarousel.astro";
 import { Image } from "astro:assets";
 
 import cableCarRaw from "../assets/images/cable_car.svg?raw";
-
+import hackclubLogo from "../assets/misc/hackclub.svg";
 // images
 import signImage from "../assets/images/railwaysign.png";
 import prahaCentralImage from "../assets/images/praha_central.jpg";
@@ -145,6 +145,13 @@ if (user) {
         </div>
         <div class="header">
             <div class="title-container">
+                <a href="https://hackclub.com">
+                    <Image
+                        src={hackclubLogo}
+                        class="hackclub-logo"
+                        alt="hackclub logo"
+                    />
+                </a>
                 <span class="icon" set:html={cableCarRaw} />
                 <h1 class="title">hackrail</h1>
                 <p class="subtitle">ship projects ß get on trains</p>
@@ -153,6 +160,7 @@ if (user) {
                         {isLoggedIn ? "Enter the station" : "Get started now!"}
                     </span>
                 </a>
+                <p class="pre">Ran by Alice & Barnav!</p>
             </div>
             <div class="spacer">
                 <div class="mapdesc-cont">

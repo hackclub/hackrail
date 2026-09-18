@@ -18,9 +18,15 @@ const oauthUrl = `https://hackatime.hackclub.com/oauth/authorize?client_id=${cli
     <UserHeader user={user} />
     <div class="margin">
         <div class="link-container">
-            <h1>hackatime link required</h1>
-            <p>we need your hackatime account before creating projects :0</p>
-            <a class="button" href={oauthUrl}>link hackatime</a>
+            <h1>Hackatime link required</h1>
+            <p>
+                we need access to your hackatime data before you can create
+                projects :0 <br /> (this will only be used to read time spent on
+                each project you select/list all of your projects!)
+            </p>
+            <a class="button" href={oauthUrl}>
+                link hackatime
+            </a>
         </div>
     </div>
 </BaseLayout>
