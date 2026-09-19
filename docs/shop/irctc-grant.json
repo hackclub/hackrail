@@ -1,0 +1,16 @@
+{
+  "id": "irctc",
+  "image": "/shop/irctc.svg",
+  "name": "IRCTC grant",
+  "description": "5$ on IRCTC (India), stackable",
+  "extended-description": "Redeem this grant towards Indian Railways train tickets.",
+  "stackable": true,
+  "options": [
+    {
+      "id": "irctc-5",
+      "name": "$5 IRCTC grant",
+      "price": 10
+    }
+  ],
+  "featured": false
+}
