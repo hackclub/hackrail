@@ -1,31 +1,50 @@
 ---
 interface Props {
     title: string;
-    description?: string;
+    embedTitleReplacement?: string;
+    embedDescriptionReplacement?: string;
+    embedImageReplacement?: string;
 }
 
-const { title, description = "" } = Astro.props;
+const {
+    title,
+    embedTitleReplacement,
+    embedDescriptionReplacement,
+    embedImageReplacement,
+} = Astro.props;
 ---
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="generator" content={Astro.generator} />
 
     <title>{title}</title>
     <meta name="description" content="ship projects -> get on trains!" />
 
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="hackrail" />
-    <meta property="og:description" content="ship projects -> get on trains!" />
-    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:title" content={embedTitleReplacement || title} />
+    <meta
+        property="og:description"
+        content={
+            embedDescriptionReplacement || "ship projects -> get on trains!"
+        }
+    />
+    <meta
+        property="og:image"
+        content={embedImageReplacement || "/og-image.png"}
+    />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title} />
+    <meta name="twitter:title" content={embedTitleReplacement || title} />
     <meta
         name="twitter:description"
-        content="ship projects -> get on trains!"
+        content={
+            embedDescriptionReplacement || "ship projects -> get on trains!"
+        }
     />
-    <meta name="twitter:image" content="/og-image.png" />
+    <meta
+        name="twitter:image"
+        content={embedImageReplacement || "/og-image.png"}
+    />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 </head>

@@ -22,33 +22,24 @@ if (!item) {
 }
 
 const user = await GetUserFromCookies(Astro.cookies);
-
-if (!user) {
-    Astro.cookies.set(
-        "flash_error",
-        "There was a problem with your account...",
-        {
-            path: "/",
-            maxAge: 10,
-        },
-    );
-}
+const isGuest = !user;
 
 const balance = user?.balance || 0;
 
 // now we have the item :scheming:
 ---
 
-<BaseLayout title={"Shop - " + item.name}>
-    <UserHeader user={user} backUrlOverride="/station/shop" />
+<BaseLayout
+    title={"Shop - " + item.name}
+    embedTitleReplacement={item.name}
+    embedDescriptionReplacement={item.description}
+    embedImageReplacement={item.image}
+>
+    <UserHeader user={user} backUrlOverride={isGuest ? "/station/shop" : "/"} />
     <div class="shop-item-page">
         <div class="shop-item-top">
             <div class="shop-item-image-container">
-                <img
-                    class="shop-item-image"
-                    src={item.image}
-                    alt={item.name}
-                />
+                <img class="shop-item-image" src={item.image} alt={item.name} />
             </div>
             {item["extended-description"] != "" && (
                 <div class="shop-item-extended surface">
@@ -69,7 +60,7 @@ const balance = user?.balance || 0;
             >
                 <input type="hidden" name="itemId" value={item.id} />
 
-                {item.options.length > 0 && (
+                {item.options.length > 0 && !isGuest && (
                     <>
                         <fieldset class="shop-item-options">
                             <legend>Select an option:</legend>
@@ -105,24 +96,31 @@ const balance = user?.balance || 0;
                         )}
                     </>
                 )}
-                <div class="gap row purchase-btn-container">
-                    <button
-                        id="purchase-btn"
-                        class="button greenbg"
-                        type="submit"
-                        data-balance={balance}
-                    >
-                        Purchase
-                    </button>
+                {isGuest && (
+                    <div class="surface warnbg">
+                        <p>You must be logged in to purchase this item!</p>
+                    </div>
+                )}
+                {!isGuest && (
+                    <div class="gap row purchase-btn-container">
+                        <button
+                            id="purchase-btn"
+                            class="button greenbg"
+                            type="submit"
+                            data-balance={balance}
+                        >
+                            Purchase
+                        </button>
 
-                    <p
-                        id="error-message"
-                        class="error-text"
-                        style="display: none;"
-                    >
-                        You don't have enough to purchase this item :(
-                    </p>
-                </div>
+                        <p
+                            id="error-message"
+                            class="error-text"
+                            style="display: none;"
+                        >
+                            You don't have enough to purchase this item :(
+                        </p>
+                    </div>
+                )}
             </form>
         </div>
     </div>
