@@ -1,7 +1,14 @@
 ---
 import BaseHead from "../components/BaseHead.astro";
 import Footer from "../components/Footer.astro";
-const { title, hideFooter, removeContent } = Astro.props;
+const {
+    title,
+    hideFooter,
+    removeContent,
+    embedTitleReplacement,
+    embedDescriptionReplacement,
+    embedImageReplacement,
+} = Astro.props;
 import "../styles/global.css";
 import { Font } from "astro:assets";
 ---
@@ -11,7 +18,12 @@ import { Font } from "astro:assets";
         <Font cssVariable="--font-rail" preload />
         <Font cssVariable="--font-dot" preload />
         <meta name="color-scheme" content="dark" />
-        <BaseHead title={title} />
+        <BaseHead
+            title={title}
+            embedTitleReplacement={embedTitleReplacement}
+            embedDescriptionReplacement={embedDescriptionReplacement}
+            embedImageReplacement={embedImageReplacement}
+        />
     </head>
     <body>
         <main class="content">
