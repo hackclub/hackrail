@@ -35,7 +35,7 @@ const balance = user?.balance || 0;
     embedDescriptionReplacement={item.description}
     embedImageReplacement={item.image}
 >
-    <UserHeader user={user} backUrlOverride={isGuest ? "/station/shop" : "/"} />
+    <UserHeader user={user} backUrlOverride="/station/shop" />
     <div class="shop-item-page">
         <div class="shop-item-top">
             <div class="shop-item-image-container">
