@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="760" viewBox="0 0 1080 760" role="img" aria-labelledby="title desc">
+  <title id="title">IRCTC Train Grant artwork</title>
+  <desc id="desc">Illustrated train on a deep blue background, with IRCTC Train Grant text and a subtle Indian tricolor accent.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#123d71"/>
+      <stop offset="1" stop-color="#0d2345"/>
+    </linearGradient>
+    <linearGradient id="train" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#f9fbff"/>
+      <stop offset="1" stop-color="#dce8f8"/>
+    </linearGradient>
+  </defs>
+  <rect width="1080" height="760" fill="url(#bg)"/>
+  <circle cx="870" cy="132" r="178" fill="#ffffff" opacity=".035"/>
+  <circle cx="172" cy="588" r="204" fill="#ffffff" opacity=".03"/>
+  <g transform="translate(330 94)">
+    <rect x="50" y="18" width="320" height="282" rx="76" fill="url(#train)"/>
+    <rect x="81" y="55" width="258" height="108" rx="27" fill="#245991"/>
+    <rect x="91" y="65" width="116" height="86" rx="14" fill="#86bbdb"/>
+    <rect x="216" y="65" width="113" height="86" rx="14" fill="#86bbdb"/>
+    <path d="M50 211h320v34H50z" fill="#e78d48"/>
+    <path d="M50 245h320v11H50z" fill="#398c64"/>
+    <circle cx="116" cy="206" r="15" fill="#f3c962"/>
+    <circle cx="304" cy="206" r="15" fill="#f3c962"/>
+    <rect x="102" y="274" width="55" height="34" rx="9" fill="#9db3c9"/>
+    <rect x="263" y="274" width="55" height="34" rx="9" fill="#9db3c9"/>
+    <path d="M74 331h270M35 365h348" fill="none" stroke="#98bbd7" stroke-width="13" stroke-linecap="round" opacity=".65"/>
+  </g>
+  <text x="540" y="511" fill="#ffffff" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="115" letter-spacing="6">IRCTC</text>
+  <text x="540" y="577" fill="#dce9f7" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="600" font-size="33" letter-spacing="9">TRAIN GRANT</text>
+  <g transform="translate(385 663)">
+    <rect width="103" height="9" rx="4.5" fill="#f4a45f"/>
+    <rect x="103" width="103" height="9" fill="#ffffff"/>
+    <rect x="206" width="103" height="9" rx="4.5" fill="#69b685"/>
+  </g>
+</svg>
