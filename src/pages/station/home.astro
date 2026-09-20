@@ -203,7 +203,7 @@ import MultiPurposeCard from "../../components/MultipurposeCard.astro";
             <div class="row gap project-strip">
                 {shopItems.map((item) => {
                     if (item.featured) {
-                        var priceText = item.options[0].price + " =";
+                        var priceText = (item.options[0]?.price ?? 0) + " =";
                         if (item.options.length > 1) {
                             priceText = "from " + priceText;
                         }

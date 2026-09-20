@@ -189,7 +189,7 @@ export function sheetToShopData(data: SheetShopData): ShopData {
     optionsByParent.set(key, list);
   }
 
-  const items: ShopData = data.items.map((item) => {
+  const items: ShopData = data.items.flatMap((item) => {
     const key = normalizeId(item.id);
     const opts = (optionsByParent.get(key) ?? []).map((opt) => ({
       id: opt.id,
@@ -197,16 +197,20 @@ export function sheetToShopData(data: SheetShopData): ShopData {
       price: opt.price,
     }));
 
-    return {
-      id: item.id,
-      image: item.image,
-      name: item.name,
-      description: item.description,
-      "extended-description": item.extendedDescription,
-      stackable: item.stackable,
-      options: opts,
-      featured: item.featured,
-    };
+    if (opts.length === 0) return [];
+
+    return [
+      {
+        id: item.id,
+        image: item.image,
+        name: item.name,
+        description: item.description,
+        "extended-description": item.extendedDescription,
+        stackable: item.stackable,
+        options: opts,
+        featured: item.featured,
+      },
+    ];
   });
 
   return items;

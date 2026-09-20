@@ -87,7 +87,7 @@ const success = Astro.url.searchParams.get("success");
 
             <div class="shop-items">
                 {shopItems.map((item) => {
-                    var priceText = item.options[0].price + " =";
+                    var priceText = (item.options[0]?.price ?? 0) + " =";
                     if (item.options.length > 1) {
                         priceText = "from " + priceText;
                     }
