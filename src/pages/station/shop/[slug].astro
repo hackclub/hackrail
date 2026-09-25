@@ -117,7 +117,10 @@ item.options.forEach((option) => {
                                         <label for={`option-${index}`}>
                                             {discount ? (
                                                 <span class="option-name">
-                                                    {option.name} -{" "}
+                                                    <FixedText
+                                                        text={option.name}
+                                                    />{" "}
+                                                    -{" "}
                                                     <span class="strikethrough">
                                                         {option.price.toFixed(
                                                             2,
@@ -133,8 +136,11 @@ item.options.forEach((option) => {
                                                 </span>
                                             ) : (
                                                 <span class="option-name">
-                                                    {option.name} - $
-                                                    {option.price.toFixed(2)}
+                                                    <FixedText
+                                                        text={option.name}
+                                                    />{" "}
+                                                    - {option.price.toFixed(2)}{" "}
+                                                    =
                                                 </span>
                                             )}
                                         </label>
