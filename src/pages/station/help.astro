@@ -124,12 +124,28 @@ const projects: CardItem[] = [
             height={500}
         />
         <h1>Information desk</h1>
-        <p class="expl">
-            hackrail projects should use open train data and make something cool
-            with it! we also accept train/transportation adjacent projects
-            (games,...), but you should ask in the hackrail slack channel!
-        </p>
         <div class="categories gap">
+            <div class="category">
+                <h2>Tiers</h2>
+                <ul>
+                    <li>
+                        <strong>Tier 3</strong> - A simple project that doesn't
+                        make use of public transport open data.
+                        <p class="payout">(8 tracks per hour)</p>
+                    </li>
+                    <li>
+                        <strong>Tier 2</strong> - A project that makes use of
+                        public transport open data OR any polished project!
+                        <p class="payout">(10 tracks per hour)</p>
+                    </li>
+                    <li>
+                        <strong>Tier 1</strong> - A project that makes use of
+                        public transport open data and is polished, or a project
+                        that is very unique and creative!
+                        <p class="payout">(12 tracks per hour)</p>
+                    </li>
+                </ul>
+            </div>
             <div class="category">
                 <h2>Cool apis!</h2>
                 <div class="guides-content">
@@ -162,12 +178,6 @@ const projects: CardItem[] = [
                             <MultipurposeCard item={project} />
                         ))}
                     </div>
-                </div>
-            </div>
-            <div class="category">
-                <h2>Starter projects</h2>
-                <div class="guides-content">
-                    <p>/wip/</p>
                 </div>
             </div>
         </div>

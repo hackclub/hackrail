@@ -1,0 +1,25 @@
+---
+import { Image } from "astro:assets";
+import DiscountShape from "../assets/misc/discount.svg";
+import "./discount.css";
+import FixedText from "./FixedText.astro";
+
+interface Props {
+    percentage: string;
+}
+
+const { percentage } = Astro.props;
+---
+
+<div class="discount-chip">
+    <Image
+        src={DiscountShape}
+        width={16}
+        height={16}
+        alt="discount"
+        class="discount-icon"
+    />
+    <p class="discount-text">
+        <FixedText text={"- " + percentage} />
+    </p>
+</div>

@@ -6,12 +6,13 @@ import "../../../styles/shop.css";
 import UserHeader from "../../../components/UserHeader.astro";
 import { GetUserFromCookies } from "../../../utils/auth";
 import FixedText from "../../../components/FixedText.astro";
+import DiscountChip from "../../../components/DiscountChip.astro";
 
 const shopItems = await getShopData();
 
 const shopItemId = slug || "";
 
-const item = shopItems.find((item) => item.id === shopItemId);
+const item = shopItems.items.find((item) => item.id === shopItemId);
 if (!item) {
     Astro.cookies.set("flash_error", "Shop item not found", {
         path: "/",
@@ -25,6 +26,29 @@ const user = await GetUserFromCookies(Astro.cookies);
 const isGuest = !user;
 
 const balance = user?.balance || 0;
+
+var discount: boolean = false;
+var percentage: string = "";
+var discountEndDate: string = "";
+
+item.options.forEach((option) => {
+    shopItems.discounts?.forEach((discountItem) => {
+        if (discountItem["discount-parent-option-id"] === option.id) {
+            discount = true;
+            // make a new date object with unix discountItem.end and format it to a readable string
+            const endDate = new Date(parseInt(discountItem.end));
+            discountEndDate = endDate.toLocaleString("en-US", {
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+                hour: "numeric",
+                minute: "numeric",
+                hour12: true,
+            });
+            percentage = discountItem.percentage.toString();
+        }
+    });
+});
 
 // now we have the item :scheming:
 ---
@@ -40,6 +64,7 @@ const balance = user?.balance || 0;
         <div class="shop-item-top">
             <div class="shop-item-image-container">
                 <img class="shop-item-image" src={item.image} alt={item.name} />
+                {discount && <DiscountChip percentage={percentage} />}
             </div>
             {item["extended-description"] != "" && (
                 <div class="shop-item-extended surface">
@@ -52,6 +77,13 @@ const balance = user?.balance || 0;
             <p class="shop-item-desc">
                 <FixedText text={item.description} />
             </p>
+            {discount && (
+                <div class="surface dangerbg" style="margin-bottom:1rem;">
+                    <FixedText
+                        text={percentage + " off until " + discountEndDate}
+                    />
+                </div>
+            )}
 
             <form
                 method="POST"
@@ -64,23 +96,51 @@ const balance = user?.balance || 0;
                     <>
                         <fieldset class="shop-item-options">
                             <legend>Select an option:</legend>
-                            {item.options.map((option, index) => (
-                                <div class="radio-option">
-                                    <input
-                                        type="radio"
-                                        id={`option-${index}`}
-                                        name="optionId"
-                                        value={option.id}
-                                        checked={index === 0}
-                                        data-price={option.price}
-                                        required
-                                    />
-                                    <label for={`option-${index}`}>
-                                        <FixedText text={option.name} /> -{" "}
-                                        {option.price} =
-                                    </label>
-                                </div>
-                            ))}
+                            {item.options.map((option, index) => {
+                                const discount = shopItems.discounts?.find(
+                                    (d) =>
+                                        d["discount-parent-option-id"] ===
+                                        option.id,
+                                );
+
+                                return (
+                                    <div class="radio-option">
+                                        <input
+                                            type="radio"
+                                            id={`option-${index}`}
+                                            name="optionId"
+                                            value={option.id}
+                                            checked={index === 0}
+                                            data-price={option.price}
+                                            required
+                                        />
+                                        <label for={`option-${index}`}>
+                                            {discount ? (
+                                                <span class="option-name">
+                                                    {option.name} -{" "}
+                                                    <span class="strikethrough">
+                                                        {option.price.toFixed(
+                                                            2,
+                                                        )}{" "}
+                                                        =
+                                                    </span>{" "}
+                                                    <span class="discounted-price">
+                                                        {discount[
+                                                            "new-price"
+                                                        ].toFixed(2)}{" "}
+                                                        =
+                                                    </span>
+                                                </span>
+                                            ) : (
+                                                <span class="option-name">
+                                                    {option.name} - $
+                                                    {option.price.toFixed(2)}
+                                                </span>
+                                            )}
+                                        </label>
+                                    </div>
+                                );
+                            })}
                         </fieldset>
                         {item.stackable && (
                             <fieldset class="shop-item-options">

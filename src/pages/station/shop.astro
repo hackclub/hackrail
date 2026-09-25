@@ -6,6 +6,7 @@ import "../../styles/shop.css";
 import { GetUserFromCookies } from "../../utils/auth";
 import MultiPurposeCard from "../../components/MultipurposeCard.astro";
 import type { CardItem } from "../../components/MultipurposeCard.astro";
+import DiscountChip from "../../components/DiscountChip.astro";
 // load shop items
 import { getShopData } from "../../utils/shop";
 const shopItems = await getShopData();
@@ -66,8 +67,8 @@ const success = Astro.url.searchParams.get("success");
                         store?
                     </p>
                 </div>
-<div class="row gap" style="align-items: center;">
-    {user && (
+                <div class="row gap" style="align-items: center;">
+                    {user && (
                         <div class="surface warnbg">
                             <p>Balance: {user?.balance} =</p>
                         </div>
@@ -79,18 +80,42 @@ const success = Astro.url.searchParams.get("success");
                 <p class="expl">
                     welcome to the shop! here you can spend your tracks = on
                     real stuff. <br />
-                    you earn 10 tracks for every hour you spend on your
-                    projects, and you can get a variable bonus based on project
-                    quality & relevant use of train data :)
+                    you earn between 8 to 12 tracks for every hour you spend on
+                    your projects! (check the{" "}
+                    <a class="inline-link" href="/station/help">
+                        guide
+                    </a>{" "}
+                    for info on tiers)
                 </p>
             </div>
 
             <div class="shop-items">
-                {shopItems.map((item) => {
+                {shopItems.items.map((item) => {
                     var priceText = (item.options[0]?.price ?? 0) + " =";
                     if (item.options.length > 1) {
                         priceText = "from " + priceText;
                     }
+                    var discount: boolean = false;
+                    var discountPercentage: string = "0";
+                    item.options.forEach((option) => {
+                        if (
+                            shopItems.discounts?.find(
+                                (d) =>
+                                    d["discount-parent-option-id"] ===
+                                    option.id,
+                            )
+                        ) {
+                            discount = true;
+                            discountPercentage = shopItems.discounts
+                                ?.find(
+                                    (d) =>
+                                        d["discount-parent-option-id"] ===
+                                        option.id,
+                                )
+                                ?.percentage.toString() as string;
+                        }
+                    });
+
                     const cardItem: CardItem = {
                         id: item.id,
                         name: item.name,
@@ -100,7 +125,15 @@ const success = Astro.url.searchParams.get("success");
                         chipText: priceText,
                         itemLink: `/station/shop/${item.id}`,
                     };
-                    return <MultiPurposeCard item={cardItem} />;
+                    if (!discount) {
+                        return <MultiPurposeCard item={cardItem} />;
+                    } else {
+                        return (
+                            <MultiPurposeCard item={cardItem}>
+                                <DiscountChip percentage={discountPercentage} />
+                            </MultiPurposeCard>
+                        );
+                    }
                 })}
                 <div class="requests">
                     <a href="mailto:alice@hackclub.cc?subject=Shop%20Request">

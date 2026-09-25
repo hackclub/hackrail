@@ -31,11 +31,19 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
 
   var price = 0;
   if (
-    !shopData.some((item) => {
+    !shopData.items.some((item) => {
       if (item.id === itemId) {
         const option = item.options.find((opt) => opt.id === optionId);
         if (option) {
           price = option.price;
+          // check if theres a discount running
+          if (shopData.discounts) {
+            price =
+              shopData.discounts.find(
+                (discount) =>
+                  discount["discount-parent-option-id"] === optionId,
+              )?.["new-price"] || price;
+          }
           return true;
         }
       }
@@ -50,7 +58,7 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
 
   // now if it's stackable, check that a quantity has been provided & multiply the price
   var stackable =
-    shopData.find((item) => item.id === itemId)?.stackable || false;
+    shopData.items.find((item) => item.id === itemId)?.stackable || false;
 
   if (stackable && quantity <= 0) {
     cookies.set("flash_error", "Quantity must be greater than 0", {

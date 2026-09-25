@@ -13,10 +13,10 @@ import type { Order } from "../../db/schema";
 const user = await GetUserFromCookies(Astro.cookies);
 if (!user) return Astro.redirect("/login");
 
-const orders = await GetOrdersByUser(user.slackId);
+const orders = GetOrdersByUser(user.slackId);
 
 const info = (order: Order) => {
-    const item = shopItems.find((item) => item.id === order.itemId);
+    const item = shopItems.items.find((item) => item.id === order.itemId);
     if (!item) return null;
     const option = item.options.find((option) => option.id === order.optionId);
     console.log("item", item, "option", option);

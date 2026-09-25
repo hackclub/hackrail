@@ -56,10 +56,8 @@ export async function SendSlackBlocksToUser(userId: string, blocks: any[]) {
 
 export async function OrderBlocks(order: Order): Promise<any[]> {
   const shopItems = await getShopData();
-  const item = shopItems.find((i) => i.id === order.itemId);
-  const imageUrl = item
-    ? item.image
-    : undefined;
+  const item = shopItems.items.find((i) => i.id === order.itemId);
+  const imageUrl = item ? item.image : undefined;
 
   const accessory = imageUrl
     ? { type: "image", image_url: imageUrl, alt_text: item!.name }

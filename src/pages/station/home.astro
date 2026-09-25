@@ -12,6 +12,7 @@ import { formatSeconds } from "../../utils/time";
 import type { Project } from "../../db/schema";
 import UserHeader from "../../components/UserHeader.astro";
 import { separateText, type TextBlock } from "../../utils/text";
+import DiscountChip from "../../components/DiscountChip.astro";
 
 // get error from cookies
 const error = Astro.cookies.get("flash_error")?.value;
@@ -201,7 +202,29 @@ import MultiPurposeCard from "../../components/MultipurposeCard.astro";
                 </a>
             </div>
             <div class="row gap project-strip">
-                {shopItems.map((item) => {
+                {shopItems.items.map((item) => {
+                    // check if theres a discount
+                    var discount: boolean = false;
+                    var discountPercentage: string = "0";
+                    item.options.forEach((option) => {
+                        if (
+                            shopItems.discounts?.find(
+                                (d) =>
+                                    d["discount-parent-option-id"] ===
+                                    option.id,
+                            )
+                        ) {
+                            discount = true;
+                            discountPercentage = shopItems.discounts
+                                ?.find(
+                                    (d) =>
+                                        d["discount-parent-option-id"] ===
+                                        option.id,
+                                )
+                                ?.percentage.toString() as string;
+                        }
+                    });
+
                     if (item.featured) {
                         var priceText = (item.options[0]?.price ?? 0) + " =";
                         if (item.options.length > 1) {
@@ -217,7 +240,17 @@ import MultiPurposeCard from "../../components/MultipurposeCard.astro";
                             chipText: priceText,
                             itemLink: `/station/shop/${item.id}`,
                         };
-                        return <MultiPurposeCard item={cardItem} />;
+                        if (!discount) {
+                            return <MultiPurposeCard item={cardItem} />;
+                        } else {
+                            return (
+                                <MultiPurposeCard item={cardItem}>
+                                    <DiscountChip
+                                        percentage={discountPercentage}
+                                    />
+                                </MultiPurposeCard>
+                            );
+                        }
                     }
                 })}
             </div>

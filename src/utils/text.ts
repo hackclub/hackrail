@@ -1,4 +1,4 @@
-const breakList = ["$"];
+const breakList = ["$", "%", "+"];
 
 export type TextBlock = {
   text: string;

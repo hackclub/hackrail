@@ -27,6 +27,7 @@ const { item, scale, unClickable = false } = Astro.props;
 
 <a href={unClickable == false ? item.itemLink : undefined} class="card-link">
     <div class="multicard" style={`transform: scale(${scale || 1})`}>
+        <slot />
         <div class="card-image-container">
             {item.chip && <div class="card-chip">{item.chipText}</div>}
             {item.secondChip && (

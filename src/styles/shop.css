@@ -118,16 +118,16 @@ h1 {
 
 .shop-item-image-container {
     max-width: 480px;
+    position: relative;
     width: 100%;
     flex-shrink: 0;
     aspect-ratio: 16 / 9;
-    overflow: hidden;
-    border-radius: 1rem;
 }
 
 .shop-item-image {
     width: 100%;
     height: 100%;
+    border-radius: 1rem;
     object-fit: cover;
 }
 
@@ -197,4 +197,9 @@ input[type="number" i] {
 
 .purchase-btn-container {
     margin-top: 2rem;
+}
+
+.strikethrough {
+    text-decoration: line-through;
+    color: var(--fg-muted);
 }

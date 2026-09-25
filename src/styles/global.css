@@ -178,3 +178,10 @@ button {
     scrollbar-color: var(--fg-muted) var(--bg);
     scrollbar-width: thin;
 }
+
+.inline-link {
+    text-decoration: wavy underline;
+    text-decoration-color: var(--green);
+    color: var(--green);
+    cursor: pointer;
+}

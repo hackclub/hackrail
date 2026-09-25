@@ -68,3 +68,19 @@ h2 {
     max-width: 600px;
     font-size: 1.2rem;
 }
+
+li {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.payout {
+    margin: 0;
+    color: var(--green);
+}
+
+ul {
+    padding-left: 1rem;
+}
