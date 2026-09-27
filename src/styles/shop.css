@@ -191,7 +191,7 @@ input[type="number" i] {
 
 .disabled {
     background-color: var(--bg-inset) !important;
-    color: var(--fg-muted);
+    color: var(--fg-muted) !important;
     pointer-events: none;
 }
 
