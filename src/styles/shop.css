@@ -196,10 +196,17 @@ input[type="number" i] {
 }
 
 .purchase-btn-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     margin-top: 2rem;
 }
 
 .strikethrough {
     text-decoration: line-through;
     color: var(--fg-muted);
+}
+
+.error-text {
+    margin: 0;
 }
