@@ -154,8 +154,8 @@ const ariStatus = project.shipped
                     (project.shipped || project.approved) && (
                         <div class="row smolgap vcenter">
                             <p class="pre">
-                                this project is in review/has been accepted, so
-                                it cannot be deleted or edited
+                                This project is in review/has been accepted, so
+                                it cannot be deleted or edited!
                             </p>
                         </div>
                     )}
@@ -209,14 +209,6 @@ const ariStatus = project.shipped
                                         >
                                             <p class={statusClass}>{status}</p>
                                         </div>
-                                        {ariStatus && (
-                                            <p class="pre">
-                                                ari: {ariStatus.phase}
-                                                {ariStatus.decision
-                                                    ? ` / ${ariStatus.decision}`
-                                                    : ""}
-                                            </p>
-                                        )}
                                     </div>
                                     <div class="dot"></div>
                                 </div>
@@ -305,11 +297,9 @@ const ariStatus = project.shipped
                                                                     : "dangerbg")
                                                         }
                                                     >
-                                                        <div class="review-card-inside">
-                                                            <p class="review-content">
-                                                                {review.message}
-                                                            </p>
-                                                        </div>
+                                                        <p class="review-content">
+                                                            {review.message}
+                                                        </p>
                                                     </div>
                                                 </div>
                                             </div>

@@ -1,3 +1,4 @@
+import type { APIRoute } from "astro";
 import { Ari, type AriWebhookEvent } from "@hackclub/ari";
 import { db } from "../../../db";
 import {
@@ -70,8 +71,10 @@ async function handleReviewEvent(event: AriWebhookEvent) {
       await addTimeline(
         project.id,
         "approved",
-        "Your project was approved! Note from the reviewer: " +
-          event.review.note_to_maker || "Your project was approved!",
+        event.review.note_to_maker
+          ? "Your project was approved! Note from the reviewer: " +
+              event.review.note_to_maker
+          : "Your project was approved!",
         event.review.reviewer?.slack_id ?? null,
         { decision: event.decision },
       );
@@ -81,8 +84,9 @@ async function handleReviewEvent(event: AriWebhookEvent) {
       await addTimeline(
         project.id,
         "rejected",
-        "Your project was rejected :( Why? : " + event.review.note_to_maker ||
-          "Your project was rejected but no reason was given.",
+        event.review.note_to_maker
+          ? "Your project was rejected :( Why? : " + event.review.note_to_maker
+          : "Your project was rejected but no reason was given.",
         event.review.reviewer?.slack_id ?? null,
         { decision: event.decision },
       );
@@ -92,9 +96,10 @@ async function handleReviewEvent(event: AriWebhookEvent) {
       await addTimeline(
         project.id,
         "warning",
-        "Your project wasn't rejected but we need you to do some changes... Here's the reviewer notes: " +
-          event.review.note_to_maker ||
-          "Your project wasn't rejected but we need you to do some changes... No changes were provided",
+        event.review.note_to_maker
+          ? "Your project wasn't rejected but we need you to do some changes... Here's the reviewer notes: " +
+              event.review.note_to_maker
+          : "Your project wasn't rejected but we need you to do some changes... No changes were provided",
         event.review.reviewer?.slack_id ?? null,
         { decision: event.decision },
       );
@@ -136,7 +141,7 @@ async function handleReviewEvent(event: AriWebhookEvent) {
   }
 }
 
-export const POST = Ari.webhooks.createHandler({
+const ariWebhookHandler = Ari.webhooks.createHandler({
   secret: getAriWebhookSecret(),
   async on_event(event, context) {
     const seen = db
@@ -151,3 +156,7 @@ export const POST = Ari.webhooks.createHandler({
     db.insert(ariDeliveries).values({ deliveryId: context.delivery_id }).run();
   },
 });
+
+export const POST: APIRoute = async (context) => {
+  return ariWebhookHandler(context.request);
+};
