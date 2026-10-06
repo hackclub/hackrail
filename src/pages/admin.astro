@@ -2,11 +2,6 @@
 import BaseLayout from "../layouts/base.astro";
 import { GetAllProjects, GetAllUsers } from "../utils/admin.ts";
 import "../styles/admin.css";
-import {
-    GetHackatimeProjects,
-    type HackatimeProject,
-} from "../utils/hackatime";
-import { formatSeconds } from "../utils/time";
 
 // get error from cookies
 const error = Astro.cookies.get("flash_error")?.value;
@@ -14,76 +9,63 @@ if (error) {
     Astro.cookies.delete("flash_error", { path: "/" });
 }
 
-async function batchedFetch<T>(
-    items: string[],
-    fn: (item: string) => Promise<T>,
-    batchSize = 10,
-): Promise<T[]> {
-    const results: T[] = [];
-    for (let i = 0; i < items.length; i += batchSize) {
-        const batch = items.slice(i, i + batchSize);
-        const batchResults = await Promise.all(batch.map(fn));
-        results.push(...batchResults);
-    }
-    return results;
-}
-
 const users = GetAllUsers();
 const projects = GetAllProjects();
 
-// dict of project: hackatime seconds
-var projectTimeSpent: { [key: string]: number } = {};
+const userBySlackId = new Map(users.map((u) => [u.slackId, u]));
 
-const hackDataResults = await batchedFetch(
-    users.map((u) => u.slackId),
-    (slackId) => GetHackatimeProjects(slackId),
-    10,
-);
-
-for (let i = 0; i < users.length; i++) {
-    const user = users[i];
-    const hackData = hackDataResults[i];
-
-    var hackatimeProjects: HackatimeProject[];
-    if (hackData.ok) {
-        hackatimeProjects = hackData.projects || [];
-    } else {
-        hackatimeProjects = [];
-    }
-
-    for (const project of projects.filter(
-        (p) => p.authorSlackId === user.slackId,
-    )) {
-        var timeSpent = 0;
-        var hackatimeProjectNames = JSON.parse(project.hackatimeProjects);
-
-        for (const hackatimeProject of hackatimeProjects) {
-            if (hackatimeProjectNames.includes(hackatimeProject.name)) {
-                timeSpent += hackatimeProject.total_seconds || 0;
-            }
-        }
-
-        projectTimeSpent[project.id] = timeSpent;
-    }
+const projectsByAuthor = new Map<string, typeof projects>();
+for (const p of projects) {
+    const list = projectsByAuthor.get(p.authorSlackId);
+    if (list) list.push(p);
+    else projectsByAuthor.set(p.authorSlackId, [p]);
 }
 
-const totalTimeSpent = Object.values(projectTimeSpent).reduce(
-    (a, b) => a + b,
-    0,
+const totalUsers = users.length;
+const linkedUsers = users.filter((u) => u.hackatimeLinked).length;
+const authorIds = new Set(projects.map((p) => p.authorSlackId));
+const usersWithProject = [...authorIds].filter((id) =>
+    userBySlackId.has(id),
+).length;
+const shippedAuthorIds = new Set(
+    projects.filter((p) => p.shipped).map((p) => p.authorSlackId),
 );
+const usersWithShipped = [...shippedAuthorIds].filter((id) =>
+    userBySlackId.has(id),
+).length;
+
+const funnel = [
+    { label: "Signed up", count: totalUsers },
+    { label: "Hackatime linked", count: linkedUsers },
+    { label: "Created a project", count: usersWithProject },
+    { label: "Shipped a project", count: usersWithShipped },
+];
+
+const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+const now = Date.now();
+const signups7d = users.filter(
+    (u) => now - u.createdAt.getTime() < WEEK_MS,
+).length;
+const projects7d = projects.filter(
+    (p) => now - p.createdAt.getTime() < WEEK_MS,
+).length;
+const recentUsers = [...users]
+    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+    .slice(0, 5);
+const recentProjects = [...projects]
+    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+    .slice(0, 5);
 ---
 
 <BaseLayout title="Admin" hideFooter={true}>
-    {
-        error && (
-            <div
-                class="surface dangerbg"
-                style="width: 100%; border-radius: 0; padding: 1rem; margin-bottom: 1rem;"
-            >
-                <p>{error}</p>
-            </div>
-        )
-    }
+    {error && (
+        <div
+            class="surface dangerbg"
+            style="width: 100%; border-radius: 0; padding: 1rem; margin-bottom: 1rem;"
+        >
+            <p>{error}</p>
+        </div>
+    )}
     <div style="margin:2rem;">
         <button
             class="button greenbg"
@@ -96,8 +78,92 @@ const totalTimeSpent = Object.values(projectTimeSpent).reduce(
         <ul>
             <li>Total Users: {users.length}</li>
             <li>Total Projects: {projects.length}</li>
-            <li>Total Time logged: {formatSeconds(totalTimeSpent)}</li>
+            <li>
+                Total Time logged: <span id="total-time">loading…</span>
+            </li>
         </ul>
+        <h2>Funnel</h2>
+        <div class="surface" style="width: 100%; max-width: 560px;">
+            {funnel.map((stage, i) => {
+                const pct = totalUsers
+                    ? Math.round((stage.count / totalUsers) * 100)
+                    : 0;
+                const prev = i === 0 ? stage.count : funnel[i - 1].count;
+                const drop =
+                    i === 0 || !prev
+                        ? 0
+                        : Math.round(((prev - stage.count) / prev) * 100);
+                return (
+                    <div style="margin-bottom: 0.75rem;">
+                        <div class="row spacebetween">
+                            <span>
+                                {stage.label}: {stage.count} ({pct}%)
+                            </span>
+                            {i > 0 && <span>{drop}% drop</span>}
+                        </div>
+                        <div style="background: var(--bg-inset); border-radius: 0.5rem; overflow: hidden;">
+                            <div
+                                style={`background: var(--green); height: 0.6rem; width: ${pct}%; border-radius: 0.5rem;`}
+                            />
+                        </div>
+                    </div>
+                );
+            })}
+        </div>
+        <h2>Activity (last 7 days)</h2>
+        <ul>
+            <li>New users: {signups7d}</li>
+            <li>New projects: {projects7d}</li>
+        </ul>
+        <div class="row gap" style="flex-wrap: wrap;">
+            <div>
+                <h3>Recent signups</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Signed Up</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {recentUsers.map((user) => (
+                            <tr>
+                                <td>
+                                    {user.firstName} {user.lastName}
+                                </td>
+                                <td>{user.createdAt.toLocaleDateString()}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+            <div>
+                <h3>Recent projects</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Author</th>
+                            <th>Created</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {recentProjects.map((project) => (
+                            <tr>
+                                <td>{project.projectName}</td>
+                                <td>
+                                    {userBySlackId.get(project.authorSlackId)
+                                        ?.firstName || "Unknown"}
+                                </td>
+                                <td>
+                                    {project.createdAt.toLocaleDateString()}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        </div>
         <h2>Users ({users.length})</h2>
         <table>
             <thead>
@@ -113,51 +179,47 @@ const totalTimeSpent = Object.values(projectTimeSpent).reduce(
                 </tr>
             </thead>
             <tbody>
-                {
-                    users.map((user) => (
-                        <tr>
-                            <td>
-                                <img
-                                    src={user.avatar}
-                                    alt={user.firstName}
-                                    width={32}
-                                    height={32}
-                                    style={{ borderRadius: "50%" }}
-                                />
-                            </td>
-                            <td>
-                                {user.firstName} {user.lastName}
-                            </td>
-                            <td>{user.email}</td>
-                            <td>
-                                <code>{user.slackId}</code>
-                            </td>
-                            <td>{user.createdAt.toLocaleDateString()}</td>
-                            <td>{user.hackatimeLinked ? "yes" : "no"}</td>
-                            <td>
-                                {
-                                    projects.filter(
-                                        (p) => p.authorSlackId === user.slackId,
-                                    ).length
-                                }
-                            </td>
-                            <td class="unlimited-width">
-                                <a
-                                    class="button warnbg"
-                                    id={`delete-user-${user.slackId}`}
-                                >
-                                    unlink hackatime
-                                </a>
-                                <a
-                                    class="button"
-                                    href={`/admin/user/${user.slackId}`}
-                                >
-                                    view details
-                                </a>
-                            </td>
-                        </tr>
-                    ))
-                }
+                {users.map((user) => (
+                    <tr>
+                        <td>
+                            <img
+                                src={user.avatar}
+                                alt={user.firstName}
+                                width={32}
+                                height={32}
+                                loading="lazy"
+                                decoding="async"
+                                style={{ borderRadius: "50%" }}
+                            />
+                        </td>
+                        <td>
+                            {user.firstName} {user.lastName}
+                        </td>
+                        <td>{user.email}</td>
+                        <td>
+                            <code>{user.slackId}</code>
+                        </td>
+                        <td>{user.createdAt.toLocaleDateString()}</td>
+                        <td>{user.hackatimeLinked ? "yes" : "no"}</td>
+                        <td>
+                            {projectsByAuthor.get(user.slackId)?.length ?? 0}
+                        </td>
+                        <td class="unlimited-width">
+                            <a
+                                class="button warnbg"
+                                id={`delete-user-${user.slackId}`}
+                            >
+                                unlink hackatime
+                            </a>
+                            <a
+                                class="button"
+                                href={`/admin/user/${user.slackId}`}
+                            >
+                                view details
+                            </a>
+                        </td>
+                    </tr>
+                ))}
             </tbody>
         </table>
         <h2>Projects ({projects.length})</h2>
@@ -174,55 +236,80 @@ const totalTimeSpent = Object.values(projectTimeSpent).reduce(
                 </tr>
             </thead>
             <tbody>
-                {
-                    projects.map((project) => (
-                        <tr>
-                            <td>
-                                <img
-                                    src={
-                                        project.projectScreenshot ||
-                                        "/assets/images/bonk.png"
-                                    }
-                                    alt={project.projectName}
-                                    width={32}
-                                    height={32}
-                                    style={{ borderRadius: "50%" }}
-                                />
-                            </td>
-                            <td>{project.projectName}</td>
-                            <td>{project.projectDescription}</td>
-                            <td>
-                                {formatSeconds(
-                                    projectTimeSpent[project.id] || 0,
-                                )}
-                            </td>
-                            <td>
-                                {users.find(
-                                    (u) => u.slackId === project.authorSlackId,
-                                )?.firstName || "Unknown"}
-                            </td>
-                            <td>{project.createdAt.toLocaleDateString()}</td>
-                            <td class="unlimited-width">
-                                <a
-                                    class="button dangerbg"
-                                    id={`delete-project-${project.id}`}
-                                >
-                                    delete project
-                                </a>
-                                <a
-                                    class="button"
-                                    href={`/admin/project/${project.id}`}
-                                >
-                                    view details
-                                </a>
-                            </td>
-                        </tr>
-                    ))
-                }
+                {projects.map((project) => (
+                    <tr>
+                        <td>
+                            <img
+                                src={
+                                    project.projectScreenshot ||
+                                    "/assets/images/bonk.png"
+                                }
+                                alt={project.projectName}
+                                width={32}
+                                height={32}
+                                loading="lazy"
+                                decoding="async"
+                                style={{ borderRadius: "50%" }}
+                            />
+                        </td>
+                        <td>{project.projectName}</td>
+                        <td title={project.projectDescription}>
+                            {project.projectDescription}
+                        </td>
+                        <td data-time-for={project.id}>…</td>
+                        <td>
+                            {userBySlackId.get(project.authorSlackId)
+                                ?.firstName || "Unknown"}
+                        </td>
+                        <td>{project.createdAt.toLocaleDateString()}</td>
+                        <td class="unlimited-width">
+                            <a
+                                class="button dangerbg"
+                                id={`delete-project-${project.id}`}
+                            >
+                                delete project
+                            </a>
+                            <a
+                                class="button"
+                                href={`/admin/project/${project.id}`}
+                            >
+                                view details
+                            </a>
+                        </td>
+                    </tr>
+                ))}
             </tbody>
         </table>
     </div>
     <script>
+        (async () => {
+            const formatSeconds = (s?: number) => {
+                if (!s || s <= 0) return "";
+                const h = Math.floor(s / 3600);
+                const m = Math.floor((s % 3600) / 60);
+                if (h && m) return `${h}h ${m}m`;
+                if (h) return `${h}h`;
+                return `${m}m`;
+            };
+            try {
+                const response = await fetch("/api/admin/hackatime-times");
+                if (!response.ok) throw new Error(response.statusText);
+                const data = await response.json();
+                const totalEl = document.getElementById("total-time");
+                if (totalEl)
+                    totalEl.textContent = formatSeconds(data.totalSeconds);
+                document.querySelectorAll("[data-time-for]").forEach((cell) => {
+                    const id = cell.getAttribute("data-time-for");
+                    if (id)
+                        cell.textContent = formatSeconds(data.times[id] ?? 0);
+                });
+            } catch (err) {
+                console.error("Failed to load hackatime times:", err);
+                const totalEl = document.getElementById("total-time");
+                if (totalEl) totalEl.textContent = "unavailable";
+            }
+        })();
+
         document
             .getElementById("update-shop-btn")
             ?.addEventListener("click", async () => {
@@ -230,7 +317,7 @@ const totalTimeSpent = Object.values(projectTimeSpent).reduce(
                     method: "POST",
                 });
                 if (response.ok) {
-                   alert("Shop updated successfully!");
+                    alert("Shop updated successfully!");
                 } else {
                     console.error(
                         "Failed to update shop:",
