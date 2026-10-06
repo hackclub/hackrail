@@ -3,6 +3,8 @@ import { GetUserFromCookies } from "../../utils/auth";
 import { db } from "../../db";
 import { projects, reviewEvents, reviews } from "../../db/schema";
 import { GetProjectFromId } from "../../utils/projects";
+import { getAri } from "../../utils/ari";
+import { AriApiError, AriInputError } from "@hackclub/ari";
 import { eq } from "drizzle-orm";
 
 export const POST: APIRoute = async ({ request, cookies, redirect }) => {
@@ -49,6 +51,52 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
     projectId: Number(projectId),
     done: false,
   });
+
+  // submit to ari (reships are new submissions, same external_id).
+  const ari = getAri();
+  if (ari) {
+    const isReship = formData.get("reship") === "true";
+    try {
+      const result = await ari.ships.create({
+        external_id: String(project.id),
+        title: project.projectName,
+        description: project.projectDescription,
+        maker: {
+          email: user.email,
+          name: `${user.firstName} ${user.lastName}`,
+          slack_id: user.slackId,
+        },
+        repo_url: project.projectCodeUrl,
+        demo_url: project.projectPlayableUrl,
+        thumbnail_url: project.projectScreenshot || "",
+        hackatime_projects: JSON.parse(project.hackatimeProjects),
+        shipped_at: new Date(),
+        ...(isReship
+          ? { is_update: true, update_message: "Resubmitted after rejection" }
+          : {}),
+      });
+      await db
+        .update(projects)
+        .set({ ariSubmissionId: result.id })
+        .where(eq(projects.id, Number(projectId)));
+    } catch (error) {
+      if (error instanceof AriInputError) {
+        console.error(
+          `Ari rejected project ${projectId}:`,
+          error.field,
+          error.message,
+        );
+      } else if (error instanceof AriApiError) {
+        console.error(
+          `Ari API error for project ${projectId}:`,
+          error.status,
+          error.code,
+        );
+      } else {
+        console.error(`Failed to submit project ${projectId} to Ari:`, error);
+      }
+    }
+  }
 
   return redirect("/station/project/" + projectId);
 };

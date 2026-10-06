@@ -3,6 +3,7 @@ import { GetUserFromCookies } from "../../utils/auth";
 import { db } from "../../db";
 import { projects } from "../../db/schema";
 import { GetProjectFromId } from "../../utils/projects";
+import { withdrawFromAri } from "../../utils/ari";
 import { eq } from "drizzle-orm";
 
 export const POST: APIRoute = async ({ request, cookies, redirect }) => {
@@ -28,6 +29,8 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
       status: 400,
     });
   }
+
+  await withdrawFromAri(project);
 
   await db.delete(projects).where(eq(projects.id, Number(projectId)));
 

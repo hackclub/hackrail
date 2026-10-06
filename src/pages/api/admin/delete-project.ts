@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import { db } from "../../../db";
 import { projects } from "../../../db/schema";
+import { withdrawFromAri } from "../../../utils/ari";
 import { eq } from "drizzle-orm";
 
 export const POST: APIRoute = async ({ request }) => {
@@ -9,6 +10,13 @@ export const POST: APIRoute = async ({ request }) => {
   if (!projectId) {
     return new Response("Missing projectId", { status: 400 });
   }
+
+  const project = db
+    .select()
+    .from(projects)
+    .where(eq(projects.id, projectId))
+    .get();
+  if (project) await withdrawFromAri(project);
 
   db.delete(projects).where(eq(projects.id, projectId)).run();
 

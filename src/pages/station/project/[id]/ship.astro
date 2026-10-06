@@ -107,6 +107,7 @@ if (project?.authorSlackId != user?.slackId || !project || !user) {
                     </div>
                 </div>
                 <input type="hidden" name="projectId" value={project.id} />
+                {reship && <input type="hidden" name="reship" value="true" />}
                 <div class="row smolgap">
                     <a
                         class="button warnbg"

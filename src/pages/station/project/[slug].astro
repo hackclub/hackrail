@@ -14,6 +14,7 @@ import { GetReviewsForProject } from "../../../utils/reviews";
 import { GetUserFromSlackId } from "../../../utils/admin";
 import UserHeader from "../../../components/UserHeader.astro";
 import { formatSeconds } from "../../../utils/time";
+import { getAriStatus } from "../../../utils/ari";
 
 const { slug } = Astro.params;
 
@@ -100,6 +101,10 @@ if (project.approved) {
     status = "unshipped";
     statusClass = "fgbg";
 }
+
+const ariStatus = project.shipped
+    ? await getAriStatus(String(project.id))
+    : null;
 ---
 
 <BaseLayout title={project.projectName} hideFooter={true}>
@@ -204,6 +209,14 @@ if (project.approved) {
                                         >
                                             <p class={statusClass}>{status}</p>
                                         </div>
+                                        {ariStatus && (
+                                            <p class="pre">
+                                                ari: {ariStatus.phase}
+                                                {ariStatus.decision
+                                                    ? ` / ${ariStatus.decision}`
+                                                    : ""}
+                                            </p>
+                                        )}
                                     </div>
                                     <div class="dot"></div>
                                 </div>
@@ -282,9 +295,14 @@ if (project.approved) {
                                                             "information"
                                                                 ? "fgbg"
                                                                 : review.type ==
-                                                                    "warning"
+                                                                        "warning" ||
+                                                                    review.type ==
+                                                                        "pending"
                                                                   ? "warnbg"
-                                                                  : "dangerbg")
+                                                                  : review.type ==
+                                                                      "approved"
+                                                                    ? "greenbg"
+                                                                    : "dangerbg")
                                                         }
                                                     >
                                                         <div class="review-card-inside">

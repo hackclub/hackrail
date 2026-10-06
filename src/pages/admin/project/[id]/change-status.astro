@@ -1,7 +1,7 @@
 ---
 import { eq } from "drizzle-orm";
 import { db } from "../../../../db";
-import { projects } from "../../../../db/schema";
+import { projects, reviewEvents } from "../../../../db/schema";
 import { GetProjectFromId } from "../../../../utils/projects";
 
 const { id } = Astro.params;
@@ -56,6 +56,17 @@ switch (status) {
         });
         return Astro.redirect(`/admin/project/${project.id}`);
 }
+
+// keep manual thing in the review timeline
+db.insert(reviewEvents)
+    .values({
+        projectId: intId,
+        reviewAuthorSlackId: null,
+        type: "information",
+        message: `Admin manually set status to ${status}.`,
+        jsonData: JSON.stringify({ source: "admin-override" }),
+    })
+    .run();
 
 return Astro.redirect(`/admin/project/${project.id}`);
 ---

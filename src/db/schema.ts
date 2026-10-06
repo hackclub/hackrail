@@ -57,6 +57,9 @@ export const projects = sqliteTable("projects", {
     .notNull()
     .$defaultFn(() => new Date()),
 
+  // ari (latest submission id, "" when never submitted)
+  ariSubmissionId: text("ari_submission_id").notNull().default(""),
+
   // review
   overrideHoursSpent: integer("override_hours_spent").notNull().default(0),
   overrideHoursSpentReason: text("override_hours_spent_reason")
@@ -110,6 +113,13 @@ export const reviews = sqliteTable("reviews", {
     .notNull()
     .references(() => projects.id, { onDelete: "cascade" }),
   done: integer("done", { mode: "boolean" }).notNull().default(false),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .notNull()
+    .$defaultFn(() => new Date()),
+});
+
+export const ariDeliveries = sqliteTable("ari_deliveries", {
+  deliveryId: text("delivery_id").primaryKey(),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .$defaultFn(() => new Date()),

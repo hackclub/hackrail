@@ -2,6 +2,7 @@
 import { GetProjectFromId } from "../../../utils/projects";
 import BaseLayout from "../../../layouts/base.astro";
 import "../../../styles/admin.css";
+import { getAriStatus } from "../../../utils/ari";
 
 const { slug } = Astro.params;
 
@@ -15,6 +16,10 @@ if (!project) {
 
     return Astro.redirect("/admin");
 }
+
+const ariStatus = project.shipped
+    ? await getAriStatus(String(project.id))
+    : null;
 ---
 
 <BaseLayout title={project.projectName} hideFooter={true}>
@@ -88,6 +93,16 @@ if (!project) {
         <p>shipped: {project.shipped}</p>
         <p>rejected: {project.rejected}</p>
         <p>approved: {project.approved}</p>
+        <p class="pre">ari submission id:</p>
+        <p>{project.ariSubmissionId || "not submitted"}</p>
+        {
+            ariStatus && (
+                <p>
+                    ari status: {ariStatus.phase}
+                    {ariStatus.decision ? ` / ${ariStatus.decision}` : ""}
+                </p>
+            )
+        }
         <p class="pre">override hours spent:</p>
         <p>{project.overrideHoursSpent}</p>
         <p class="pre">override hours spent reason:</p>
