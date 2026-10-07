@@ -1,7 +1,16 @@
 import type { Order } from "../db/schema";
 import { getShopData } from "./shop";
 
-export async function SendSlackBlocks(blocks: any[], channel: string) {
+type SlackMessageOptions = {
+  // false hides the link previews slack adds under the message
+  unfurl?: boolean;
+};
+
+export async function SendSlackBlocks(
+  blocks: any[],
+  channel: string,
+  options: SlackMessageOptions = {},
+) {
   return await fetch("https://slack.com/api/chat.postMessage", {
     method: "POST",
     headers: {
@@ -11,6 +20,9 @@ export async function SendSlackBlocks(blocks: any[], channel: string) {
     body: JSON.stringify({
       channel,
       blocks,
+      ...(options.unfurl === false
+        ? { unfurl_links: false, unfurl_media: false }
+        : {}),
     }),
   });
 }
@@ -27,7 +39,11 @@ export function SendSlackBlocksToHackrailChannel(blocks: any[]) {
     .catch((err) => console.error("[slack] postMessage error:", err));
 }
 
-export async function SendSlackBlocksToUser(userId: string, blocks: any[]) {
+export async function SendSlackBlocksToUser(
+  userId: string,
+  blocks: any[],
+  options: SlackMessageOptions = {},
+) {
   const openRes = await fetch("https://slack.com/api/conversations.open", {
     method: "POST",
     headers: {
@@ -43,7 +59,7 @@ export async function SendSlackBlocksToUser(userId: string, blocks: any[]) {
     return openBody;
   }
 
-  return SendSlackBlocks(blocks, openBody.channel.id)
+  return SendSlackBlocks(blocks, openBody.channel.id, options)
     .then(async (res) => {
       const body = await res.json();
       if (!body.ok) {
@@ -106,6 +122,30 @@ export function OrderDMBlocks(order: Order): any[] {
       text: {
         type: "mrkdwn",
         text: `hey! we got your order! (*#${order.id}*).\nwe'll send you updates here & you can check its status at <https://rail.hackclub.com/station/orders>`,
+      },
+    },
+  ];
+}
+
+// slack mrkdwn needs these escaped in user-provided text
+function escapeMrkdwn(text: string) {
+  return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+export function PayoutDMBlocks(payout: {
+  projectId: number;
+  projectName: string;
+  tier: number;
+  hours: number;
+  rate: number;
+  amount: number;
+}): any[] {
+  return [
+    {
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: `hey! your project *${escapeMrkdwn(payout.projectName)}* got paid out :blobhaj_party:\nyou received *${payout.amount} tracks* (tier ${payout.tier}, ${payout.hours}h × ${payout.rate} tracks/h).\nspend them on our <https://rail.hackclub.com/station/shop|shop> &amp; check out your <https://rail.hackclub.com/station/project/${payout.projectId}|project> for details`,
       },
     },
   ];

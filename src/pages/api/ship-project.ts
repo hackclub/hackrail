@@ -30,10 +30,10 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
     return new Response("What are u trying to do,,,", { status: 400 });
   }
 
-  // mark the project as shipped
+  // mark the project as shipped (clearing any previous rejection)
   await db
     .update(projects)
-    .set({ shipped: true })
+    .set({ shipped: true, rejected: false })
     .where(eq(projects.id, Number(projectId)));
 
   // create a review event

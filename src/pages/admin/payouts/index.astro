@@ -1,0 +1,150 @@
+---
+import BaseLayout from "../../../layouts/base.astro";
+import { GetAllProjects, GetAllUsers } from "../../../utils/admin";
+import { GetAllPayouts, GetLatestApproval } from "../../../utils/payouts";
+import "../../../styles/admin.css";
+
+// get error from cookies
+const error = Astro.cookies.get("flash_error")?.value;
+if (error) {
+    Astro.cookies.delete("flash_error", { path: "/" });
+}
+
+const userBySlackId = new Map(GetAllUsers().map((u) => [u.slackId, u]));
+const payoutByProject = new Map(GetAllPayouts().map((p) => [p.projectId, p]));
+
+const approved = GetAllProjects()
+    .filter((p) => p.approved)
+    .map((project) => ({
+        project,
+        approval: GetLatestApproval(project.id),
+        payout: payoutByProject.get(project.id),
+    }));
+
+// oldest approval first, so nobody waits forever
+const pending = approved
+    .filter((a) => !a.payout)
+    .sort(
+        (a, b) =>
+            (a.approval?.approvedAt.getTime() ?? 0) -
+            (b.approval?.approvedAt.getTime() ?? 0),
+    );
+
+// most recent payout first
+const done = approved
+    .filter((a) => a.payout)
+    .sort(
+        (a, b) =>
+            b.payout!.createdAt.getTime() - a.payout!.createdAt.getTime(),
+    );
+
+const authorName = (slackId: string) =>
+    userBySlackId.get(slackId)?.firstName || "Unknown";
+---
+
+<BaseLayout title="Payouts" hideFooter={true}>
+    {error && (
+        <div
+            class="surface dangerbg"
+            style="width: 100%; border-radius: 0; padding: 1rem; margin-bottom: 1rem;"
+        >
+            <p>{error}</p>
+        </div>
+    )}
+    <div class="content">
+        <a class="button" href="/admin">back to admin</a>
+
+        <h2 style="margin-top: 1rem;">Pending payouts ({pending.length})</h2>
+        {pending.length === 0 ? (
+            <p class="pre">nothing to pay out!</p>
+        ) : (
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Author</th>
+                        <th>Approved</th>
+                        <th>Approved hours</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {pending.map(({ project, approval }) => (
+                        <tr>
+                            <td>{project.projectName}</td>
+                            <td>{authorName(project.authorSlackId)}</td>
+                            <td>
+                                {approval?.approvedAt.toLocaleDateString() ??
+                                    "-"}
+                            </td>
+                            <td>{approval?.hours ?? "-"}</td>
+                            <td class="unlimited-width">
+                                <a
+                                    class="button"
+                                    href={`/admin/project/${project.id}`}
+                                >
+                                    view details
+                                </a>
+                                <a
+                                    class="button greenbg"
+                                    href={`/admin/payouts/${project.id}`}
+                                >
+                                    payout
+                                </a>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        )}
+
+        <h2 style="margin-top: 2rem;">Payouts done ({done.length})</h2>
+        {done.length === 0 ? (
+            <p class="pre">no payouts yet</p>
+        ) : (
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Author</th>
+                        <th>Paid</th>
+                        <th>Tier</th>
+                        <th>Hours</th>
+                        <th>Amount</th>
+                        <th>Paid by</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {done.map(({ project, payout }) => (
+                        <tr>
+                            <td>{project.projectName}</td>
+                            <td>{authorName(project.authorSlackId)}</td>
+                            <td>{payout!.createdAt.toLocaleDateString()}</td>
+                            <td>{payout!.tier}</td>
+                            <td>
+                                {payout!.hours}h × {payout!.rate}
+                            </td>
+                            <td>{payout!.amount} tracks</td>
+                            <td>{authorName(payout!.adminSlackId)}</td>
+                            <td class="unlimited-width">
+                                <a
+                                    class="button"
+                                    href={`/admin/project/${project.id}`}
+                                >
+                                    view details
+                                </a>
+                                <a
+                                    class="button fgbg"
+                                    href={`/admin/payouts/${project.id}`}
+                                >
+                                    view payout
+                                </a>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        )}
+    </div>
+</BaseLayout>

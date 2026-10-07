@@ -118,6 +118,26 @@ export const reviews = sqliteTable("reviews", {
     .$defaultFn(() => new Date()),
 });
 
+export const payouts = sqliteTable("payouts", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  // unique so a project can only ever be paid out once
+  projectId: integer("project_id")
+    .notNull()
+    .unique()
+    .references(() => projects.id, { onDelete: "cascade" }),
+  recipientSlackId: text("recipient_slack_id")
+    .notNull()
+    .references(() => users.slackId, { onDelete: "cascade" }),
+  adminSlackId: text("admin_slack_id").notNull(),
+  tier: integer("tier").notNull(),
+  hours: real("hours").notNull(),
+  rate: integer("rate").notNull(), // tracks per hour at the time of payout
+  amount: integer("amount").notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .notNull()
+    .$defaultFn(() => new Date()),
+});
+
 export const ariDeliveries = sqliteTable("ari_deliveries", {
   deliveryId: text("delivery_id").primaryKey(),
   createdAt: integer("created_at", { mode: "timestamp" })
@@ -129,3 +149,4 @@ export type User = typeof users.$inferSelect;
 export type Project = typeof projects.$inferSelect;
 export type Order = typeof orders.$inferSelect;
 export type Review = typeof reviewEvents.$inferSelect;
+export type Payout = typeof payouts.$inferSelect;

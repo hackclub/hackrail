@@ -7,6 +7,10 @@
     color: var(--fg-muted);
 }
 
+.content a:not(.button) {
+    color: var(--green);
+}
+
 td > a {
     margin-left: 0.5rem;
     margin-right: 0.5rem;
@@ -30,6 +34,13 @@ td {
     color: var(--bg);
     padding: 0.5rem 1rem;
     border-radius: 0.5rem;
+}
+
+.project-header > .project-title {
+    max-width: min(800px, 80vw);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 h1 {

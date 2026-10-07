@@ -13,6 +13,7 @@ import type { Project } from "../../db/schema";
 import UserHeader from "../../components/UserHeader.astro";
 import { separateText, type TextBlock } from "../../utils/text";
 import DiscountChip from "../../components/DiscountChip.astro";
+import { GetProjectStatus } from "../../utils/projects";
 
 // get error from cookies
 const error = Astro.cookies.get("flash_error")?.value;
@@ -50,11 +51,12 @@ for (const project of projects) {
     for (const hackatimeProject of hackatimeProjects) {
         if (hackatimeProjectNames.includes(hackatimeProject.name)) {
             // project found in hackatime, add time spent
-            if (project.approved) {
+            const status = GetProjectStatus(project);
+            if (status === "approved") {
                 totalTimeApproved += hackatimeProject.total_seconds;
-            } else if (project.rejected) {
+            } else if (status === "rejected") {
                 totalTimeRejected += hackatimeProject.total_seconds;
-            } else if (project.shipped) {
+            } else if (status === "in review") {
                 totalTimeUnreviewed += hackatimeProject.total_seconds;
             } else {
                 totalTimeUnshipped += hackatimeProject.total_seconds;
@@ -134,7 +136,7 @@ import MultiPurposeCard from "../../components/MultipurposeCard.astro";
                 <div class="color-box unshipped"></div>
                 <span>unshipped</span>
                 <div class="color-box unreviewed"></div>
-                <span>unreviewed</span>
+                <span>in review</span>
                 <div class="color-box approved"></div>
                 <span>approved</span>
                 <div class="color-box rejected"></div>
@@ -163,6 +165,7 @@ import MultiPurposeCard from "../../components/MultipurposeCard.astro";
 
             <div class="row gap project-strip">
                 {projects.map((project: Project) => {
+                    const status = GetProjectStatus(project);
                     const projectCard: CardItem = {
                         id: project.id.toString(),
                         name: project.projectName,
@@ -171,24 +174,16 @@ import MultiPurposeCard from "../../components/MultipurposeCard.astro";
                         chip: true,
                         chipText: projectTimeSpent[project.id] || "0h 0m",
                         itemLink: `/station/project/${project.id}`,
-                        secondChip:
-                            project.rejected == true ||
-                            project.shipped == true ||
-                            project.approved == true,
-                        secondChipText: project.rejected
-                            ? "rejected"
-                            : project.shipped
-                              ? "in review"
-                              : project.approved
-                                ? "approved"
-                                : "unshipped",
-                        secondChipColor: project.rejected
-                            ? "danger"
-                            : project.shipped
-                              ? "warn"
-                              : project.approved
+                        secondChip: status !== "unshipped",
+                        secondChipText: status,
+                        secondChipColor:
+                            status === "approved"
                                 ? "success"
-                                : "primary",
+                                : status === "rejected"
+                                  ? "danger"
+                                  : status === "in review"
+                                    ? "warn"
+                                    : "primary",
                     };
                     return <MultiPurposeCard item={projectCard} />;
                 })}

@@ -17,7 +17,7 @@ if (!project) {
     return Astro.redirect("/admin");
 }
 
-const ariStatus = project.shipped
+const ariStatus = project.ariSubmissionId
     ? await getAriStatus(String(project.id))
     : null;
 ---

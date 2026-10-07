@@ -67,13 +67,27 @@ const recentProjects = [...projects]
         </div>
     )}
     <div style="margin:2rem;">
-        <button
-            class="button greenbg"
-            id="update-shop-btn"
-            style="margin-bottom: 1rem;"
-        >
-            update shop from sheets
-        </button>
+        <div class="row column gap">
+            <a class="button warnbg" href="/station/home">
+                home
+            </a>
+            <div class="flex row gap">
+                <button
+                    class="button greenbg"
+                    id="update-shop-btn"
+                    style="margin-bottom: 1rem;"
+                >
+                    update shop from sheets
+                </button>
+                <a
+                    class="button"
+                    href="/admin/payouts"
+                    style="margin-bottom: 1rem;"
+                >
+                    payouts
+                </a>
+            </div>
+        </div>
         <h2>Stats</h2>
         <ul>
             <li>Total Users: {users.length}</li>
@@ -109,60 +123,6 @@ const recentProjects = [...projects]
                     </div>
                 );
             })}
-        </div>
-        <h2>Activity (last 7 days)</h2>
-        <ul>
-            <li>New users: {signups7d}</li>
-            <li>New projects: {projects7d}</li>
-        </ul>
-        <div class="row gap" style="flex-wrap: wrap;">
-            <div>
-                <h3>Recent signups</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Signed Up</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {recentUsers.map((user) => (
-                            <tr>
-                                <td>
-                                    {user.firstName} {user.lastName}
-                                </td>
-                                <td>{user.createdAt.toLocaleDateString()}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-            <div>
-                <h3>Recent projects</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Author</th>
-                            <th>Created</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {recentProjects.map((project) => (
-                            <tr>
-                                <td>{project.projectName}</td>
-                                <td>
-                                    {userBySlackId.get(project.authorSlackId)
-                                        ?.firstName || "Unknown"}
-                                </td>
-                                <td>
-                                    {project.createdAt.toLocaleDateString()}
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
         </div>
         <h2>Users ({users.length})</h2>
         <table>

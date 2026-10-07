@@ -15,3 +15,17 @@ export async function GetProjectFromId(id: string): Promise<Project | null> {
 
   return result ?? null;
 }
+
+export type ProjectStatus = "approved" | "rejected" | "in review" | "unshipped";
+
+export function GetProjectStatus(project: Project): ProjectStatus {
+  if (project.approved) return "approved";
+  if (project.rejected) return "rejected";
+  if (project.shipped) return "in review";
+  return "unshipped";
+}
+
+// nice urls
+export function SafeUrl(url: string): string | null {
+  return /^https?:\/\//i.test(url) ? url : null;
+}

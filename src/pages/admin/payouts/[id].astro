@@ -1,0 +1,168 @@
+---
+import BaseLayout from "../../../layouts/base.astro";
+import { GetProjectFromId, SafeUrl } from "../../../utils/projects";
+import { GetUserFromSlackId } from "../../../utils/admin";
+import {
+    CalculatePayout,
+    GetLatestApproval,
+    GetPayoutForProject,
+    GetTier,
+    TIERS,
+} from "../../../utils/payouts";
+import "../../../styles/admin.css";
+
+// get error from cookies
+const error = Astro.cookies.get("flash_error")?.value;
+if (error) {
+    Astro.cookies.delete("flash_error", { path: "/" });
+}
+
+const project = await GetProjectFromId(Astro.params.id || "");
+if (!project || !project.approved) {
+    Astro.cookies.set("flash_error", "Project not found or not approved", {
+        path: "/",
+        maxAge: 10,
+    });
+    return Astro.redirect("/admin/payouts");
+}
+
+const author = GetUserFromSlackId(project.authorSlackId);
+const approval = GetLatestApproval(project.id);
+const payout = GetPayoutForProject(project.id);
+const codeUrl = SafeUrl(project.projectCodeUrl);
+const playableUrl = SafeUrl(project.projectPlayableUrl);
+
+const params = Astro.url.searchParams;
+const chosenTier = GetTier(Number(params.get("tier")));
+const chosenHours = Number(params.get("hours"));
+const confirming =
+    !payout && chosenTier && Number.isFinite(chosenHours) && chosenHours > 0;
+const defaultHours = params.get("hours") ?? approval?.hours ?? "";
+---
+
+<BaseLayout title={`Payout - ${project.projectName}`} hideFooter={true}>
+    {error && (
+        <div
+            class="surface dangerbg"
+            style="width: 100%; border-radius: 0; padding: 1rem; margin-bottom: 1rem;"
+        >
+            <p>{error}</p>
+        </div>
+    )}
+    <div class="content">
+        <a class="button" href="/admin/payouts">
+            back to payouts
+        </a>
+        <div class="project-header" style="margin-top: 1rem;">
+            <h1 class="project-title">
+                {project.projectName} - {project.id}
+            </h1>
+        </div>
+        <p class="pre">author:</p>
+        <p>
+            {author ? `${author.firstName} ${author.lastName}` : "Unknown"} (
+            <code>{project.authorSlackId}</code>)
+        </p>
+        <p class="pre">description:</p>
+        <p>{project.projectDescription}</p>
+        <p class="pre">code / playable:</p>
+        <p>
+            {codeUrl ? (
+                <a href={codeUrl} target="_blank" rel="noopener noreferrer">
+                    {codeUrl}
+                </a>
+            ) : (
+                project.projectCodeUrl || "none"
+            )}
+            {" / "}
+            {playableUrl ? (
+                <a href={playableUrl} target="_blank" rel="noopener noreferrer">
+                    {playableUrl}
+                </a>
+            ) : (
+                project.projectPlayableUrl || "none"
+            )}
+        </p>
+        <p class="pre">approved hours (from ari):</p>
+        <p>{approval?.hours ?? "not given"}</p>
+        <p class="pre">reviewer note:</p>
+        <p>{approval?.note || "none"}</p>
+        <a class="button" href={`/admin/project/${project.id}`}>
+            full project details
+        </a>
+
+        <div class="balance-change-form" style="margin-top: 2rem;">
+            {payout ? (
+                <div class="surface greenbg">
+                    <p>
+                        Paid {payout.amount} tracks on{" "}
+                        {payout.createdAt.toLocaleString()} (tier {payout.tier},{" "}
+                        {payout.hours}h × {payout.rate}) by{" "}
+                        <code>{payout.adminSlackId}</code>
+                    </p>
+                </div>
+            ) : confirming ? (
+                <form
+                    method="POST"
+                    action="/api/admin/payout"
+                    class="balance-form"
+                >
+                    <h2>Confirm payout</h2>
+                    <p>
+                        Give{" "}
+                        <strong>
+                            {CalculatePayout(chosenHours, chosenTier.rate)}{" "}
+                            tracks
+                        </strong>{" "}
+                        to {author?.firstName ?? project.authorSlackId}? (tier{" "}
+                        {chosenTier.tier}, {chosenHours}h × {chosenTier.rate})
+                    </p>
+                    <input type="hidden" name="projectId" value={project.id} />
+                    <input type="hidden" name="tier" value={chosenTier.tier} />
+                    <input type="hidden" name="hours" value={chosenHours} />
+                    <div class="buttons-group">
+                        <a
+                            class="button fgbg"
+                            href={`/admin/payouts/${project.id}?hours=${chosenHours}`}
+                        >
+                            back
+                        </a>
+                        <button class="button greenbg" type="submit">
+                            confirm payout
+                        </button>
+                    </div>
+                </form>
+            ) : (
+                <form method="GET" class="balance-form">
+                    <h2>Choose a tier</h2>
+                    {TIERS.map((t) => (
+                        <label>
+                            <input
+                                type="radio"
+                                name="tier"
+                                value={t.tier}
+                                required
+                            />{" "}
+                            <strong>Tier {t.tier}</strong> - {t.description} (
+                            {t.rate} tracks/h)
+                        </label>
+                    ))}
+                    <label for="hours">Hours:</label>
+                    <input
+                        type="number"
+                        id="hours"
+                        name="hours"
+                        min="0.1"
+                        step="0.1"
+                        value={defaultHours}
+                        required
+                        style="max-width: 200px;"
+                    />
+                    <button class="button" type="submit">
+                        next
+                    </button>
+                </form>
+            )}
+        </div>
+    </div>
+</BaseLayout>

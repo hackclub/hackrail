@@ -32,9 +32,10 @@ async function applyDecision(
   approved: boolean,
   rejected: boolean,
 ) {
+  // rejected projects go back to unshipped so the maker can edit & resubmit
   await db
     .update(projects)
-    .set({ shipped: true, approved, rejected })
+    .set({ shipped: !rejected, approved, rejected })
     .where(eq(projects.id, projectId));
   if (approved || rejected) {
     await db
@@ -71,12 +72,13 @@ async function handleReviewEvent(event: AriWebhookEvent) {
       await addTimeline(
         project.id,
         "approved",
-        event.review.note_to_maker
-          ? "Your project was approved! Note from the reviewer: " +
-              event.review.note_to_maker
-          : "Your project was approved!",
+        "Your project was approved! We'll pick its tier and send your payout very soon.",
         event.review.reviewer?.slack_id ?? null,
-        { decision: event.decision },
+        {
+          type: "approval",
+          hoursApproved: event.review.approved_hours,
+          message: event.review.note_to_maker ?? null,
+        },
       );
       break;
     case "review.rejected":
@@ -84,11 +86,12 @@ async function handleReviewEvent(event: AriWebhookEvent) {
       await addTimeline(
         project.id,
         "rejected",
-        event.review.note_to_maker
-          ? "Your project was rejected :( Why? : " + event.review.note_to_maker
-          : "Your project was rejected but no reason was given.",
+        "Your project was rejected.",
         event.review.reviewer?.slack_id ?? null,
-        { decision: event.decision },
+        {
+          type: "rejection",
+          message: event.review.note_to_maker ?? null,
+        },
       );
       break;
     case "review.changes":
@@ -96,12 +99,12 @@ async function handleReviewEvent(event: AriWebhookEvent) {
       await addTimeline(
         project.id,
         "warning",
-        event.review.note_to_maker
-          ? "Your project wasn't rejected but we need you to do some changes... Here's the reviewer notes: " +
-              event.review.note_to_maker
-          : "Your project wasn't rejected but we need you to do some changes... No changes were provided",
+        "Your project was rejected with changes requested.",
         event.review.reviewer?.slack_id ?? null,
-        { decision: event.decision },
+        {
+          type: "changes_requested",
+          message: event.review.note_to_maker ?? null,
+        },
       );
       break;
     case "review.reverted":
@@ -110,34 +113,36 @@ async function handleReviewEvent(event: AriWebhookEvent) {
       await addTimeline(
         project.id,
         "information",
-        event.event === "review.requeued"
-          ? "Review result removed, project is back in the queue."
-          : "Review result reverted.",
+        "Your project was reverted to pending review.",
         event.review.reviewer?.slack_id ?? null,
-        { decision: event.decision },
+        {
+          type: "reverted",
+          message: event.review.note_to_maker ?? null,
+        },
       );
       break;
     case "review.fraud":
+      // passed checks are routine, only tell the maker when it failed
+      if (event.fraud.verdict !== "failed") break;
       await addTimeline(
         project.id,
-        "information",
-        `Fraud check ${event.fraud.verdict}.` +
-          (event.fraud.checks[0]?.justification
-            ? ` ${event.fraud.checks[0].justification}`
-            : ""),
-        null,
-        { verdict: event.fraud.verdict },
+        "warning",
+        "Your project was flagged for fraud.",
+        event.review.reviewer?.slack_id ?? null,
+        {
+          type: "fraud",
+          message: event.review.note_to_maker ?? null,
+        },
       );
       break;
     case "ship.updated":
-      await addTimeline(
-        project.id,
-        "information",
-        `Reviewer edited: ${event.changes.map((c) => c.field).join(", ")}.`,
-        event.edited_by?.slack_id ?? null,
-        { changes: event.changes },
-      );
+      // reviewer edits to the ship, we don't use these
       break;
+    default: {
+      const unhandled: never = event;
+      console.warn("Unhandled Ari event:", unhandled);
+      break;
+    }
   }
 }
 

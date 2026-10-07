@@ -190,7 +190,7 @@ input {
 
 .right-container {
     width: 40%;
-    height: 100vh;
+    min-height: 100vh;
     background-color: var(--bg-elevated);
 }
 
@@ -222,6 +222,134 @@ input {
     width: 100%;
     height: 50%;
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, var(--bg) 80%);
+}
+
+.ticket {
+    --notch: 0.65rem;
+    position: absolute;
+    right: 2rem;
+    bottom: 2rem;
+    z-index: 2;
+    display: flex;
+    max-width: min(380px, 70%);
+    color: var(--bg);
+    transform: rotate(-6deg);
+    filter: drop-shadow(0 0.5rem 1rem var(--shadow));
+}
+
+.ticket p {
+    margin: 0;
+}
+
+.ticket-main,
+.ticket-stub {
+    background-color: var(--fg);
+    padding: 0.9rem 1.1rem;
+}
+
+.ticket-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    border-radius: 1rem 0 0 1rem;
+    mask:
+        radial-gradient(
+                circle at top right,
+                transparent var(--notch),
+                #000 calc(var(--notch) + 0.5px)
+            )
+            top / 100% 51% no-repeat,
+        radial-gradient(
+                circle at bottom right,
+                transparent var(--notch),
+                #000 calc(var(--notch) + 0.5px)
+            )
+            bottom / 100% 51% no-repeat;
+}
+
+.ticket-stub {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-left: 2px dashed var(--fg-subtle);
+    border-radius: 0 1rem 1rem 0;
+    mask:
+        radial-gradient(
+                circle at top left,
+                transparent var(--notch),
+                #000 calc(var(--notch) + 0.5px)
+            )
+            top / 100% 51% no-repeat,
+        radial-gradient(
+                circle at bottom left,
+                transparent var(--notch),
+                #000 calc(var(--notch) + 0.5px)
+            )
+            bottom / 100% 51% no-repeat;
+}
+
+.ticket-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.35rem;
+}
+
+.ticket-name {
+    font-size: 1.15rem;
+    font-weight: bold;
+    font-style: italic;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ticket-class {
+    flex-shrink: 0;
+    padding: 0.05rem 0.55rem;
+    border-radius: 1rem;
+    background-color: var(--bg);
+    color: var(--fg);
+    font-size: 0.85rem;
+}
+
+.ticket-amount {
+    font-size: 2rem;
+    font-weight: bold;
+    font-style: italic;
+    line-height: 1;
+}
+
+.ticket-currency {
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.project-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    font-size: 1.15rem;
+}
+
+.project-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: var(--fg-muted);
+    text-decoration: none;
+}
+
+.project-link-text {
+    text-decoration: wavy underline;
+}
+
+.project-link:hover .project-link-text {
+    color: var(--fg);
 }
 
 .project-content {
@@ -282,23 +410,34 @@ p.pre {
     margin: 0;
 }
 
-.project-hackatime-projects {
-    display: flex;
-    flex-direction: row;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-}
-
-.project-chip {
-    padding: 0.4rem 0.9rem;
+.hackatime-board {
+    background-color: black;
     border-radius: 1rem;
-    background-color: var(--fg-muted);
-    color: var(--bg);
-    width: fit-content;
+    padding: 0.25rem 1rem;
+    font-family: var(--font-dot), sans-serif;
+    color: var(--warn);
 }
 
-.project-chip > p {
-    margin: 0;
+.hackatime-board-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.5rem 0;
+    font-size: 1.25rem;
+}
+
+.hackatime-board-row + .hackatime-board-row {
+    border-top: 1px solid var(--warn);
+}
+
+.hackatime-board-row > span:first-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.hackatime-board-row > span:last-child {
+    flex-shrink: 0;
 }
 
 .project-details > h2 {
@@ -492,23 +631,72 @@ input[type="checkbox"]:checked::after {
     gap: 0.5rem;
 }
 
-.review-card {
-    width: 100%;
-    padding: 0;
-}
-
 .review-container {
-    background-color: var(--bg-inset);
+    --tone: var(--fg-muted);
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 0.5rem;
+    padding: 1rem 1.25rem;
     border-radius: 1rem;
+    background-color: color-mix(in srgb, var(--tone) 6%, var(--bg-inset));
+}
+
+.tone-green {
+    --tone: var(--green);
+}
+
+.tone-warn {
+    --tone: var(--warn);
+}
+
+.tone-danger {
+    --tone: var(--danger);
+}
+
+.review-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
     width: 100%;
 }
 
-.review-card-inside {
-    padding: 1rem;
+.review-status {
+    font-size: 0.8rem;
+    padding: 0.15rem 0.6rem;
+    border-radius: 1rem;
+    background-color: var(--tone);
+    color: var(--bg);
 }
 
-.review-card-inside > p {
+.review-date {
+    font-size: 0.85rem;
+    color: var(--fg-muted);
+}
+
+.review-content {
     margin: 0;
+    font-size: 1.1rem;
+}
+
+.review-note {
+    margin: 0;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    background-color: var(--bg-elevated);
+    color: var(--fg-muted);
+    font-style: italic;
+    word-break: break-word;
+}
+
+.review-chip {
+    padding: 0.25rem 0.6rem;
+    border-radius: 0.5rem;
+    background-color: var(--green);
+    color: var(--bg);
 }
 
 .review-header {
@@ -517,8 +705,4 @@ input[type="checkbox"]:checked::after {
     font-style: italic;
     color: var(--fg-muted);
     margin: 0;
-}
-
-.review-container-inside {
-    padding: 1rem;
 }
