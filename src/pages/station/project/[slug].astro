@@ -8,10 +8,7 @@ import {
 import BaseLayout from "../../../layouts/base.astro";
 import "../../../styles/project.css";
 import { Image } from "astro:assets";
-import {
-    GetHackatimeProjects,
-    type HackatimeProject,
-} from "../../../utils/hackatime";
+import { GetProjectTimes } from "../../../utils/hackatime";
 import type { Review } from "../../../db/schema";
 import { GetReviewsForProject } from "../../../utils/reviews";
 
@@ -26,23 +23,10 @@ const { slug } = Astro.params;
 const user = await GetUserFromCookies(Astro.cookies);
 const project = await GetProjectFromId(slug || "");
 
-const hackData = await GetHackatimeProjects(project?.authorSlackId || "");
-var hackatimeProjects: HackatimeProject[];
-if (hackData.ok) {
-    hackatimeProjects = hackData.projects || [];
-} else {
-    hackatimeProjects = [];
-}
-
-var totalTimeSpent = 0;
-for (const hackatimeProject of hackatimeProjects) {
-    const projectHackatimeNames = JSON.parse(
-        project?.hackatimeProjects || "[]",
-    );
-    if (projectHackatimeNames.includes(hackatimeProject.name)) {
-        totalTimeSpent += hackatimeProject.total_seconds || 0;
-    }
-}
+const projectTime = project
+    ? (await GetProjectTimes(project.authorSlackId, [project])).get(project.id)
+    : undefined;
+const totalTimeSpent = projectTime?.total ?? 0;
 
 if (!project) {
     Astro.cookies.set("flash_error", "Project not found", {
@@ -315,30 +299,24 @@ const playableUrl = SafeUrl(project.projectPlayableUrl);
                             <h2 class="project-status-subheader">
                                 Hackatime projects
                             </h2>
+                            {project.updateStartedAt && (
+                                <p class="update-since">
+                                    <FixedText
+                                        text={`update, only counting time since ${shortDate(project.updateStartedAt)}`}
+                                    />
+                                </p>
+                            )}
                             <div class="hackatime-board">
-                                {hackatimeProjects.map((hackatimeProject) => {
-                                    const projectHackatimeNames = JSON.parse(
-                                        project?.hackatimeProjects || "[]",
-                                    );
-                                    if (
-                                        projectHackatimeNames.includes(
-                                            hackatimeProject.name,
-                                        )
-                                    ) {
-                                        return (
-                                            <div class="hackatime-board-row">
-                                                <span>
-                                                    {hackatimeProject.name}
-                                                </span>
-                                                <span>
-                                                    {formatSeconds(
-                                                        hackatimeProject.total_seconds,
-                                                    )}
-                                                </span>
-                                            </div>
-                                        );
-                                    }
-                                })}
+                                {[...(projectTime?.byName ?? [])].map(
+                                    ([name, seconds]) => (
+                                        <div class="hackatime-board-row">
+                                            <span>{name}</span>
+                                            <span>
+                                                {formatSeconds(seconds) || "0m"}
+                                            </span>
+                                        </div>
+                                    ),
+                                )}
                             </div>
                             <h2 class="project-status-subheader">
                                 Review timeline

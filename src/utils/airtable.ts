@@ -113,6 +113,8 @@ async function BuildAirtableFields(projectId: number) {
     [FIELDS.alternateTracking]: orNull(justification.time_evidence),
     [FIELDS.additional]: orNull(
       [
+        project.updateStartedAt &&
+          `Project update, hours only count from ${project.updateStartedAt.toISOString().slice(0, 10)}: ${project.updateDescription}`,
         justification.additional_justification,
         justification.supporting_evidence,
       ]

@@ -62,6 +62,10 @@ export const projects = sqliteTable("projects", {
     .notNull()
     .$defaultFn(() => new Date()),
 
+  // this is for project updates
+  updateStartedAt: integer("update_started_at", { mode: "timestamp" }),
+  updateDescription: text("update_description").notNull().default(""),
+
   // ari (latest submission id, "" when never submitted)
   ariSubmissionId: text("ari_submission_id").notNull().default(""),
 

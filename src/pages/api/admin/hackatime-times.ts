@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
 import { GetAllProjects, GetAllUsers } from "../../../utils/admin";
-import { GetHackatimeProjects } from "../../../utils/hackatime";
+import { GetProjectTimes } from "../../../utils/hackatime";
 
 async function batchedFetch<T>(
   items: string[],
@@ -16,25 +16,12 @@ async function batchedFetch<T>(
   return results;
 }
 
-function parseHackatimeNames(raw: string): Set<string> {
-  try {
-    const parsed: unknown = JSON.parse(raw);
-    if (Array.isArray(parsed))
-      return new Set(parsed.filter((n) => typeof n === "string"));
-  } catch {
-    // no projects
-  }
-  return new Set();
-}
-
 export const GET: APIRoute = async () => {
   const users = GetAllUsers();
   const projects = GetAllProjects();
 
-  const projectsByAuthor = new Map<string, { id: number }[]>();
-  const namesByProject = new Map<number, Set<string>>();
+  const projectsByAuthor = new Map<string, typeof projects>();
   for (const p of projects) {
-    namesByProject.set(p.id, parseHackatimeNames(p.hackatimeProjects));
     const list = projectsByAuthor.get(p.authorSlackId);
     if (list) list.push(p);
     else projectsByAuthor.set(p.authorSlackId, [p]);
@@ -46,24 +33,13 @@ export const GET: APIRoute = async () => {
 
   const results = await batchedFetch(
     candidates.map((u) => u.slackId),
-    (slackId) => GetHackatimeProjects(slackId),
+    (slackId) => GetProjectTimes(slackId, projectsByAuthor.get(slackId) ?? []),
     10,
   );
 
   const times: Record<number, number> = {};
-  for (let i = 0; i < candidates.length; i++) {
-    const data = results[i];
-    const hackProjects = data.ok ? (data.projects ?? []) : [];
-    const secondsByName = new Map(
-      hackProjects.map((h) => [h.name, h.total_seconds ?? 0]),
-    );
-    for (const p of projectsByAuthor.get(candidates[i].slackId) ?? []) {
-      let total = 0;
-      for (const name of namesByProject.get(p.id) ?? []) {
-        total += secondsByName.get(name) ?? 0;
-      }
-      times[p.id] = total;
-    }
+  for (const projectTimes of results) {
+    for (const [id, time] of projectTimes) times[id] = time.total;
   }
 
   const totalSeconds = Object.values(times).reduce((a, b) => a + b, 0);

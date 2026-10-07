@@ -4,10 +4,7 @@ import BaseLayout from "../../layouts/base.astro";
 import "../../styles/home.css";
 import { GetUserFromCookies } from "../../utils/auth.ts";
 import { GetProjectsForUser } from "../../utils/misc.ts";
-import {
-    GetHackatimeProjects,
-    type HackatimeProject,
-} from "../../utils/hackatime";
+import { GetProjectTimes } from "../../utils/hackatime";
 import { formatSeconds } from "../../utils/time";
 import type { Project } from "../../db/schema";
 import UserHeader from "../../components/UserHeader.astro";
@@ -27,13 +24,8 @@ if (!user) {
     return Astro.redirect("/login");
 }
 const projects = await GetProjectsForUser(user.slackId);
-const hackData = await GetHackatimeProjects(user.slackId);
-var hackatimeProjects: HackatimeProject[];
-if (hackData.ok) {
-    hackatimeProjects = hackData.projects || [];
-} else {
-    hackatimeProjects = [];
-}
+// updates only count the time after the update started
+const projectTimes = await GetProjectTimes(user.slackId, projects);
 
 // map of project id to time spent (str)
 var projectTimeSpent: { [key: string]: string } = {};
@@ -45,29 +37,18 @@ var totalTimeRejected = 0;
 var totalTimeApproved = 0;
 
 for (const project of projects) {
-    var timeSpent = 0;
-    var hackatimeProjectNames = JSON.parse(project.hackatimeProjects);
-
-    for (const hackatimeProject of hackatimeProjects) {
-        if (hackatimeProjectNames.includes(hackatimeProject.name)) {
-            // project found in hackatime, add time spent
-            const status = GetProjectStatus(project);
-            if (status === "approved") {
-                totalTimeApproved += hackatimeProject.total_seconds;
-            } else if (status === "rejected") {
-                totalTimeRejected += hackatimeProject.total_seconds;
-            } else if (status === "in review") {
-                totalTimeUnreviewed += hackatimeProject.total_seconds;
-            } else {
-                totalTimeUnshipped += hackatimeProject.total_seconds;
-            }
-
-            // add time to total time spent
-            totalTimeSpent += hackatimeProject.total_seconds;
-            // add time to this specific project's time spent
-            timeSpent += hackatimeProject.total_seconds;
-        }
+    const timeSpent = projectTimes.get(project.id)?.total ?? 0;
+    const status = GetProjectStatus(project);
+    if (status === "approved") {
+        totalTimeApproved += timeSpent;
+    } else if (status === "rejected") {
+        totalTimeRejected += timeSpent;
+    } else if (status === "in review") {
+        totalTimeUnreviewed += timeSpent;
+    } else {
+        totalTimeUnshipped += timeSpent;
     }
+    totalTimeSpent += timeSpent;
 
     projectTimeSpent[project.id] = formatSeconds(timeSpent);
 }

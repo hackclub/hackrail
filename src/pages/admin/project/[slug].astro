@@ -108,6 +108,12 @@ const missingForUnified = project.approved
         <p>{project.projectPlayableUrl}</p>
         <p class="pre">project description:</p>
         <p>{project.projectDescription}</p>
+        <p class="pre">project update:</p>
+        <p>
+            {project.updateStartedAt
+                ? `since ${project.updateStartedAt.toISOString().slice(0, 10)}: ${project.updateDescription}`
+                : "no, new project"}
+        </p>
         <p class="pre">project hackatime projects:</p>
         <p>{project.hackatimeProjects}</p>
         <p>shipped: {project.shipped}</p>

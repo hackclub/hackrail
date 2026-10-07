@@ -3,7 +3,7 @@ import { GetUserFromCookies } from "../../utils/auth";
 import { db } from "../../db";
 import { projects } from "../../db/schema";
 import { CompressImage, UploadImageToCDN } from "../../utils/cdn";
-import { GetHackatimeProjects } from "../../utils/hackatime";
+import { GetHackatimeProjects, PROGRAM_START } from "../../utils/hackatime";
 import { GetProjectFromId } from "../../utils/projects";
 import { eq } from "drizzle-orm";
 
@@ -20,6 +20,12 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
   const playableUrl = (formData.get("playableUrl") ??
     formData.get("liveUrl") ??
     "") as string;
+
+  const isUpdate = formData.get("isUpdate") === "on";
+  const updateStartedAtRaw = (formData.get("updateStartedAt") as string) || "";
+  const updateDescription = (
+    (formData.get("updateDescription") as string) || ""
+  ).trim();
 
   const isEdit = id !== "";
 
@@ -55,6 +61,29 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
       `User ${user.slackId} tried to create/edit project with invalid lengths: name(${name.length}), description(${description.length}), hackatimeProjects(${hackatimeProjects.length})`,
     );
     return redirect(backTo);
+  }
+
+  let updateStartedAt: Date | null = null;
+  if (isUpdate) {
+    updateStartedAt = new Date(`${updateStartedAtRaw}T00:00:00Z`);
+    let updateError = "";
+    if (
+      !/^\d{4}-\d{2}-\d{2}$/.test(updateStartedAtRaw) ||
+      isNaN(updateStartedAt.getTime())
+    ) {
+      updateError = "Please pick the day you started working on the update.";
+    } else if (updateStartedAt < PROGRAM_START) {
+      updateError = `The update can't start before ${PROGRAM_START.toISOString().slice(0, 10)}.`;
+    } else if (updateStartedAt > new Date()) {
+      updateError = "The update can't start in the future.";
+    } else if (!updateDescription || updateDescription.length > 500) {
+      updateError =
+        "Please describe what's new in this update (500 characters max).";
+    }
+    if (updateError) {
+      cookies.set("flash_error", updateError, { path: "/", maxAge: 10 });
+      return redirect(backTo);
+    }
   }
 
   // check that hackatime projects are legit
@@ -135,6 +164,8 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
     projectCodeUrl: githubUrl,
     projectPlayableUrl: playableUrl || "",
     hackatimeProjects: hackatimeProjects,
+    updateStartedAt,
+    updateDescription: isUpdate ? updateDescription : "",
     projectScreenshot:
       imageUrl ||
       "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Den_Haag_Hollands_Spoor.jpg/3840px-Den_Haag_Hollands_Spoor.jpg",

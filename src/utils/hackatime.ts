@@ -58,7 +58,12 @@ type HackatimeProjectsResponse = {
   }[];
 };
 
-export async function GetHackatimeProjects(slackId: string): Promise<{
+export const PROGRAM_START = new Date("2026-08-01T00:00:00Z");
+
+export async function GetHackatimeProjects(
+  slackId: string,
+  since: Date = PROGRAM_START,
+): Promise<{
   ok: boolean;
   projects?: HackatimeProject[];
   error?: Error;
@@ -69,8 +74,7 @@ export async function GetHackatimeProjects(slackId: string): Promise<{
       return { ok: false, error: userProfile.error };
     }
 
-    // start is 1 aug
-    const start = new Date("2026-08-01T00:00:00Z").toISOString();
+    const start = since.toISOString();
     const end = new Date().toISOString();
 
     const response = await fetch(
@@ -108,4 +112,65 @@ export async function GetHackatimeProjects(slackId: string): Promise<{
   } catch (error) {
     return { ok: false, error: error as Error };
   }
+}
+
+// updates only count the time spent after the update started
+export function HackatimeStartFor(project: { updateStartedAt: Date | null }) {
+  return project.updateStartedAt ?? PROGRAM_START;
+}
+
+export type ProjectTime = { total: number; byName: Map<string, number> };
+
+// time per project, fetching hackatime once per distinct start date
+export async function GetProjectTimes(
+  slackId: string,
+  projects: {
+    id: number;
+    hackatimeProjects: string;
+    updateStartedAt: Date | null;
+  }[],
+): Promise<Map<number, ProjectTime>> {
+  const starts = new Map<number, Date>();
+  for (const project of projects) {
+    const start = HackatimeStartFor(project);
+    starts.set(start.getTime(), start);
+  }
+
+  const secondsByStart = new Map<number, Map<string, number>>();
+  await Promise.all(
+    [...starts].map(async ([key, start]) => {
+      const data = await GetHackatimeProjects(slackId, start);
+      secondsByStart.set(
+        key,
+        new Map(
+          (data.ok ? (data.projects ?? []) : []).map((p) => [
+            p.name,
+            p.total_seconds || 0,
+          ]),
+        ),
+      );
+    }),
+  );
+
+  const times = new Map<number, ProjectTime>();
+  for (const project of projects) {
+    const seconds = secondsByStart.get(HackatimeStartFor(project).getTime());
+    let names: string[] = [];
+    try {
+      const parsed: unknown = JSON.parse(project.hackatimeProjects);
+      if (Array.isArray(parsed))
+        names = parsed.filter((n) => typeof n === "string");
+    } catch {
+      // no projects
+    }
+    const byName = new Map<string, number>();
+    let total = 0;
+    for (const name of names) {
+      const s = seconds?.get(name) ?? 0;
+      byName.set(name, s);
+      total += s;
+    }
+    times.set(project.id, { total, byName });
+  }
+  return times;
 }
