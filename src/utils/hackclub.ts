@@ -1,3 +1,4 @@
+import { eq } from "drizzle-orm";
 import { db } from "../db/index";
 import { users, type User } from "../db/schema";
 import { type Result } from "../shared/types";
@@ -62,7 +63,7 @@ async function Login(code: string): Promise<Result<string>> {
       profileData.identity.slack_id,
     );
 
-    const primaryAdress = profileData.identity.addresses.find(
+    const primaryAdress = profileData.identity.addresses?.find(
       (address: any) => address.primary,
     );
 
@@ -87,20 +88,40 @@ async function Login(code: string): Promise<Result<string>> {
       };
     }
 
-    if (!dbUserProfile.ok) {
+    // everything that comes from hack club auth, kept up to date on every login
+    const identity = {
+      firstName: profileData.identity.first_name,
+      lastName: profileData.identity.last_name,
+      email: profileData.identity.primary_email,
+      addressLine1: primaryAdress?.line_1 || "",
+      addressLine2: primaryAdress?.line_2 || "",
+      city: primaryAdress?.city || "",
+      state: primaryAdress?.state || "",
+      zipCode: primaryAdress?.postal_code || "",
+      country: primaryAdress?.country || "",
+      birthdate: profileData.identity.birthday,
+      verificationStatus: profileData.identity.verification_status || "",
+      yswsEligible: profileData.identity.ysws_eligible === true,
+    };
+
+    if (dbUserProfile.ok) {
+      // only touch identity fields, never balance/hackatime/etc
+      try {
+        db.update(users)
+          .set(identity)
+          .where(eq(users.slackId, profileData.identity.slack_id))
+          .run();
+      } catch (error) {
+        console.error(
+          `Failed to refresh profile for ${profileData.identity.slack_id}:`,
+          error,
+        );
+      }
+    } else {
       // the user doesn't have a profile yet
       const profile: User = {
         slackId: profileData.identity.slack_id,
-        firstName: profileData.identity.first_name,
-        lastName: profileData.identity.last_name,
-        email: profileData.identity.primary_email,
-        addressLine1: primaryAdress?.line_1 || "",
-        addressLine2: primaryAdress?.line_2 || "",
-        city: primaryAdress?.city || "",
-        state: primaryAdress?.state || "",
-        zipCode: primaryAdress?.postal_code || "",
-        country: primaryAdress?.country || "",
-        birthdate: profileData.identity.birthday,
+        ...identity,
         avatar:
           "https://cachet.hackclub.com/users/" +
           profileData.identity.slack_id +

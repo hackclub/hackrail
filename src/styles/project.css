@@ -706,3 +706,11 @@ input[type="checkbox"]:checked::after {
     color: var(--fg-muted);
     margin: 0;
 }
+
+.block-surface {
+    color: var(--fg);
+}
+
+.blockers-buttons {
+    margin-top: 0.5rem;
+}

@@ -6,6 +6,7 @@ import { GetProjectFromId } from "../../utils/projects";
 import { getAri } from "../../utils/ari";
 import { AriApiError, AriInputError } from "@hackclub/ari";
 import { eq } from "drizzle-orm";
+import { GetShipBlockers } from "../../utils/eligibility";
 
 export const POST: APIRoute = async ({ request, cookies, redirect }) => {
   const user = await GetUserFromCookies(cookies);
@@ -28,6 +29,13 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
 
   if (project.shipped || project.approved) {
     return new Response("What are u trying to do,,,", { status: 400 });
+  }
+
+  // unified needs a verified, eligible user with a full address
+  const blockers = GetShipBlockers(user);
+  if (blockers.length > 0) {
+    cookies.set("flash_error", blockers[0], { path: "/", maxAge: 10 });
+    return redirect(`/station/project/${project.id}/ship`);
   }
 
   // mark the project as shipped (clearing any previous rejection)

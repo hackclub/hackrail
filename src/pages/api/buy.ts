@@ -1,9 +1,9 @@
 import type { APIRoute } from "astro";
 import { GetUserFromCookies } from "../../utils/auth";
 import { getShopData } from "../../utils/shop";
-import { upsertUser } from "../../utils/hackclub";
-import { orders, type Order } from "../../db/schema";
+import { orders, users } from "../../db/schema";
 import { db } from "../../db";
+import { and, eq, gte, sql } from "drizzle-orm";
 import {
   OrderBlocks,
   OrderDMBlocks,
@@ -76,13 +76,6 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
     return redirect("/station/shop");
   }
 
-  // deduct the total price from the user's balance
-  user.balance -= totalPrice;
-
-  // save the user back to the database
-  await upsertUser(user);
-
-  // save the order
   const order = {
     slackId: user.slackId,
     itemId,
@@ -93,7 +86,24 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
     createdAt: new Date(),
   };
 
-  const [inserted] = await db.insert(orders).values(order).returning();
+  const inserted = db.transaction((tx) => {
+    const deducted = tx
+      .update(users)
+      .set({ balance: sql`${users.balance} - ${totalPrice}` })
+      .where(
+        and(eq(users.slackId, user.slackId), gte(users.balance, totalPrice)),
+      )
+      .run();
+    if (deducted.changes !== 1) return null;
+    return tx.insert(orders).values(order).returning().get();
+  });
+
+  if (!inserted) {
+    cookies.set("flash_error", "Insufficient balance", {
+      path: "/",
+    });
+    return redirect("/station/shop");
+  }
 
   await SendSlackBlocksToHackrailChannel(await OrderBlocks(inserted));
 

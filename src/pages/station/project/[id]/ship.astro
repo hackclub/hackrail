@@ -2,7 +2,9 @@
 import { GetUserFromCookies } from "../../../../utils/auth";
 import { GetProjectFromId } from "../../../../utils/projects";
 import BaseLayout from "../../../../layouts/base.astro";
+import { GetShipBlockers } from "../../../../utils/eligibility";
 import "../../../../styles/project.css";
+import FixedText from "../../../../components/FixedText.astro";
 
 const { id } = Astro.params;
 
@@ -21,6 +23,8 @@ if (project?.authorSlackId != user?.slackId || !project || !user) {
 
     return Astro.redirect("/station/home");
 }
+
+const blockers = GetShipBlockers(user);
 ---
 
 <BaseLayout title={`Ship ${project.projectName}`} hideFooter={true}>
@@ -34,6 +38,39 @@ if (project?.authorSlackId != user?.slackId || !project || !user) {
                     Are you sure you want to ship this project? This action
                     cannot be undone.
                 </p>
+                {blockers.length > 0 && (
+                    <div
+                        class="surface dangerbg block-surface"
+                        style="max-width: 600px;"
+                    >
+                        <p>
+                            <strong>You can't ship yet :(</strong>
+                        </p>
+                        <ul>
+                            {blockers.map((blocker) => (
+                                <li>{blocker}</li>
+                            ))}
+                        </ul>
+                        <FixedText
+                            text="To fix those, edit your information on Hack Club
+                        Auth & log out and log back in so your information
+                        is updated. If you think this is wrong, dm @alice!"
+                        />
+                        <div class="row smolgap blockers-buttons">
+                            <a
+                                class="button fgbg"
+                                href={"https://auth.hackclub.com/identity/edit"}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                open hack club auth
+                            </a>
+                            <a class="button fgbg" href="/logout">
+                                log out
+                            </a>
+                        </div>
+                    </div>
+                )}
                 {reship && (
                     <div class="surface warnbg" style="max-width: 600px;">
                         <p>
@@ -115,9 +152,11 @@ if (project?.authorSlackId != user?.slackId || !project || !user) {
                     >
                         cancel
                     </a>
-                    <button type="submit" class="button greenbg">
-                        ship
-                    </button>
+                    {blockers.length == 0 && (
+                        <button type="submit" class="button greenbg">
+                            ship
+                        </button>
+                    )}
                 </div>
             </div>
         </form>

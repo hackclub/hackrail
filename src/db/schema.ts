@@ -14,6 +14,11 @@ export const users = sqliteTable("users", {
   zipCode: text("zip_code").notNull(),
   country: text("country").notNull(),
   birthdate: text("birthdate").notNull(),
+  // from hack club auth, refreshed on every login
+  verificationStatus: text("verification_status").notNull().default(""),
+  yswsEligible: integer("ysws_eligible", { mode: "boolean" })
+    .notNull()
+    .default(false),
   balance: integer("balance").notNull().default(0),
 
   // hackatime
