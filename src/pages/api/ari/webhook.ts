@@ -9,6 +9,7 @@ import {
 } from "../../../db/schema";
 import { GetProjectFromId } from "../../../utils/projects";
 import { getAriWebhookSecret } from "../../../utils/ari";
+import { PushProjectToAirtable } from "../../../utils/airtable";
 import { eq } from "drizzle-orm";
 
 async function addTimeline(
@@ -78,8 +79,15 @@ async function handleReviewEvent(event: AriWebhookEvent) {
           type: "approval",
           hoursApproved: event.review.approved_hours,
           message: event.review.note_to_maker ?? null,
+          auditNote: event.review.audit_note ?? null,
+          justification: event.review.justification ?? null,
         },
       );
+      try {
+        await PushProjectToAirtable(project.id);
+      } catch (error) {
+        console.error(`Airtable push failed for project ${project.id}:`, error);
+      }
       break;
     case "review.rejected":
       await applyDecision(project.id, false, true);

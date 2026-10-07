@@ -29,3 +29,7 @@ export function GetProjectStatus(project: Project): ProjectStatus {
 export function SafeUrl(url: string): string | null {
   return /^https?:\/\//i.test(url) ? url : null;
 }
+
+// the one we use as a placeholder
+export const DEFAULT_SCREENSHOT =
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Den_Haag_Hollands_Spoor.jpg/3840px-Den_Haag_Hollands_Spoor.jpg";

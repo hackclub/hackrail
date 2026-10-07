@@ -2,6 +2,7 @@
 import BaseLayout from "../../../layouts/base.astro";
 import { GetAllProjects, GetAllUsers } from "../../../utils/admin";
 import { GetAllPayouts, GetLatestApproval } from "../../../utils/payouts";
+import { GetMissingUnifiedFields } from "../../../utils/airtable";
 import "../../../styles/admin.css";
 
 // get error from cookies
@@ -13,15 +14,18 @@ if (error) {
 const userBySlackId = new Map(GetAllUsers().map((u) => [u.slackId, u]));
 const payoutByProject = new Map(GetAllPayouts().map((p) => [p.projectId, p]));
 
-const approved = GetAllProjects()
-    .filter((p) => p.approved)
-    .map((project) => ({
-        project,
-        approval: GetLatestApproval(project.id),
-        payout: payoutByProject.get(project.id),
-    }));
+const approved = await Promise.all(
+    GetAllProjects()
+        .filter((p) => p.approved)
+        .map(async (project) => ({
+            project,
+            approval: GetLatestApproval(project.id),
+            payout: payoutByProject.get(project.id),
+            missing: await GetMissingUnifiedFields(project.id),
+        })),
+);
 
-// oldest approval first, so nobody waits forever
+// oldest approval first
 const pending = approved
     .filter((a) => !a.payout)
     .sort(
@@ -34,8 +38,7 @@ const pending = approved
 const done = approved
     .filter((a) => a.payout)
     .sort(
-        (a, b) =>
-            b.payout!.createdAt.getTime() - a.payout!.createdAt.getTime(),
+        (a, b) => b.payout!.createdAt.getTime() - a.payout!.createdAt.getTime(),
     );
 
 const authorName = (slackId: string) =>
@@ -52,7 +55,9 @@ const authorName = (slackId: string) =>
         </div>
     )}
     <div class="content">
-        <a class="button" href="/admin">back to admin</a>
+        <a class="button" href="/admin">
+            back to admin
+        </a>
 
         <h2 style="margin-top: 1rem;">Pending payouts ({pending.length})</h2>
         {pending.length === 0 ? (
@@ -65,11 +70,12 @@ const authorName = (slackId: string) =>
                         <th>Author</th>
                         <th>Approved</th>
                         <th>Approved hours</th>
+                        <th>Airtable</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {pending.map(({ project, approval }) => (
+                    {pending.map(({ project, approval, missing }) => (
                         <tr>
                             <td>{project.projectName}</td>
                             <td>{authorName(project.authorSlackId)}</td>
@@ -78,6 +84,13 @@ const authorName = (slackId: string) =>
                                     "-"}
                             </td>
                             <td>{approval?.hours ?? "-"}</td>
+                            <td>
+                                {project.airtableRecordId
+                                    ? "synced"
+                                    : "not synced"}
+                                {missing.length > 0 &&
+                                    ` (${missing.length} missing)`}
+                            </td>
                             <td class="unlimited-width">
                                 <a
                                     class="button"
@@ -112,11 +125,12 @@ const authorName = (slackId: string) =>
                         <th>Hours</th>
                         <th>Amount</th>
                         <th>Paid by</th>
+                        <th>Airtable</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {done.map(({ project, payout }) => (
+                    {done.map(({ project, payout, missing }) => (
                         <tr>
                             <td>{project.projectName}</td>
                             <td>{authorName(project.authorSlackId)}</td>
@@ -127,6 +141,13 @@ const authorName = (slackId: string) =>
                             </td>
                             <td>{payout!.amount} tracks</td>
                             <td>{authorName(payout!.adminSlackId)}</td>
+                            <td>
+                                {project.airtableRecordId
+                                    ? "synced"
+                                    : "not synced"}
+                                {missing.length > 0 &&
+                                    ` (${missing.length} missing)`}
+                            </td>
                             <td class="unlimited-width">
                                 <a
                                     class="button"

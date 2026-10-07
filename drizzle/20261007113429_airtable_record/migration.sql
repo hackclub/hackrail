@@ -1,0 +1,1 @@
+ALTER TABLE `projects` ADD `airtable_record_id` text DEFAULT '' NOT NULL;

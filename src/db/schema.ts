@@ -65,6 +65,9 @@ export const projects = sqliteTable("projects", {
   // ari (latest submission id, "" when never submitted)
   ariSubmissionId: text("ari_submission_id").notNull().default(""),
 
+  // record in the hackrail airtable
+  airtableRecordId: text("airtable_record_id").notNull().default(""),
+
   // review
   overrideHoursSpent: integer("override_hours_spent").notNull().default(0),
   overrideHoursSpentReason: text("override_hours_spent_reason")

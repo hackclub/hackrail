@@ -3,6 +3,13 @@ import { GetProjectFromId } from "../../../utils/projects";
 import BaseLayout from "../../../layouts/base.astro";
 import "../../../styles/admin.css";
 import { getAriStatus } from "../../../utils/ari";
+import { GetMissingUnifiedFields } from "../../../utils/airtable";
+
+// get error from cookies
+const error = Astro.cookies.get("flash_error")?.value;
+if (error) {
+    Astro.cookies.delete("flash_error", { path: "/" });
+}
 
 const { slug } = Astro.params;
 
@@ -20,9 +27,22 @@ if (!project) {
 const ariStatus = project.ariSubmissionId
     ? await getAriStatus(String(project.id))
     : null;
+
+// required unified fields that would go to airtable empty
+const missingForUnified = project.approved
+    ? await GetMissingUnifiedFields(project.id)
+    : [];
 ---
 
 <BaseLayout title={project.projectName} hideFooter={true}>
+    {error && (
+        <div
+            class="surface dangerbg"
+            style="width: 100%; border-radius: 0; padding: 1rem; margin-bottom: 1rem;"
+        >
+            <p>{error}</p>
+        </div>
+    )}
     <div class="content">
         <div class="project-state-toggle">
             <h2>
@@ -101,6 +121,39 @@ const ariStatus = project.ariSubmissionId
                     ari status: {ariStatus.phase}
                     {ariStatus.decision ? ` / ${ariStatus.decision}` : ""}
                 </p>
+            )
+        }
+        {
+            project.approved && (
+                <div class="balance-change-form" style="margin-top: 2rem;">
+                    <h2>Airtable</h2>
+                    <p class="pre">record:</p>
+                    <p>{project.airtableRecordId || "not synced"}</p>
+                    <p class="pre">missing for unified:</p>
+                    <p
+                        style={
+                            missingForUnified.length > 0
+                                ? "color: var(--warn);"
+                                : undefined
+                        }
+                    >
+                        {missingForUnified.length > 0
+                            ? missingForUnified.join(", ")
+                            : "nothing, ready for unified"}
+                    </p>
+                    <form method="POST" action="/api/admin/airtable-sync">
+                        <input
+                            type="hidden"
+                            name="projectId"
+                            value={project.id}
+                        />
+                        <button class="button warnbg" type="submit">
+                            {project.airtableRecordId
+                                ? "update airtable record"
+                                : "push to airtable"}
+                        </button>
+                    </form>
+                </div>
             )
         }
         <p class="pre">override hours spent:</p>

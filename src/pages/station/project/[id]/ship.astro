@@ -1,6 +1,9 @@
 ---
 import { GetUserFromCookies } from "../../../../utils/auth";
-import { GetProjectFromId } from "../../../../utils/projects";
+import {
+    DEFAULT_SCREENSHOT,
+    GetProjectFromId,
+} from "../../../../utils/projects";
 import BaseLayout from "../../../../layouts/base.astro";
 import { GetShipBlockers } from "../../../../utils/eligibility";
 import "../../../../styles/project.css";
@@ -25,6 +28,11 @@ if (project?.authorSlackId != user?.slackId || !project || !user) {
 }
 
 const blockers = GetShipBlockers(user);
+
+// ui-only: ari would send it back anyway, this just saves a round trip
+const missingScreenshot =
+    !project.projectScreenshot ||
+    project.projectScreenshot === DEFAULT_SCREENSHOT;
 ---
 
 <BaseLayout title={`Ship ${project.projectName}`} hideFooter={true}>
@@ -67,6 +75,27 @@ const blockers = GetShipBlockers(user);
                             </a>
                             <a class="button fgbg" href="/logout">
                                 log out
+                            </a>
+                        </div>
+                    </div>
+                )}
+                {missingScreenshot && (
+                    <div class="surface warnbg" style="max-width: 600px;">
+                        <p>
+                            <strong>
+                                Your project doesn't have a screenshot yet.
+                            </strong>
+                        </p>
+                        <p>
+                            Upload a screenshot of your project running before
+                            shipping, reviewers will send it back without one.i
+                        </p>
+                        <div class="row smolgap blockers-buttons">
+                            <a
+                                class="button fgbg"
+                                href={`/station/project/${project.id}/edit`}
+                            >
+                                edit project
                             </a>
                         </div>
                     </div>
@@ -152,7 +181,7 @@ const blockers = GetShipBlockers(user);
                     >
                         cancel
                     </a>
-                    {blockers.length == 0 && (
+                    {blockers.length == 0 && !missingScreenshot && (
                         <button type="submit" class="button greenbg">
                             ship
                         </button>

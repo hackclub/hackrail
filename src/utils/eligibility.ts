@@ -32,10 +32,11 @@ export function GetShipBlockers(user: User): string[] {
   const missingAddress = [
     !user.addressLine1.trim() && "street address",
     !user.city.trim() && "city",
+    !user.state.trim() && "state / province",
     !user.zipCode.trim() && "ZIP / postal code",
     !user.country.trim() && "country",
   ].filter(Boolean);
-  if (missingAddress.length === 4) {
+  if (missingAddress.length === 5) {
     blockers.push("You don't have a primary address.");
   } else if (missingAddress.length) {
     blockers.push(

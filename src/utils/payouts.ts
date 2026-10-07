@@ -48,6 +48,7 @@ export function GetLatestApproval(projectId: number) {
       note: (data.message as string | null) ?? null,
       reviewerSlackId: event.reviewAuthorSlackId,
       approvedAt: event.createdAt,
+      data,
     };
   }
   return null;
