@@ -7,7 +7,6 @@ import { getAri } from "../../utils/ari";
 import { AriApiError, AriInputError } from "@hackclub/ari";
 import { eq } from "drizzle-orm";
 import { GetShipBlockers } from "../../utils/eligibility";
-import { GetProjectTimes } from "../../utils/hackatime";
 
 export const POST: APIRoute = async ({ request, cookies, redirect }) => {
   const user = await GetUserFromCookies(cookies);
@@ -67,9 +66,6 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
     const isReship = formData.get("reship") === "true";
     const isUpdate = project.updateStartedAt !== null;
     try {
-      const programSeconds =
-        (await GetProjectTimes(user.slackId, [project])).get(project.id)
-          ?.total ?? 0;
       const result = await ari.ships.create({
         external_id: String(project.id),
         title: project.projectName,
@@ -78,7 +74,6 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
           email: user.email,
           name: `${user.firstName} ${user.lastName}`,
           slack_id: user.slackId,
-          program_minutes: Math.round(programSeconds / 60),
         },
         repo_url: project.projectCodeUrl,
         demo_url: project.projectPlayableUrl,
